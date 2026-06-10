@@ -60,7 +60,19 @@ def index():
 @app.route("/revision")
 def revision():
     erreurs = session.get("erreurs", [])
-    return render_template("revision.html", erreurs=erreurs)
+    if not erreurs:
+        return redirect("/fin")
+    # Convertir les erreurs en format attendu par le mode revision dans /quiz
+    session["erreurs_revision"] = [
+        (e["verbe"], e["mode"], e["temps"], e["personne"], e["donne"], e["attendu"])
+        for e in erreurs
+    ]
+    session["mode"] = "revision"
+    session["score"] = 0
+    session["total"] = 0
+    import time
+    session["start"] = time.time()
+    return redirect("/quiz")
 
 @app.route("/parametres")
 def parametres():
