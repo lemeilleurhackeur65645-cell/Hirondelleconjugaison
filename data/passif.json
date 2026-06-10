@@ -1,0 +1,562 @@
+{
+
+  "faire": {
+    "indicatif": {
+      "présent": ["je suis fait", "tu es fait", "il est fait", "nous sommes faits", "vous êtes faits", "ils sont faits"],
+      "passé composé": ["j'ai été fait", "tu as été fait", "il a été fait", "nous avons été faits", "vous avez été faits", "ils ont été faits"],
+      "imparfait": ["j'étais fait", "tu étais fait", "il était fait", "nous étions faits", "vous étiez faits", "ils étaient faits"],
+      "plus-que-parfait": ["j'avais été fait", "tu avais été fait", "il avait été fait", "nous avions été faits", "vous aviez été faits", "ils avaient été faits"],
+      "passé simple": ["je fus fait", "tu fus fait", "il fut fait", "nous fûmes faits", "vous fûtes faits", "ils furent faits"],
+      "passé antérieur": ["j'eus été fait", "tu eus été fait", "il eut été fait", "nous eûmes été faits", "vous eûtes été faits", "ils eurent été faits"],
+      "futur simple": ["je serai fait", "tu seras fait", "il sera fait", "nous serons faits", "vous serez faits", "ils seront faits"],
+      "futur antérieur": ["j'aurai été fait", "tu auras été fait", "il aura été fait", "nous aurons été faits", "vous aurez été faits", "ils auront été faits"]
+    },
+    "conditionnel": {
+      "présent": ["je serais fait", "tu serais fait", "il serait fait", "nous serions faits", "vous seriez faits", "ils seraient faits"],
+      "passé 1": ["j'aurais été fait", "tu aurais été fait", "il aurait été fait", "nous aurions été faits", "vous auriez été faits", "ils auraient été faits"],
+      "passé 2": ["j'eusse été fait", "tu eusses été fait", "il eût été fait", "nous eussions été faits", "vous eussiez été faits", "ils eussent été faits"]
+    },
+    "subjonctif": {
+      "présent": ["que je sois fait", "que tu sois fait", "qu'il soit fait", "que nous soyons faits", "que vous soyez faits", "qu'ils soient faits"],
+      "passé": ["que j'aie été fait", "que tu aies été fait", "qu'il ait été fait", "que nous ayons été faits", "que vous ayez été faits", "qu'ils aient été faits"],
+      "imparfait": ["que je fusse fait", "que tu fusses fait", "qu'il fût fait", "que nous fussions faits", "que vous fussiez faits", "qu'ils fussent faits"],
+      "plus-que-parfait": ["que j'eusse été fait", "que tu eusses été fait", "qu'il eût été fait", "que nous eussions été faits", "que vous eussiez été faits", "qu'ils eussent été faits"]
+    },
+    "impératif": {
+      "présent": ["sois fait", "soyons faits", "soyez faits"],
+      "passé": ["aie été fait", "ayons été faits", "ayez été faits"]
+    }
+  },
+
+  "appeler": {
+    "indicatif": {
+      "présent": ["je suis appelé", "tu es appelé", "il est appelé", "nous sommes appelés", "vous êtes appelés", "ils sont appelés"],
+      "passé composé": ["j'ai été appelé", "tu as été appelé", "il a été appelé", "nous avons été appelés", "vous avez été appelés", "ils ont été appelés"],
+      "imparfait": ["j'étais appelé", "tu étais appelé", "il était appelé", "nous étions appelés", "vous étiez appelés", "ils étaient appelés"],
+      "plus-que-parfait": ["j'avais été appelé", "tu avais été appelé", "il avait été appelé", "nous avions été appelés", "vous aviez été appelés", "ils avaient été appelés"],
+      "passé simple": ["je fus appelé", "tu fus appelé", "il fut appelé", "nous fûmes appelés", "vous fûtes appelés", "ils furent appelés"],
+      "passé antérieur": ["j'eus été appelé", "tu eus été appelé", "il eut été appelé", "nous eûmes été appelés", "vous eûtes été appelés", "ils eurent été appelés"],
+      "futur simple": ["je serai appelé", "tu seras appelé", "il sera appelé", "nous serons appelés", "vous serez appelés", "ils seront appelés"],
+      "futur antérieur": ["j'aurai été appelé", "tu auras été appelé", "il aura été appelé", "nous aurons été appelés", "vous aurez été appelés", "ils auront été appelés"]
+    },
+    "conditionnel": {
+      "présent": ["je serais appelé", "tu serais appelé", "il serait appelé", "nous serions appelés", "vous seriez appelés", "ils seraient appelés"],
+      "passé 1": ["j'aurais été appelé", "tu aurais été appelé", "il aurait été appelé", "nous aurions été appelés", "vous auriez été appelés", "ils auraient été appelés"],
+      "passé 2": ["j'eusse été appelé", "tu eusses été appelé", "il eût été appelé", "nous eussions été appelés", "vous eussiez été appelés", "ils eussent été appelés"]
+    },
+    "subjonctif": {
+      "présent": ["que je sois appelé", "que tu sois appelé", "qu'il soit appelé", "que nous soyons appelés", "que vous soyez appelés", "qu'ils soient appelés"],
+      "passé": ["que j'aie été appelé", "que tu aies été appelé", "qu'il ait été appelé", "que nous ayons été appelés", "que vous ayez été appelés", "qu'ils aient été appelés"],
+      "imparfait": ["que je fusse appelé", "que tu fusses appelé", "qu'il fût appelé", "que nous fussions appelés", "que vous fussiez appelés", "qu'ils fussent appelés"],
+      "plus-que-parfait": ["que j'eusse été appelé", "que tu eusses été appelé", "qu'il eût été appelé", "que nous eussions été appelés", "que vous eussiez été appelés", "qu'ils eussent été appelés"]
+    },
+    "impératif": {
+      "présent": ["sois appelé", "soyons appelés", "soyez appelés"],
+      "passé": ["aie été appelé", "ayons été appelés", "ayez été appelés"]
+    }
+  },
+
+  "jeter": {
+    "indicatif": {
+      "présent": ["je suis jeté", "tu es jeté", "il est jeté", "nous sommes jetés", "vous êtes jetés", "ils sont jetés"],
+      "passé composé": ["j'ai été jeté", "tu as été jeté", "il a été jeté", "nous avons été jetés", "vous avez été jetés", "ils ont été jetés"],
+      "imparfait": ["j'étais jeté", "tu étais jeté", "il était jeté", "nous étions jetés", "vous étiez jetés", "ils étaient jetés"],
+      "plus-que-parfait": ["j'avais été jeté", "tu avais été jeté", "il avait été jeté", "nous avions été jetés", "vous aviez été jetés", "ils avaient été jetés"],
+      "passé simple": ["je fus jeté", "tu fus jeté", "il fut jeté", "nous fûmes jetés", "vous fûtes jetés", "ils furent jetés"],
+      "passé antérieur": ["j'eus été jeté", "tu eus été jeté", "il eut été jeté", "nous eûmes été jetés", "vous eûtes été jetés", "ils eurent été jetés"],
+      "futur simple": ["je serai jeté", "tu seras jeté", "il sera jeté", "nous serons jetés", "vous serez jetés", "ils seront jetés"],
+      "futur antérieur": ["j'aurai été jeté", "tu auras été jeté", "il aura été jeté", "nous aurons été jetés", "vous aurez été jetés", "ils auront été jetés"]
+    },
+    "conditionnel": {
+      "présent": ["je serais jeté", "tu serais jeté", "il serait jeté", "nous serions jetés", "vous seriez jetés", "ils seraient jetés"],
+      "passé 1": ["j'aurais été jeté", "tu aurais été jeté", "il aurait été jeté", "nous aurions été jetés", "vous auriez été jetés", "ils auraient été jetés"],
+      "passé 2": ["j'eusse été jeté", "tu eusses été jeté", "il eût été jeté", "nous eussions été jetés", "vous eussiez été jetés", "ils eussent été jetés"]
+    },
+    "subjonctif": {
+      "présent": ["que je sois jeté", "que tu sois jeté", "qu'il soit jeté", "que nous soyons jetés", "que vous soyez jetés", "qu'ils soient jetés"],
+      "passé": ["que j'aie été jeté", "que tu aies été jeté", "qu'il ait été jeté", "que nous ayons été jetés", "que vous ayez été jetés", "qu'ils aient été jetés"],
+      "imparfait": ["que je fusse jeté", "que tu fusses jeté", "qu'il fût jeté", "que nous fussions jetés", "que vous fussiez jetés", "qu'ils fussent jetés"],
+      "plus-que-parfait": ["que j'eusse été jeté", "que tu eusses été jeté", "qu'il eût été jeté", "que nous eussions été jetés", "que vous eussiez été jetés", "qu'ils eussent été jetés"]
+    },
+    "impératif": {
+      "présent": ["sois jeté", "soyons jetés", "soyez jetés"],
+      "passé": ["aie été jeté", "ayons été jetés", "ayez été jetés"]
+    }
+  },
+
+  "peigner": {
+    "indicatif": {
+      "présent": ["je suis peigné", "tu es peigné", "il est peigné", "nous sommes peignés", "vous êtes peignés", "ils sont peignés"],
+      "passé composé": ["j'ai été peigné", "tu as été peigné", "il a été peigné", "nous avons été peignés", "vous avez été peignés", "ils ont été peignés"],
+      "imparfait": ["j'étais peigné", "tu étais peigné", "il était peigné", "nous étions peignés", "vous étiez peignés", "ils étaient peignés"],
+      "plus-que-parfait": ["j'avais été peigné", "tu avais été peigné", "il avait été peigné", "nous avions été peignés", "vous aviez été peignés", "ils avaient été peignés"],
+      "passé simple": ["je fus peigné", "tu fus peigné", "il fut peigné", "nous fûmes peignés", "vous fûtes peignés", "ils furent peignés"],
+      "passé antérieur": ["j'eus été peigné", "tu eus été peigné", "il eut été peigné", "nous eûmes été peignés", "vous eûtes été peignés", "ils eurent été peignés"],
+      "futur simple": ["je serai peigné", "tu seras peigné", "il sera peigné", "nous serons peignés", "vous serez peignés", "ils seront peignés"],
+      "futur antérieur": ["j'aurai été peigné", "tu auras été peigné", "il aura été peigné", "nous aurons été peignés", "vous aurez été peignés", "ils auront été peignés"]
+    },
+    "conditionnel": {
+      "présent": ["je serais peigné", "tu serais peigné", "il serait peigné", "nous serions peignés", "vous seriez peignés", "ils seraient peignés"],
+      "passé 1": ["j'aurais été peigné", "tu aurais été peigné", "il aurait été peigné", "nous aurions été peignés", "vous auriez été peignés", "ils auraient été peignés"],
+      "passé 2": ["j'eusse été peigné", "tu eusses été peigné", "il eût été peigné", "nous eussions été peignés", "vous eussiez été peignés", "ils eussent été peignés"]
+    },
+    "subjonctif": {
+      "présent": ["que je sois peigné", "que tu sois peigné", "qu'il soit peigné", "que nous soyons peignés", "que vous soyez peignés", "qu'ils soient peignés"],
+      "passé": ["que j'aie été peigné", "que tu aies été peigné", "qu'il ait été peigné", "que nous ayons été peignés", "que vous ayez été peignés", "qu'ils aient été peignés"],
+      "imparfait": ["que je fusse peigné", "que tu fusses peigné", "qu'il fût peigné", "que nous fussions peignés", "que vous fussiez peignés", "qu'ils fussent peignés"],
+      "plus-que-parfait": ["que j'eusse été peigné", "que tu eusses été peigné", "qu'il eût été peigné", "que nous eussions été peignés", "que vous eussiez été peignés", "qu'ils eussent été peignés"]
+    },
+    "impératif": {
+      "présent": ["sois peigné", "soyons peignés", "soyez peignés"],
+      "passé": ["aie été peigné", "ayons été peignés", "ayez été peignés"]
+    }
+  },
+
+  "mouler": {
+    "indicatif": {
+      "présent": ["je suis moulé", "tu es moulé", "il est moulé", "nous sommes moulés", "vous êtes moulés", "ils sont moulés"],
+      "passé composé": ["j'ai été moulé", "tu as été moulé", "il a été moulé", "nous avons été moulés", "vous avez été moulés", "ils ont été moulés"],
+      "imparfait": ["j'étais moulé", "tu étais moulé", "il était moulé", "nous étions moulés", "vous étiez moulés", "ils étaient moulés"],
+      "plus-que-parfait": ["j'avais été moulé", "tu avais été moulé", "il avait été moulé", "nous avions été moulés", "vous aviez été moulés", "ils avaient été moulés"],
+      "passé simple": ["je fus moulé", "tu fus moulé", "il fut moulé", "nous fûmes moulés", "vous fûtes moulés", "ils furent moulés"],
+      "passé antérieur": ["j'eus été moulé", "tu eus été moulé", "il eut été moulé", "nous eûmes été moulés", "vous eûtes été moulés", "ils eurent été moulés"],
+      "futur simple": ["je serai moulé", "tu seras moulé", "il sera moulé", "nous serons moulés", "vous serez moulés", "ils seront moulés"],
+      "futur antérieur": ["j'aurai été moulé", "tu auras été moulé", "il aura été moulé", "nous aurons été moulés", "vous aurez été moulés", "ils auront été moulés"]
+    },
+    "conditionnel": {
+      "présent": ["je serais moulé", "tu serais moulé", "il serait moulé", "nous serions moulés", "vous seriez moulés", "ils seraient moulés"],
+      "passé 1": ["j'aurais été moulé", "tu aurais été moulé", "il aurait été moulé", "nous aurions été moulés", "vous auriez été moulés", "ils auraient été moulés"],
+      "passé 2": ["j'eusse été moulé", "tu eusses été moulé", "il eût été moulé", "nous eussions été moulés", "vous eussiez été moulés", "ils eussent été moulés"]
+    },
+    "subjonctif": {
+      "présent": ["que je sois moulé", "que tu sois moulé", "qu'il soit moulé", "que nous soyons moulés", "que vous soyez moulés", "qu'ils soient moulés"],
+      "passé": ["que j'aie été moulé", "que tu aies été moulé", "qu'il ait été moulé", "que nous ayons été moulés", "que vous ayez été moulés", "qu'ils aient été moulés"],
+      "imparfait": ["que je fusse moulé", "que tu fusses moulé", "qu'il fût moulé", "que nous fussions moulés", "que vous fussiez moulés", "qu'ils fussent moulés"],
+      "plus-que-parfait": ["que j'eusse été moulé", "que tu eusses été moulé", "qu'il eût été moulé", "que nous eussions été moulés", "que vous eussiez été moulés", "qu'ils eussent été moulés"]
+    },
+    "impératif": {
+      "présent": ["sois moulé", "soyons moulés", "soyez moulés"],
+      "passé": ["aie été moulé", "ayons été moulés", "ayez été moulés"]
+    }
+  },
+
+  "tuer": {
+    "indicatif": {
+      "présent": ["je suis tué", "tu es tué", "il est tué", "nous sommes tués", "vous êtes tués", "ils sont tués"],
+      "passé composé": ["j'ai été tué", "tu as été tué", "il a été tué", "nous avons été tués", "vous avez été tués", "ils ont été tués"],
+      "imparfait": ["j'étais tué", "tu étais tué", "il était tué", "nous étions tués", "vous étiez tués", "ils étaient tués"],
+      "plus-que-parfait": ["j'avais été tué", "tu avais été tué", "il avait été tué", "nous avions été tués", "vous aviez été tués", "ils avaient été tués"],
+      "passé simple": ["je fus tué", "tu fus tué", "il fut tué", "nous fûmes tués", "vous fûtes tués", "ils furent tués"],
+      "passé antérieur": ["j'eus été tué", "tu eus été tué", "il eut été tué", "nous eûmes été tués", "vous eûtes été tués", "ils eurent été tués"],
+      "futur simple": ["je serai tué", "tu seras tué", "il sera tué", "nous serons tués", "vous serez tués", "ils seront tués"],
+      "futur antérieur": ["j'aurai été tué", "tu auras été tué", "il aura été tué", "nous aurons été tués", "vous aurez été tués", "ils auront été tués"]
+    },
+    "conditionnel": {
+      "présent": ["je serais tué", "tu serais tué", "il serait tué", "nous serions tués", "vous seriez tués", "ils seraient tués"],
+      "passé 1": ["j'aurais été tué", "tu aurais été tué", "il aurait été tué", "nous aurions été tués", "vous auriez été tués", "ils auraient été tués"],
+      "passé 2": ["j'eusse été tué", "tu eusses été tué", "il eût été tué", "nous eussions été tués", "vous eussiez été tués", "ils eussent été tués"]
+    },
+    "subjonctif": {
+      "présent": ["que je sois tué", "que tu sois tué", "qu'il soit tué", "que nous soyons tués", "que vous soyez tués", "qu'ils soient tués"],
+      "passé": ["que j'aie été tué", "que tu aies été tué", "qu'il ait été tué", "que nous ayons été tués", "que vous ayez été tués", "qu'ils aient été tués"],
+      "imparfait": ["que je fusse tué", "que tu fusses tué", "qu'il fût tué", "que nous fussions tués", "que vous fussiez tués", "qu'ils fussent tués"],
+      "plus-que-parfait": ["que j'eusse été tué", "que tu eusses été tué", "qu'il eût été tué", "que nous eussions été tués", "que vous eussiez été tués", "qu'ils eussent été tués"]
+    },
+    "impératif": {
+      "présent": ["sois tué", "soyons tués", "soyez tués"],
+      "passé": ["aie été tué", "ayons été tués", "ayez été tués"]
+    }
+  },
+
+  "rendre": {
+    "indicatif": {
+      "présent": ["je suis rendu", "tu es rendu", "il est rendu", "nous sommes rendus", "vous êtes rendus", "ils sont rendus"],
+      "passé composé": ["j'ai été rendu", "tu as été rendu", "il a été rendu", "nous avons été rendus", "vous avez été rendus", "ils ont été rendus"],
+      "imparfait": ["j'étais rendu", "tu étais rendu", "il était rendu", "nous étions rendus", "vous étiez rendus", "ils étaient rendus"],
+      "plus-que-parfait": ["j'avais été rendu", "tu avais été rendu", "il avait été rendu", "nous avions été rendus", "vous aviez été rendus", "ils avaient été rendus"],
+      "passé simple": ["je fus rendu", "tu fus rendu", "il fut rendu", "nous fûmes rendus", "vous fûtes rendus", "ils furent rendus"],
+      "passé antérieur": ["j'eus été rendu", "tu eus été rendu", "il eut été rendu", "nous eûmes été rendus", "vous eûtes été rendus", "ils eurent été rendus"],
+      "futur simple": ["je serai rendu", "tu seras rendu", "il sera rendu", "nous serons rendus", "vous serez rendus", "ils seront rendus"],
+      "futur antérieur": ["j'aurai été rendu", "tu auras été rendu", "il aura été rendu", "nous aurons été rendus", "vous aurez été rendus", "ils auront été rendus"]
+    },
+    "conditionnel": {
+      "présent": ["je serais rendu", "tu serais rendu", "il serait rendu", "nous serions rendus", "vous seriez rendus", "ils seraient rendus"],
+      "passé 1": ["j'aurais été rendu", "tu aurais été rendu", "il aurait été rendu", "nous aurions été rendus", "vous auriez été rendus", "ils auraient été rendus"],
+      "passé 2": ["j'eusse été rendu", "tu eusses été rendu", "il eût été rendu", "nous eussions été rendus", "vous eussiez été rendus", "ils eussent été rendus"]
+    },
+    "subjonctif": {
+      "présent": ["que je sois rendu", "que tu sois rendu", "qu'il soit rendu", "que nous soyons rendus", "que vous soyez rendus", "qu'ils soient rendus"],
+      "passé": ["que j'aie été rendu", "que tu aies été rendu", "qu'il ait été rendu", "que nous ayons été rendus", "que vous ayez été rendus", "qu'ils aient été rendus"],
+      "imparfait": ["que je fusse rendu", "que tu fusses rendu", "qu'il fût rendu", "que nous fussions rendus", "que vous fussiez rendus", "qu'ils fussent rendus"],
+      "plus-que-parfait": ["que j'eusse été rendu", "que tu eusses été rendu", "qu'il eût été rendu", "que nous eussions été rendus", "que vous eussiez été rendus", "qu'ils eussent été rendus"]
+    },
+    "impératif": {
+      "présent": ["sois rendu", "soyons rendus", "soyez rendus"],
+      "passé": ["aie été rendu", "ayons été rendus", "ayez été rendus"]
+    }
+  },
+
+  "peindre": {
+    "indicatif": {
+      "présent": ["je suis peint", "tu es peint", "il est peint", "nous sommes peints", "vous êtes peints", "ils sont peints"],
+      "passé composé": ["j'ai été peint", "tu as été peint", "il a été peint", "nous avons été peints", "vous avez été peints", "ils ont été peints"],
+      "imparfait": ["j'étais peint", "tu étais peint", "il était peint", "nous étions peints", "vous étiez peints", "ils étaient peints"],
+      "plus-que-parfait": ["j'avais été peint", "tu avais été peint", "il avait été peint", "nous avions été peints", "vous aviez été peints", "ils avaient été peints"],
+      "passé simple": ["je fus peint", "tu fus peint", "il fut peint", "nous fûmes peints", "vous fûtes peints", "ils furent peints"],
+      "passé antérieur": ["j'eus été peint", "tu eus été peint", "il eut été peint", "nous eûmes été peints", "vous eûtes été peints", "ils eurent été peints"],
+      "futur simple": ["je serai peint", "tu seras peint", "il sera peint", "nous serons peints", "vous serez peints", "ils seront peints"],
+      "futur antérieur": ["j'aurai été peint", "tu auras été peint", "il aura été peint", "nous aurons été peints", "vous aurez été peints", "ils auront été peints"]
+    },
+    "conditionnel": {
+      "présent": ["je serais peint", "tu serais peint", "il serait peint", "nous serions peints", "vous seriez peints", "ils seraient peints"],
+      "passé 1": ["j'aurais été peint", "tu aurais été peint", "il aurait été peint", "nous aurions été peints", "vous auriez été peints", "ils auraient été peints"],
+      "passé 2": ["j'eusse été peint", "tu eusses été peint", "il eût été peint", "nous eussions été peints", "vous eussiez été peints", "ils eussent été peints"]
+    },
+    "subjonctif": {
+      "présent": ["que je sois peint", "que tu sois peint", "qu'il soit peint", "que nous soyons peints", "que vous soyez peints", "qu'ils soient peints"],
+      "passé": ["que j'aie été peint", "que tu aies été peint", "qu'il ait été peint", "que nous ayons été peints", "que vous ayez été peints", "qu'ils aient été peints"],
+      "imparfait": ["que je fusse peint", "que tu fusses peint", "qu'il fût peint", "que nous fussions peints", "que vous fussiez peints", "qu'ils fussent peints"],
+      "plus-que-parfait": ["que j'eusse été peint", "que tu eusses été peint", "qu'il eût été peint", "que nous eussions été peints", "que vous eussiez été peints", "qu'ils eussent été peints"]
+    },
+    "impératif": {
+      "présent": ["sois peint", "soyons peints", "soyez peints"],
+      "passé": ["aie été peint", "ayons été peints", "ayez été peints"]
+    }
+  },
+
+  "vaincre": {
+    "indicatif": {
+      "présent": ["je suis vaincu", "tu es vaincu", "il est vaincu", "nous sommes vaincus", "vous êtes vaincus", "ils sont vaincus"],
+      "passé composé": ["j'ai été vaincu", "tu as été vaincu", "il a été vaincu", "nous avons été vaincus", "vous avez été vaincus", "ils ont été vaincus"],
+      "imparfait": ["j'étais vaincu", "tu étais vaincu", "il était vaincu", "nous étions vaincus", "vous étiez vaincus", "ils étaient vaincus"],
+      "plus-que-parfait": ["j'avais été vaincu", "tu avais été vaincu", "il avait été vaincu", "nous avions été vaincus", "vous aviez été vaincus", "ils avaient été vaincus"],
+      "passé simple": ["je fus vaincu", "tu fus vaincu", "il fut vaincu", "nous fûmes vaincus", "vous fûtes vaincus", "ils furent vaincus"],
+      "passé antérieur": ["j'eus été vaincu", "tu eus été vaincu", "il eut été vaincu", "nous eûmes été vaincus", "vous eûtes été vaincus", "ils eurent été vaincus"],
+      "futur simple": ["je serai vaincu", "tu seras vaincu", "il sera vaincu", "nous serons vaincus", "vous serez vaincus", "ils seront vaincus"],
+      "futur antérieur": ["j'aurai été vaincu", "tu auras été vaincu", "il aura été vaincu", "nous aurons été vaincus", "vous aurez été vaincus", "ils auront été vaincus"]
+    },
+    "conditionnel": {
+      "présent": ["je serais vaincu", "tu serais vaincu", "il serait vaincu", "nous serions vaincus", "vous seriez vaincus", "ils seraient vaincus"],
+      "passé 1": ["j'aurais été vaincu", "tu aurais été vaincu", "il aurait été vaincu", "nous aurions été vaincus", "vous auriez été vaincus", "ils auraient été vaincus"],
+      "passé 2": ["j'eusse été vaincu", "tu eusses été vaincu", "il eût été vaincu", "nous eussions été vaincus", "vous eussiez été vaincus", "ils eussent été vaincus"]
+    },
+    "subjonctif": {
+      "présent": ["que je sois vaincu", "que tu sois vaincu", "qu'il soit vaincu", "que nous soyons vaincus", "que vous soyez vaincus", "qu'ils soient vaincus"],
+      "passé": ["que j'aie été vaincu", "que tu aies été vaincu", "qu'il ait été vaincu", "que nous ayons été vaincus", "que vous ayez été vaincus", "qu'ils aient été vaincus"],
+      "imparfait": ["que je fusse vaincu", "que tu fusses vaincu", "qu'il fût vaincu", "que nous fussions vaincus", "que vous fussiez vaincus", "qu'ils fussent vaincus"],
+      "plus-que-parfait": ["que j'eusse été vaincu", "que tu eusses été vaincu", "qu'il eût été vaincu", "que nous eussions été vaincus", "que vous eussiez été vaincus", "qu'ils eussent été vaincus"]
+    },
+    "impératif": {
+      "présent": ["sois vaincu", "soyons vaincus", "soyez vaincus"],
+      "passé": ["aie été vaincu", "ayons été vaincus", "ayez été vaincus"]
+    }
+  },
+
+  "prendre": {
+    "indicatif": {
+      "présent": ["je suis pris", "tu es pris", "il est pris", "nous sommes pris", "vous êtes pris", "ils sont pris"],
+      "passé composé": ["j'ai été pris", "tu as été pris", "il a été pris", "nous avons été pris", "vous avez été pris", "ils ont été pris"],
+      "imparfait": ["j'étais pris", "tu étais pris", "il était pris", "nous étions pris", "vous étiez pris", "ils étaient pris"],
+      "plus-que-parfait": ["j'avais été pris", "tu avais été pris", "il avait été pris", "nous avions été pris", "vous aviez été pris", "ils avaient été pris"],
+      "passé simple": ["je fus pris", "tu fus pris", "il fut pris", "nous fûmes pris", "vous fûtes pris", "ils furent pris"],
+      "passé antérieur": ["j'eus été pris", "tu eus été pris", "il eut été pris", "nous eûmes été pris", "vous eûtes été pris", "ils eurent été pris"],
+      "futur simple": ["je serai pris", "tu seras pris", "il sera pris", "nous serons pris", "vous serez pris", "ils seront pris"],
+      "futur antérieur": ["j'aurai été pris", "tu auras été pris", "il aura été pris", "nous aurons été pris", "vous aurez été pris", "ils auront été pris"]
+    },
+    "conditionnel": {
+      "présent": ["je serais pris", "tu serais pris", "il serait pris", "nous serions pris", "vous seriez pris", "ils seraient pris"],
+      "passé 1": ["j'aurais été pris", "tu aurais été pris", "il aurait été pris", "nous aurions été pris", "vous auriez été pris", "ils auraient été pris"],
+      "passé 2": ["j'eusse été pris", "tu eusses été pris", "il eût été pris", "nous eussions été pris", "vous eussiez été pris", "ils eussent été pris"]
+    },
+    "subjonctif": {
+      "présent": ["que je sois pris", "que tu sois pris", "qu'il soit pris", "que nous soyons pris", "que vous soyez pris", "qu'ils soient pris"],
+      "passé": ["que j'aie été pris", "que tu aies été pris", "qu'il ait été pris", "que nous ayons été pris", "que vous ayez été pris", "qu'ils aient été pris"],
+      "imparfait": ["que je fusse pris", "que tu fusses pris", "qu'il fût pris", "que nous fussions pris", "que vous fussiez pris", "qu'ils fussent pris"],
+      "plus-que-parfait": ["que j'eusse été pris", "que tu eusses été pris", "qu'il eût été pris", "que nous eussions été pris", "que vous eussiez été pris", "qu'ils eussent été pris"]
+    },
+    "impératif": {
+      "présent": ["sois pris", "soyons pris", "soyez pris"],
+      "passé": ["aie été pris", "ayons été pris", "ayez été pris"]
+    }
+  },
+  "tenir" :{
+  "indicatif": {
+    "présent": [
+      "je suis tenu",
+      "tu es tenu",
+      "il est tenu",
+      "nous sommes tenus",
+      "vous êtes tenus",
+      "ils sont tenus"
+    ],
+    "passé composé": [
+      "j'ai été tenu",
+      "tu as été tenu",
+      "il a été tenu",
+      "nous avons été tenus",
+      "vous avez été tenus",
+      "ils ont été tenus"
+    ],
+    "imparfait": [
+      "j'étais tenu",
+      "tu étais tenu",
+      "il était tenu",
+      "nous étions tenus",
+      "vous étiez tenus",
+      "ils étaient tenus"
+    ],
+    "plus-que-parfait": [
+      "j'avais été tenu",
+      "tu avais été tenu",
+      "il avait été tenu",
+      "nous avions été tenus",
+      "vous aviez été tenus",
+      "ils avaient été tenus"
+    ],
+    "passé simple": [
+      "je fus tenu",
+      "tu fus tenu",
+      "il fut tenu",
+      "nous fûmes tenus",
+      "vous fûtes tenus",
+      "ils furent tenus"
+    ],
+    "passé antérieur": [
+      "j'eus été tenu",
+      "tu eus été tenu",
+      "il eut été tenu",
+      "nous eûmes été tenus",
+      "vous eûtes été tenus",
+      "ils eurent été tenus"
+    ],
+    "futur simple": [
+      "je serai tenu",
+      "tu seras tenu",
+      "il sera tenu",
+      "nous serons tenus",
+      "vous serez tenus",
+      "ils seront tenus"
+    ],
+    "futur antérieur": [
+      "j'aurai été tenu",
+      "tu auras été tenu",
+      "il aura été tenu",
+      "nous aurons été tenus",
+      "vous aurez été tenus",
+      "ils auront été tenus"
+    ]
+  },
+  "conditionnel": {
+    "présent": [
+      "je serais tenu",
+      "tu serais tenu",
+      "il serait tenu",
+      "nous serions tenus",
+      "vous seriez tenus",
+      "ils seraient tenus"
+    ],
+    "passé 1": [
+      "j'aurais été tenu",
+      "tu aurais été tenu",
+      "il aurait été tenu",
+      "nous aurions été tenus",
+      "vous auriez été tenus",
+      "ils auraient été tenus"
+    ],
+    "passé 2": [
+      "j'eusse été tenu",
+      "tu eusses été tenu",
+      "il eût été tenu",
+      "nous eussions été tenus",
+      "vous eussiez été tenus",
+      "ils eussent été tenus"
+    ]
+  },
+  "subjonctif": {
+    "présent": [
+      "que je sois tenu",
+      "que tu sois tenu",
+      "qu'il soit tenu",
+      "que nous soyons tenus",
+      "que vous soyez tenus",
+      "qu'ils soient tenus"
+    ],
+    "passé": [
+      "que j'aie été tenu",
+      "que tu aies été tenu",
+      "qu'il ait été tenu",
+      "que nous ayons été tenus",
+      "que vous ayez été tenus",
+      "qu'ils aient été tenus"
+    ],
+    "imparfait": [
+      "que je fusse tenu",
+      "que tu fusses tenu",
+      "qu'il fût tenu",
+      "que nous fussions tenus",
+      "que vous fussiez tenus",
+      "qu'ils fussent tenus"
+    ],
+    "plus-que-parfait": [
+      "que j'eusse été tenu",
+      "que tu eusses été tenu",
+      "qu'il eût été tenu",
+      "que nous eussions été tenus",
+      "que vous eussiez été tenus",
+      "qu'ils eussent été tenus"
+    ]
+  },
+  "impératif": {
+    "présent": [
+      "sois tenu",
+      "soyons tenus",
+      "soyez tenus"
+    ],
+    "passé": [
+      "aie été tenu",
+      "ayons été tenus",
+      "ayez été tenus"
+    ]
+  }
+  },
+  "sentir": {
+    "indicatif": {
+      "présent": ["je suis senti", "tu es senti", "il est senti", "nous sommes sentis", "vous êtes sentis", "ils sont sentis"],
+      "passé composé": ["j'ai été senti", "tu as été senti", "il a été senti", "nous avons été sentis", "vous avez été sentis", "ils ont été sentis"],
+      "imparfait": ["j'étais senti", "tu étais senti", "il était senti", "nous étions sentis", "vous étiez sentis", "ils étaient sentis"],
+      "plus-que-parfait": ["j'avais été senti", "tu avais été senti", "il avait été senti", "nous avions été sentis", "vous aviez été sentis", "ils avaient été sentis"],
+      "passé simple": ["je fus senti", "tu fus senti", "il fut senti", "nous fûmes sentis", "vous fûtes sentis", "ils furent sentis"],
+      "passé antérieur": ["j'eus été senti", "tu eus été senti", "il eut été senti", "nous eûmes été sentis", "vous eûtes été sentis", "ils eurent été sentis"],
+      "futur simple": ["je serai senti", "tu seras senti", "il sera senti", "nous serons sentis", "vous serez sentis", "ils seront sentis"],
+      "futur antérieur": ["j'aurai été senti", "tu auras été senti", "il aura été senti", "nous aurons été sentis", "vous aurez été sentis", "ils auront été sentis"]
+    },
+    "conditionnel": {
+      "présent": ["je serais senti", "tu serais senti", "il serait senti", "nous serions sentis", "vous seriez sentis", "ils seraient sentis"],
+      "passé 1": ["j'aurais été senti", "tu aurais été senti", "il aurait été senti", "nous aurions été sentis", "vous auriez été sentis", "ils auraient été sentis"],
+      "passé 2": ["j'eusse été senti", "tu eusses été senti", "il eût été senti", "nous eussions été sentis", "vous eussiez été sentis", "ils eussent été sentis"]
+    },
+    "subjonctif": {
+      "présent": ["que je sois senti", "que tu sois senti", "qu'il soit senti", "que nous soyons sentis", "que vous soyez sentis", "qu'ils soient sentis"],
+      "passé": ["que j'aie été senti", "que tu aies été senti", "qu'il ait été senti", "que nous ayons été sentis", "que vous ayez été sentis", "qu'ils aient été sentis"],
+      "imparfait": ["que je fusse senti", "que tu fusses senti", "qu'il fût senti", "que nous fussions sentis", "que vous fussiez sentis", "qu'ils fussent sentis"],
+      "plus-que-parfait": ["que j'eusse été senti", "que tu eusses été senti", "qu'il eût été senti", "que nous eussions été sentis", "que vous eussiez été sentis", "qu'ils eussent été sentis"]
+    },
+    "impératif": {
+      "présent": ["sois senti", "soyons sentis", "soyez sentis"],
+      "passé": ["aie été senti", "ayons été sentis", "ayez été sentis"]
+    }
+  },
+
+  "voir": {
+    "indicatif": {
+      "présent": ["je suis vu", "tu es vu", "il est vu", "nous sommes vus", "vous êtes vus", "ils sont vus"],
+      "passé composé": ["j'ai été vu", "tu as été vu", "il a été vu", "nous avons été vus", "vous avez été vus", "ils ont été vus"],
+      "imparfait": ["j'étais vu", "tu étais vu", "il était vu", "nous étions vus", "vous étiez vus", "ils étaient vus"],
+      "plus-que-parfait": ["j'avais été vu", "tu avais été vu", "il avait été vu", "nous avions été vus", "vous aviez été vus", "ils avaient été vus"],
+      "passé simple": ["je fus vu", "tu fus vu", "il fut vu", "nous fûmes vus", "vous fûtes vus", "ils furent vus"],
+      "passé antérieur": ["j'eus été vu", "tu eus été vu", "il eut été vu", "nous eûmes été vus", "vous eûtes été vus", "ils eurent été vus"],
+      "futur simple": ["je serai vu", "tu seras vu", "il sera vu", "nous serons vus", "vous serez vus", "ils seront vus"],
+      "futur antérieur": ["j'aurai été vu", "tu auras été vu", "il aura été vu", "nous aurons été vus", "vous aurez été vus", "ils auront été vus"]
+    },
+    "conditionnel": {
+      "présent": ["je serais vu", "tu serais vu", "il serait vu", "nous serions vus", "vous seriez vus", "ils seraient vus"],
+      "passé 1": ["j'aurais été vu", "tu aurais été vu", "il aurait été vu", "nous aurions été vus", "vous auriez été vus", "ils auraient été vus"],
+      "passé 2": ["j'eusse été vu", "tu eusses été vu", "il eût été vu", "nous eussions été vus", "vous eussiez été vus", "ils eussent été vus"]
+    },
+    "subjonctif": {
+      "présent": ["que je sois vu", "que tu sois vu", "qu'il soit vu", "que nous soyons vus", "que vous soyez vus", "qu'ils soient vus"],
+      "passé": ["que j'aie été vu", "que tu aies été vu", "qu'il ait été vu", "que nous ayons été vus", "que vous ayez été vus", "qu'ils aient été vus"],
+      "imparfait": ["que je fusse vu", "que tu fusses vu", "qu'il fût vu", "que nous fussions vus", "que vous fussiez vus", "qu'ils fussent vus"],
+      "plus-que-parfait": ["que j'eusse été vu", "que tu eusses été vu", "qu'il eût été vu", "que nous eussions été vus", "que vous eussiez été vus", "qu'ils eussent été vus"]
+    },
+    "impératif": {
+      "présent": ["sois vu", "soyons vus", "soyez vus"],
+      "passé": ["aie été vu", "ayons été vus", "ayez été vus"]
+    }
+  },
+
+  "recevoir": {
+    "indicatif": {
+      "présent": ["je suis reçu", "tu es reçu", "il est reçu", "nous sommes reçus", "vous êtes reçus", "ils sont reçus"],
+      "passé composé": ["j'ai été reçu", "tu as été reçu", "il a été reçu", "nous avons été reçus", "vous avez été reçus", "ils ont été reçus"],
+      "imparfait": ["j'étais reçu", "tu étais reçu", "il était reçu", "nous étions reçus", "vous étiez reçus", "ils étaient reçus"],
+      "plus-que-parfait": ["j'avais été reçu", "tu avais été reçu", "il avait été reçu", "nous avions été reçus", "vous aviez été reçus", "ils avaient été reçus"],
+      "passé simple": ["je fus reçu", "tu fus reçu", "il fut reçu", "nous fûmes reçus", "vous fûtes reçus", "ils furent reçus"],
+      "passé antérieur": ["j'eus été reçu", "tu eus été reçu", "il eut été reçu", "nous eûmes été reçus", "vous eûtes été reçus", "ils eurent été reçus"],
+      "futur simple": ["je serai reçu", "tu seras reçu", "il sera reçu", "nous serons reçus", "vous serez reçus", "ils seront reçus"],
+      "futur antérieur": ["j'aurai été reçu", "tu auras été reçu", "il aura été reçu", "nous aurons été reçus", "vous aurez été reçus", "ils auront été reçus"]
+    },
+    "conditionnel": {
+      "présent": ["je serais reçu", "tu serais reçu", "il serait reçu", "nous serions reçus", "vous seriez reçus", "ils seraient reçus"],
+      "passé 1": ["j'aurais été reçu", "tu aurais été reçu", "il aurait été reçu", "nous aurions été reçus", "vous auriez été reçus", "ils auraient été reçus"],
+      "passé 2": ["j'eusse été reçu", "tu eusses été reçu", "il eût été reçu", "nous eussions été reçus", "vous eussiez été reçus", "ils eussent été reçus"]
+    },
+    "subjonctif": {
+      "présent": ["que je sois reçu", "que tu sois reçu", "qu'il soit reçu", "que nous soyons reçus", "que vous soyez reçus", "qu'ils soient reçus"],
+      "passé": ["que j'aie été reçu", "que tu aies été reçu", "qu'il ait été reçu", "que nous ayons été reçus", "que vous ayez été reçus", "qu'ils aient été reçus"],
+      "imparfait": ["que je fusse reçu", "que tu fusses reçu", "qu'il fût reçu", "que nous fussions reçus", "que vous fussiez reçus", "qu'ils fussent reçus"],
+      "plus-que-parfait": ["que j'eusse été reçu", "que tu eusses été reçu", "qu'il eût été reçu", "que nous eussions été reçus", "que vous eussiez été reçus", "qu'ils eussent été reçus"]
+    },
+    "impératif": {
+      "présent": ["sois reçu", "soyons reçus", "soyez reçus"],
+      "passé": ["aie été reçu", "ayons été reçus", "ayez été reçus"]
+    }
+  },
+
+  "cueillir": {
+    "indicatif": {
+      "présent": ["je suis cueilli", "tu es cueilli", "il est cueilli", "nous sommes cueillis", "vous êtes cueillis", "ils sont cueillis"],
+      "passé composé": ["j'ai été cueilli", "tu as été cueilli", "il a été cueilli", "nous avons été cueillis", "vous avez été cueillis", "ils ont été cueillis"],
+      "imparfait": ["j'étais cueilli", "tu étais cueilli", "il était cueilli", "nous étions cueillis", "vous étiez cueillis", "ils étaient cueillis"],
+      "plus-que-parfait": ["j'avais été cueilli", "tu avais été cueilli", "il avait été cueilli", "nous avions été cueillis", "vous aviez été cueillis", "ils avaient été cueillis"],
+      "passé simple": ["je fus cueilli", "tu fus cueilli", "il fut cueilli", "nous fûmes cueillis", "vous fûtes cueillis", "ils furent cueillis"],
+      "passé antérieur": ["j'eus été cueilli", "tu eus été cueilli", "il eut été cueilli", "nous eûmes été cueillis", "vous eûtes été cueillis", "ils eurent été cueillis"],
+      "futur simple": ["je serai cueilli", "tu seras cueilli", "il sera cueilli", "nous serons cueillis", "vous serez cueillis", "ils seront cueillis"],
+      "futur antérieur": ["j'aurai été cueilli", "tu auras été cueilli", "il aura été cueilli", "nous aurons été cueillis", "vous aurez été cueillis", "ils auront été cueillis"]
+    },
+    "conditionnel": {
+      "présent": ["je serais cueilli", "tu serais cueilli", "il serait cueilli", "nous serions cueillis", "vous seriez cueillis", "ils seraient cueillis"],
+      "passé 1": ["j'aurais été cueilli", "tu aurais été cueilli", "il aurait été cueilli", "nous aurions été cueillis", "vous auriez été cueillis", "ils auraient été cueillis"],
+      "passé 2": ["j'eusse été cueilli", "tu eusses été cueilli", "il eût été cueilli", "nous eussions été cueillis", "vous eussiez été cueillis", "ils eussent été cueillis"]
+    },
+    "subjonctif": {
+      "présent": ["que je sois cueilli", "que tu sois cueilli", "qu'il soit cueilli", "que nous soyons cueillis", "que vous soyez cueillis", "qu'ils soient cueillis"],
+      "passé": ["que j'aie été cueilli", "que tu aies été cueilli", "qu'il ait été cueilli", "que nous ayons été cueillis", "que vous ayez été cueillis", "qu'ils aient été cueillis"],
+      "imparfait": ["que je fusse cueilli", "que tu fusses cueilli", "qu'il fût cueilli", "que nous fussions cueillis", "que vous fussiez cueillis", "qu'ils fussent cueillis"],
+      "plus-que-parfait": ["que j'eusse été cueilli", "que tu eusses été cueilli", "qu'il eût été cueilli", "que nous eussions été cueillis", "que vous eussiez été cueillis", "qu'ils eussent été cueillis"]
+    },
+    "impératif": {
+      "présent": ["sois cueilli", "soyons cueillis", "soyez cueillis"],
+      "passé": ["aie été cueilli", "ayons été cueillis", "ayez été cueillis"]
+    }
+  },
+
+  "acquérir": {
+    "indicatif": {
+      "présent": ["je suis acquis", "tu es acquis", "il est acquis", "nous sommes acquis", "vous êtes acquis", "ils sont acquis"],
+      "passé composé": ["j'ai été acquis", "tu as été acquis", "il a été acquis", "nous avons été acquis", "vous avez été acquis", "ils ont été acquis"],
+      "imparfait": ["j'étais acquis", "tu étais acquis", "il était acquis", "nous étions acquis", "vous étiez acquis", "ils étaient acquis"],
+      "plus-que-parfait": ["j'avais été acquis", "tu avais été acquis", "il avait été acquis", "nous avions été acquis", "vous aviez été acquis", "ils avaient été acquis"],
+      "passé simple": ["je fus acquis", "tu fus acquis", "il fut acquis", "nous fûmes acquis", "vous fûtes acquis", "ils furent acquis"],
+      "passé antérieur": ["j'eus été acquis", "tu eus été acquis", "il eut été acquis", "nous eûmes été acquis", "vous eûtes été acquis", "ils eurent été acquis"],
+      "futur simple": ["je serai acquis", "tu seras acquis", "il sera acquis", "nous serons acquis", "vous serez acquis", "ils seront acquis"],
+      "futur antérieur": ["j'aurai été acquis", "tu auras été acquis", "il aura été acquis", "nous aurons été acquis", "vous aurez été acquis", "ils auront été acquis"]
+    },
+    "conditionnel": {
+      "présent": ["je serais acquis", "tu serais acquis", "il serait acquis", "nous serions acquis", "vous seriez acquis", "ils seraient acquis"],
+      "passé 1": ["j'aurais été acquis", "tu aurais été acquis", "il aurait été acquis", "nous aurions été acquis", "vous auriez été acquis", "ils auraient été acquis"],
+      "passé 2": ["j'eusse été acquis", "tu eusses été acquis", "il eût été acquis", "nous eussions été acquis", "vous eussiez été acquis", "ils eussent été acquis"]
+    },
+    "subjonctif": {
+      "présent": ["que je sois acquis", "que tu sois acquis", "qu'il soit acquis", "que nous soyons acquis", "que vous soyez acquis", "qu'ils soient acquis"],
+      "passé": ["que j'aie été acquis", "que tu aies été acquis", "qu'il ait été acquis", "que nous ayons été acquis", "que vous ayez été acquis", "qu'ils aient été acquis"],
+      "imparfait": ["que je fusse acquis", "que tu fusses acquis", "qu'il fût acquis", "que nous fussions acquis", "que vous fussiez acquis", "qu'ils fussent acquis"],
+      "plus-que-parfait": ["que j'eusse été acquis", "que tu eusses été acquis", "qu'il eût été acquis", "que nous eussions été acquis", "que vous eussiez été acquis", "qu'ils eussent été acquis"]
+    },
+    "impératif": {
+      "présent": ["sois acquis", "soyons acquis", "soyez acquis"],
+      "passé": ["aie été acquis", "ayons été acquis", "ayez été acquis"]
+    }
+  }
+
+}
