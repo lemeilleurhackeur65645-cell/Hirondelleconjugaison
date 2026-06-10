@@ -549,7 +549,7 @@
             "nous avons jeté", "vous avez jeté", "ils ont jeté"
         ],
         "imparfait": [
-            "je jetais", "tu jetais", "il jetais",
+            "je jetais", "tu jetais", "il jetait",
             "nous jetions", "vous jetiez", "ils jetaient"
         ],
         "plus-que-parfait": [
@@ -941,8 +941,8 @@
             "nous avons moulu", "vous avez moulu", "ils ont moulu"
         ],
         "imparfait": [
-            "je moulinais", "tu moulinais", "il moulinais",
-            "nous moulions", "vous mouliez", "ils moulinaient"
+            "je moulais", "tu moulais", "il moulais",
+            "nous moulions", "vous mouliez", "ils moulaient"
         ],
         "plus-que-parfait": [
             "j'avais moulu", "tu avais moulu", "il avait moulu",
@@ -1014,7 +1014,7 @@
             "nous avons moulé", "vous avez moulé", "ils ont moulé"
         ],
         "imparfait": [
-            "je moulai", "tu moulai", "il moulait",
+            "je moulais", "tu moulais", "il moulait",
             "nous moulions", "vous mouliez", "ils moulaient"
         ],
         "plus-que-parfait": [
@@ -1087,8 +1087,6 @@
             "nous sommes chus", "vous êtes chus", "ils sont chus"
         ],
         "imparfait": [
-            "je choyais", "tu choyais", "il choyait",
-            "nous choyions", "vous choyiez", "ils choyaient"
         ],
         "plus-que-parfait": [
             "j'étais chu", "tu étais chu", "il était chu",
@@ -1443,25 +1441,25 @@
 
 "seoir": {
     "indicatif": {
-        "présent": ["il sied"],
-        "passé composé": ["il a siégé"],
-        "imparfait": ["il seyait"],
-        "plus-que-parfait": ["il avait siégé"],
-        "passé simple": ["il siégea"],
-        "passé antérieur": ["il eut siégé"],
-        "futur simple": ["il siéra"],
-        "futur antérieur": ["il aura siégé"]
+        "présent": ["il sied", "ils siéent"],
+        "passé composé": [],
+        "imparfait": ["il seyait", "ils seyaient"],
+        "plus-que-parfait": [],
+        "passé simple": [],
+        "passé antérieur": [],
+        "futur simple": ["il siéra", "ils siéront"],
+        "futur antérieur": []
     },
     "conditionnel": {
-        "présent": ["il siérait"],
-        "passé 1": ["il aurait siégé"],
-        "passé 2": ["il eût siégé"]
+        "présent": ["il siérait", "ils siéraient"],
+        "passé 1": [],
+        "passé 2": []
     },
     "subjonctif": {
-        "présent": ["qu'il siée"],
-        "passé": ["qu'il ait siégé"],
-        "imparfait": ["qu'il siégeât"],
-        "plus-que-parfait": ["qu'il eût siégé"]
+        "présent": ["qu'il siée", "qu'ils siéent"],
+        "passé": [],
+        "imparfait": [],
+        "plus-que-parfait": []
     },
     "impératif": {
         "présent": [],
@@ -2128,7 +2126,7 @@
  
   "faillir": {
     "indicatif": {
-      "présent": ["je faux", "tu faux", "il faut", "nous faillissons", "vous faillissez", "ils faillissent"],
+      "présent": ["je faux", "tu faux", "il faut", "nous faillions", "vous failliez", "ils faillient"],
       "passé composé": ["j'ai failli", "tu as failli", "il a failli", "nous avons failli", "vous avez failli", "ils ont failli"],
       "imparfait": ["je faillais", "tu faillais", "il faillait", "nous faillions", "vous failliez", "ils faillaient"],
       "plus-que-parfait": ["j'avais failli", "tu avais failli", "il avait failli", "nous avions failli", "vous aviez failli", "ils avaient failli"],
