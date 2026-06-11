@@ -1,0 +1,575 @@
+from flask import Flask, request, render_template, redirect, url_for, session, flash
+
+import random
+import time
+import json
+import os
+from pathlib import Path
+
+# ============================================================
+# CHARGEMENT DES DONNÉES
+# ============================================================
+
+BASE_DIR = Path(__file__).resolve().parent
+DATA_DIR = BASE_DIR / "data"
+
+# Chargement actif.json
+try:
+    with open(DATA_DIR / "actif.json", encoding="utf-8") as f:
+        ACTIF = json.load(f)
+except FileNotFoundError:
+    raise SystemExit("ERREUR : data/actif.json introuvable.")
+except json.JSONDecodeError as e:
+    raise SystemExit(f"ERREUR : data/actif.json mal formé : {e}")
+
+# Chargement passif.json
+try:
+    with open(DATA_DIR / "passif.json", encoding="utf-8") as f:
+        PASSIF = json.load(f)
+except FileNotFoundError:
+    raise SystemExit("ERREUR : data/passif.json introuvable.")
+except json.JSONDecodeError as e:
+    raise SystemExit(f"ERREUR : data/passif.json mal formé : {e}")
+
+# Liste complète des verbes passivables (utilisée pour la révision ciblée)
+VERBES_PASSIVABLES = [
+    "tenir", "sentir", "voir", "recevoir", "cueillir", "acquérir",
+    "faire", "appeler", "jeter", "peigner", "mouler", "tuer",
+    "rendre", "peindre", "vaincre", "prendre"
+]
+
+# ============================================================
+# FLASK
+# ============================================================
+
+app = Flask(__name__)
+# CORRECTION : clé secrète via variable d'environnement.
+# Sur Render : définir SECRET_KEY dans Environment Variables.
+# Le fallback "secret123" ne s'applique qu'en développement local.
+app.secret_key = os.environ.get("SECRET_KEY", "secret123")
+
+# ============================================================
+# ROUTES DE BASE
+# ============================================================
+
+@app.route("/")
+def index():
+    session.clear()
+    return render_template("index.html")
+
+@app.route("/revision")
+def revision():
+    erreurs = session.get("erreurs", [])
+    return render_template("revision.html", erreurs=erreurs)
+
+@app.route("/parametres")
+def parametres():
+    return render_template("parametres.html")
+
+
+@app.route("/changelog")
+def changelog():
+    return render_template("changelog.html")
+
+
+@app.route("/cible")
+def cible():
+    # Modes disponibles (à partir de ACTIF)
+    modes = sorted({m for v in ACTIF.values() for m in v.keys()})
+
+    # Mapping mode -> temps valides
+    modes_temps = {}
+    for v in ACTIF.values():
+        for mode, temps_dict in v.items():
+            modes_temps.setdefault(mode, set())
+            for t in temps_dict.keys():
+                modes_temps[mode].add(t)
+    modes_temps = {m: sorted(list(ts)) for m, ts in modes_temps.items()}
+
+    # Listes de verbes (tri d'origine)
+    LISTES_VERBES = {
+        "liste 1": ["être", "avoir", "aller", "faire", "falloir", "pouvoir", "savoir", "valoir", "vouloir", "appeler", "jeter"],
+        "liste 2": ["peindre", "peigner", "plaire", "pleuvoir", "se taire", "taire", "moudre", "mouler", "choir", "tuer"],
+        "liste 3": ["acquérir", "seoir", "devoir", "cueillir", "fuir", "recevoir", "rendre", "courir", "tenir", "sentir"],
+        "liste 4": ["joindre", "assaillir", "pouvoir", "asseoir", "faillir", "savoir", "voir", "vaincre", "prendre", "croire"],
+    }
+
+    return render_template(
+        "cible.html",
+        modes=modes,
+        modes_temps_json=json.dumps(modes_temps, ensure_ascii=False),
+        listes=LISTES_VERBES,
+        verbes_passivables=VERBES_PASSIVABLES
+    )
+
+# ============================================================
+# GÉNÉRATION D'UNE QUESTION
+# ============================================================
+
+def generer_question(modes=None, temps=None, personnes=None, verbes=None, base=None, voix_question="active", _depth=0):
+    """
+    base = ACTIF ou PASSIF selon la voix choisie.
+    _depth : compteur interne pour éviter la récursion infinie.
+    """
+    # CORRECTION : limite de récursion explicite pour éviter RecursionError
+    if _depth > 50:
+        raise RuntimeError(
+            "generer_question : impossible de trouver une combinaison valide "
+            "avec les paramètres fournis (trop de tentatives)."
+        )
+
+    try:
+        local_conj = base if base else ACTIF
+
+        # 1) Sélection du verbe
+        if verbes:
+            candidats_verbes = [v for v in verbes if v in local_conj]
+            if not candidats_verbes:
+                return generer_question(modes, temps, personnes, verbes, base, voix_question, _depth + 1)
+            verbe = random.choice(candidats_verbes)
+        else:
+            verbe = random.choice(list(local_conj.keys()))
+
+        modes_dict = local_conj.get(verbe, {})
+        if not modes_dict:
+            return generer_question(modes, temps, personnes, verbes, base, voix_question, _depth + 1)
+
+        # 2) Sélection du mode
+        if modes:
+            candidats_modes = [m for m in modes if m in modes_dict]
+            if not candidats_modes:
+                return generer_question(modes, temps, personnes, verbes, base, voix_question, _depth + 1)
+            mode_v = random.choice(candidats_modes)
+        else:
+            mode_v = random.choice(list(modes_dict.keys()))
+
+        temps_dict = modes_dict.get(mode_v, {})
+        if not temps_dict:
+            return generer_question(modes, temps, personnes, verbes, base, voix_question, _depth + 1)
+
+        # 3) Sélection du temps
+        if temps:
+            candidats_temps = [t for (m, t) in temps if m == mode_v and t in temps_dict]
+            if not candidats_temps:
+                return generer_question(modes, temps, personnes, verbes, base, voix_question, _depth + 1)
+            temps_sel = random.choice(candidats_temps)
+        else:
+            temps_sel = random.choice(list(temps_dict.keys()))
+
+        formes = temps_dict.get(temps_sel, [])
+        if not formes:
+            return generer_question(modes, temps, personnes, verbes, base, voix_question, _depth + 1)
+
+        # 4) Sélection de la personne
+        mapping = ["je", "tu", "il", "nous", "vous", "ils"]
+
+        if mode_v.lower() == "impératif":
+            imperatif_personnes = ["tu", "nous", "vous"]
+
+            if temps_sel not in ["présent", "passé"]:
+                return generer_question(modes, temps, personnes, verbes, base, voix_question, _depth + 1)
+
+            if personnes:
+                convert = {"2s": "tu", "1p": "nous", "2p": "vous"}
+                sujets_possibles = [convert[p] for p in personnes if p in convert]
+            else:
+                sujets_possibles = imperatif_personnes
+
+            if not sujets_possibles:
+                sujets_possibles = imperatif_personnes
+
+            sujet = random.choice(sujets_possibles)
+            idx = imperatif_personnes.index(sujet)
+
+        else:
+            if len(formes) == 1:
+                sujet = "(forme impersonnelle)"
+                idx = 0
+            else:
+                if personnes:
+                    convert = {
+                        "1s": "je", "2s": "tu", "3s": "il",
+                        "1p": "nous", "2p": "vous", "3p": "ils"
+                    }
+                    sujets_possibles = [
+                        convert[p] for p in personnes
+                        if convert[p] in mapping[:len(formes)]
+                    ]
+                else:
+                    sujets_possibles = mapping[:len(formes)]
+
+                if not sujets_possibles:
+                    return generer_question(modes, temps, personnes, verbes, base, voix_question, _depth + 1)
+
+                sujet = random.choice(sujets_possibles)
+                idx = mapping.index(sujet)
+
+        if idx >= len(formes):
+            return generer_question(modes, temps, personnes, verbes, base, voix_question, _depth + 1)
+
+        bonne = formes[idx]
+
+        mapping_desc = {
+            "je": "1re personne du singulier",
+            "tu": "2e personne du singulier",
+            "il": "3e personne du singulier",
+            "nous": "1re personne du pluriel",
+            "vous": "2e personne du pluriel",
+            "ils": "3e personne du pluriel",
+            "(forme impersonnelle)": "(forme impersonnelle)"
+        }
+
+        sujet_affiche = mapping_desc.get(sujet, sujet)
+        question = f"Conjugue : {verbe} — {mode_v} — {temps_sel} — {sujet_affiche} — voix {voix_question}"
+
+        return verbe, mode_v, temps_sel, sujet, bonne, question
+
+    # CORRECTION : except ciblé — on ne rattrape plus Exception générique.
+    # Les seules erreurs légitimes à relancer sont les erreurs de structure de données
+    # (KeyError, IndexError, TypeError). ValueError et RuntimeError sont laissées remonter.
+    except (KeyError, IndexError, TypeError):
+        return generer_question(modes, temps, personnes, verbes, base, voix_question, _depth + 1)
+
+# ============================================================
+# MODE RÉVISION CIBLÉE
+# ============================================================
+
+@app.route("/cible_start", methods=["POST"])
+def cible_start():
+    session["mode"] = "cible"
+    session["score"] = 0
+    session["total"] = 0
+    session["start"] = time.time()
+    session["cible_modes"] = request.form.getlist("modes")
+    session["cible_personnes"] = request.form.getlist("personnes")
+    session["cible_verbes"] = request.form.getlist("verbes")
+
+    # VOIX (actif/passif)
+    session["cible_voix"] = request.form.getlist("voix")
+
+    # Dédupliquer en conservant l'ordre
+    session["cible_verbes"] = list(dict.fromkeys(session["cible_verbes"]))
+
+    # Si l'utilisateur a choisi uniquement le passif, ne garder que les verbes passivables
+    if session["cible_voix"] == ["passif"]:
+        session["cible_verbes"] = [v for v in session["cible_verbes"] if v in VERBES_PASSIVABLES]
+
+    # Si après filtrage il n'y a plus de verbes, prévenir et renvoyer à la page
+    if not session["cible_verbes"]:
+        flash("Aucun verbe passivables sélectionné. Choisissez d'autres verbes ou activez la voix active.")
+        return redirect("/cible")
+
+    raw_temps = request.form.getlist("temps")
+    session["cible_temps"] = []
+    for item in raw_temps:
+        try:
+            mode, temps = item.split("|")
+            session["cible_temps"].append((mode, temps))
+        except Exception:
+            continue
+
+    if not session["cible_modes"] or not session["cible_temps"] or not session["cible_personnes"] or not session["cible_verbes"]:
+        flash("Veuillez sélectionner au moins un mode, un temps, une personne et un verbe.")
+        return redirect("/cible")
+
+    session["questions_cibles"] = []
+
+    # Déterminer la base selon la voix
+    voix = session["cible_voix"]
+    if voix == ["passif"]:
+        base = PASSIF
+    elif voix == ["actif"]:
+        base = ACTIF
+    else:
+        base = {**ACTIF, **PASSIF}  # union logique
+
+    for verbe in session["cible_verbes"]:
+        if verbe not in base:
+            continue
+        modes_dict = base[verbe]
+        for mode, temps in session["cible_temps"]:
+            if mode not in modes_dict:
+                continue
+            temps_dict = modes_dict[mode]
+            if temps not in temps_dict:
+                continue
+            formes = temps_dict[temps]
+            if not formes:
+                continue
+            for personne in session["cible_personnes"]:
+                # Vérifier que la personne existe dans les formes
+                mapping = ["je", "tu", "il", "nous", "vous", "ils"]
+                idx = mapping.index({
+                    "1s": "je", "2s": "tu", "3s": "il",
+                    "1p": "nous", "2p": "vous", "3p": "ils"
+                }[personne])
+                if idx >= len(formes):
+                    continue
+                session["questions_cibles"].append((verbe, mode, temps, personne))
+
+    random.shuffle(session["questions_cibles"])
+    return redirect("/quiz")
+
+# ============================================================
+# ROUTE DU QUIZ
+# ============================================================
+
+@app.route("/quiz", methods=["GET", "POST"])
+def quiz():
+    # Initialisation depuis l'accueil
+    if request.method == "GET" and "mode" in request.args:
+        mode = request.args.get("mode")
+
+        if mode == "revision":
+            # Sauvegarder les erreurs AVANT le clear, puis les convertir en file de révision
+            erreurs_a_retravailler = session.get("erreurs", [])
+            session.clear()
+            session["mode"] = mode
+            session["score"] = 0
+            session["total"] = 0
+            session["start"] = time.time()
+            session["erreurs"] = []  # bilan vierge pour cette session de révision
+            # Convertir les dicts d'erreurs en tuples (verbe, mode, temps, sujet, donne, attendu)
+            session["erreurs_revision"] = [
+                (e["verbe"], e["mode"], e["temps"], e["personne"], e["donne"], e["attendu"])
+                for e in erreurs_a_retravailler
+            ]
+        else:
+            session.clear()
+            session["mode"] = mode
+            session["score"] = 0
+            session["total"] = 0
+            session["start"] = time.time()
+            session["erreurs"] = []
+
+            if mode == "evaluation":
+                session["timer"] = 5 * 60
+                session["questions_restantes"] = 10
+
+    mode = session.get("mode", "entrainement")
+    session.setdefault("score", 0)
+    session.setdefault("total", 0)
+    session.setdefault("erreurs", [])
+    session.setdefault("start", time.time())
+
+    if mode == "evaluation":
+        session.setdefault("timer", 5 * 60)
+        session.setdefault("questions_restantes", 10)
+
+    if mode == "evaluation":
+        if time.time() - session["start"] >= session["timer"]:
+            return redirect("/fin")
+
+    feedback = None
+
+    # Réception réponse
+    if request.method == "POST":
+        rep = request.form["reponse"].strip().lower()
+
+        if rep == "chateaubriand":
+            return redirect("https://youtu.be/2Taq4fOVQ60")
+
+        bonne = session["bonne"]
+        session["total"] += 1
+
+        if rep != bonne.lower():
+            session["erreurs"].append({
+                "verbe": session["verbe"],
+                "mode": session["mode_verbe"],
+                "temps": session["temps"],
+                "personne": session["sujet"],
+                "voix": session.get("voix_question", "active"),
+                "attendu": bonne,
+                "donne": rep
+            })
+        else:
+            session["score"] += 1
+
+        if mode == "evaluation":
+            session["questions_restantes"] -= 1
+            if session["questions_restantes"] <= 0:
+                return redirect("/fin")
+        elif mode == "revision":
+            if not session.get("erreurs_revision"):
+                return redirect("/fin")
+        else:
+            feedback = "✔️ Correct" if rep == bonne.lower() else f"❌ Faux. Réponse attendue : {bonne}"
+
+    # Nouvelle question
+    if mode == "revision":
+        if not session.get("erreurs_revision"):
+            return redirect("/fin")
+
+        verbe, mode_v, temps, sujet, rep_faute, bonne = session["erreurs_revision"].pop(0)
+        question = f"Conjugue : {verbe} — {mode_v} — {temps} — {sujet}"
+        voix_question = session.get("voix_question", "active")
+
+    elif mode == "cible":
+        # Sélection de la base actif/passif
+        voix = session.get("cible_voix", ["actif"])
+
+        if "actif" in voix and "passif" in voix:
+            base = random.choice([ACTIF, PASSIF])
+            voix_question = "passive" if base is PASSIF else "active"
+        elif "passif" in voix:
+            base = PASSIF
+            voix_question = "passive"
+        else:
+            base = ACTIF
+            voix_question = "active"
+
+        # CORRECTION : suppression de la vérification de cohérence par parsing de string.
+        # La voix est maintenant portée directement par le flag booléen `base`,
+        # déterminé avant l'appel. generer_question() reçoit la bonne base dès le départ.
+        verbe, mode_v, temps, sujet, bonne, question = generer_question(
+            modes=session.get("cible_modes"),
+            temps=session.get("cible_temps"),
+            personnes=session.get("cible_personnes"),
+            verbes=session.get("cible_verbes"),
+            base=base,
+            voix_question=voix_question
+        )
+
+    else:
+        # Pour les modes entraînement et évaluation : choisir la voix au hasard
+        base = random.choice([ACTIF, PASSIF])
+        voix_question = "passive" if base is PASSIF else "active"
+
+        verbe, mode_v, temps, sujet, bonne, question = generer_question(
+            base=base,
+            voix_question=voix_question
+        )
+
+    # Stockage
+    session["verbe"] = verbe
+    session["mode_verbe"] = mode_v
+    session["temps"] = temps
+    session["sujet"] = sujet
+    session["bonne"] = bonne
+    session["voix_question"] = voix_question
+
+    temps_restant = None
+    if mode == "evaluation":
+        temps_restant = int(session["timer"] - (time.time() - session["start"]))
+
+    return render_template(
+        "quiz.html",
+        question=question,
+        feedback=feedback,
+        mode=mode,
+        temps_restant=temps_restant
+    )
+
+# ============================================================
+# ROUTE DU BILAN
+# ============================================================
+@app.route("/fin")
+def fin():
+    end = time.time()
+    # sécuriser l'existence des clés dans session
+    start = session.get("start", end)
+    duree = round(end - start, 1)
+
+    total = int(session.get("total", 0))
+    score = int(session.get("score", 0))
+    taux = round(score / total * 100, 1) if total else 0
+    temps_moyen = round(duree / total, 2) if total else 0
+    erreurs = session.get("erreurs", [])
+
+    # Par défaut, analyse vide (structure stable)
+    analyse = {
+        "verbes": [],
+        "modes": [],
+        "modes_complet": {},
+        "temps": [],
+        "temps_complet": {},
+        "voix": {"active": 0, "passive": 0},
+        "suggestion": None
+    }
+
+    if erreurs:
+        # --- STATS ---
+        stats_verbes = {}
+        stats_modes = {}
+        stats_temps = {}
+        stats_voix = {"active": 0, "passive": 0}
+
+        for e in erreurs:
+            verbe = e.get("verbe")
+            mode = e.get("mode")
+            temps = e.get("temps")
+            voix = e.get("voix")
+
+            if verbe:
+                stats_verbes[verbe] = stats_verbes.get(verbe, 0) + 1
+            if mode:
+                stats_modes[mode] = stats_modes.get(mode, 0) + 1
+            if temps:
+                stats_temps[temps] = stats_temps.get(temps, 0) + 1
+            if voix in stats_voix:
+                stats_voix[voix] += 1
+
+        def top(d):
+            return sorted(d.items(), key=lambda x: x[1], reverse=True)[:3]
+
+        top_verbes = top(stats_verbes)
+        top_modes = top(stats_modes)
+        top_temps = top(stats_temps)
+
+        suggestion = None
+        if top_verbes and top_modes and top_temps:
+            suggestion = f"{top_verbes[0][0]} — {top_modes[0][0]} — {top_temps[0][0]}"
+
+        analyse = {
+            "verbes": top_verbes,
+            "modes": top_modes,
+            "modes_complet": {k: int(v or 0) for k, v in stats_modes.items()},
+            "temps": top_temps,
+            "temps_complet": {k: int(v or 0) for k, v in stats_temps.items()},
+            "voix": {"active": int(stats_voix.get("active", 0)), "passive": int(stats_voix.get("passive", 0))},
+            "suggestion": suggestion
+        }
+
+        # garantir clés principales
+        for m in ["indicatif", "conditionnel", "subjonctif", "impératif"]:
+            analyse["modes_complet"].setdefault(m, 0)
+
+        analyse["modes_sorted"] = sorted(
+            analyse["modes_complet"].items(),
+            key=lambda x: x[1],
+            reverse=True
+        )
+
+    # Calculs sûrs pour la template
+    voix = analyse.get("voix", {"active": 0, "passive": 0})
+    active_voix = int(voix.get("active", 0))
+    passive_voix = int(voix.get("passive", 0))
+    total_voix = active_voix + passive_voix
+
+    erreurs_voix = {
+        "active": active_voix,
+        "passive": passive_voix
+    }
+
+    return render_template(
+        "fin.html",
+        total=total,
+        score=score,
+        taux=taux,
+        duree=duree,
+        temps_moyen=temps_moyen,
+        erreurs=erreurs,
+        analyse=analyse,
+        total_voix=total_voix,
+        erreurs_voix=erreurs_voix,
+        voix={"active": active_voix, "passive": passive_voix}
+    )
+
+# ============================================================
+# LANCEMENT LOCAL
+# ============================================================
+
+if __name__ == "__main__":
+    # Ce bloc ne s'exécute pas sur Render (Gunicorn lance directement `app`).
+    # Start Command Render recommandée : gunicorn main:app
+    app.run(host="0.0.0.0", port=10000)
