@@ -86,12 +86,140 @@ def cible():
                 modes_temps[mode].add(t)
     modes_temps = {m: sorted(list(ts)) for m, ts in modes_temps.items()}
 
-    # Listes de verbes (tri d'origine)
+    # Listes de verbes par groupe grammatical
     LISTES_VERBES = {
-        "liste 1": ["être", "avoir", "aller", "faire", "falloir", "pouvoir", "savoir", "valoir", "vouloir", "appeler", "jeter"],
-        "liste 2": ["peindre", "peigner", "plaire", "pleuvoir", "se taire", "taire", "moudre", "mouler", "choir", "tuer"],
-        "liste 3": ["acquérir", "seoir", "devoir", "cueillir", "fuir", "recevoir", "rendre", "courir", "tenir", "sentir"],
-        "liste 4": ["joindre", "assaillir", "pouvoir", "asseoir", "faillir", "savoir", "voir", "vaincre", "prendre", "croire"],
+        # ── 1er GROUPE : verbes en -er ──────────────────────────────────────────
+        "1er groupe — verbes courants": [
+            "aimer", "aller", "amener", "amuser", "annoncer", "apporter", "appeler",
+            "arriver", "avancer", "avouer", "baisser", "briser", "cacher", "calmer",
+            "caresser", "casser", "causer", "céder", "cesser", "changer", "chanter",
+            "charger", "chasser", "chercher", "commander", "commencer", "composer",
+            "compter", "condamner", "confier", "considérer", "consulter", "contenter",
+            "continuer", "copier", "coucher", "couler", "couper", "coûter", "créer",
+            "creuser", "crier", "croiser",
+        ],
+        "1er groupe — D à G": [
+            "danser", "décider", "déclarer", "dégager", "demander", "demeurer",
+            "dépasser", "déposer", "désigner", "désirer", "dessiner", "détacher",
+            "deviner", "diriger", "discuter", "disposer", "distinguer", "dominer",
+            "donner", "douter", "dresser", "durer", "écarter", "échapper", "éclairer",
+            "éclater", "écouter", "écraser", "effacer", "élever", "éloigner",
+            "embrasser", "emmener", "empêcher", "employer", "emporter", "endormir",
+            "enfermer", "enfoncer", "engager", "enlever", "entourer", "entraîner",
+            "envelopper", "envoyer", "éprouver", "espérer", "essayer", "essuyer",
+            "établir", "étaler", "étonner", "étouffer", "étudier", "éviter",
+            "examiner", "exécuter", "exiger", "expliquer", "exposer", "exprimer",
+            "fatiguer", "fermer", "figurer", "fixer", "fonder", "forcer", "former",
+            "frapper", "fumer", "gagner", "garder", "glisser", "grandir",
+        ],
+        "1er groupe — H à P": [
+            "habiller", "habiter", "hésiter", "ignorer", "imaginer", "importer",
+            "imposer", "indiquer", "inquiéter", "inspirer", "installer", "intéresser",
+            "interroger", "inventer", "inviter", "jeter", "jouer", "juger",
+            "lever", "lier", "lisser", "livrer", "lutter", "maintenir", "manger",
+            "manquer", "marcher", "marier", "marquer", "mêler", "menacer", "mener",
+            "mériter", "monter", "montrer", "nommer", "nourrir", "obliger", "observer",
+            "occuper", "oser", "oublier", "parcourir", "parler", "partager", "passer",
+            "payer", "pencher", "penser", "peser", "placer", "pleurer", "plonger",
+            "porter", "poser", "posséder", "pousser", "précipiter", "préparer",
+            "présenter", "presser", "prêter", "prier", "profiter", "promener",
+            "prononcer", "proposer", "protéger", "prouver",
+        ],
+        "1er groupe — R à Z": [
+            "raconter", "ramasser", "ramener", "rappeler", "rapporter", "rassurer",
+            "réclamer", "recommencer", "reculer", "réfléchir", "refuser", "regarder",
+            "regretter", "relever", "remarquer", "remercier", "remplacer", "rencontrer",
+            "renverser", "renvoyer", "répéter", "reposer", "repousser", "représenter",
+            "réserver", "respecter", "respirer", "ressembler", "rester", "retirer",
+            "retomber", "retourner", "retrouver", "réveiller", "révéler", "rêver",
+            "risquer", "rouler", "saluer", "sauter", "sauver", "séparer", "serrer",
+            "signer", "signifier", "songer", "sonner", "souhaiter", "soulever",
+            "supposer", "surveiller", "terminer", "tenter", "tirer", "toucher",
+            "tourner", "tracer", "traîner", "traiter", "transformer", "travailler",
+            "traverser", "trembler", "tromper", "troubler", "trouver", "tuer",
+            "user", "veiller", "verser", "voyager",
+        ],
+        "1er groupe — verbes en -eler / -eter": [
+            "appeler", "jeter", "rappeler", "rejeter", "regeler", "surgeler",
+            "voleter", "trompeter",
+        ],
+        "1er groupe — verbes en -cer / -ger": [
+            "annoncer", "avancer", "commencer", "effacer", "lancer", "menacer",
+            "placer", "remplacer", "renoncer", "tracer",
+            "changer", "charger", "dégager", "déranger", "engager", "manger",
+            "partager", "plonger", "protéger", "voyager",
+        ],
+        "1er groupe — verbes en -yer": [
+            "appuyer", "employer", "envoyer", "essayer", "essuyer", "nettoyer",
+            "payer", "renvoyer", "surpayer", "voussoyer", "vouvoyer",
+        ],
+
+        # ── 2e GROUPE : verbes en -ir / participe présent en -issant ───────────
+        "2e groupe": [
+            "accomplir", "agir", "choisir", "établir", "finir", "franchir",
+            "grandir", "nourrir", "obéir", "réfléchir", "remplir", "réunir",
+            "réussir", "saillir", "saisir", "subir",
+        ],
+
+        # ── 3e GROUPE : verbes irréguliers en -ir ───────────────────────────────
+        "3e groupe — -ir irréguliers (courir, partir…)": [
+            "acquérir", "accueillir", "assaillir", "bouillir", "consentir",
+            "contenir", "convenir", "courir", "couvrir", "cueillir", "devenir",
+            "dormir", "découvrir", "dévêtir", "endormir", "entretenir", "faillir",
+            "fuir", "maintenir", "mentir", "mourir", "obtenir", "offrir", "ouvrir",
+            "parcourir", "partir", "parvenir", "prévenir", "reconquérir", "recourir",
+            "recueillir", "redormir", "refuir", "rendormir", "requérir", "resservir",
+            "retenir", "revenir", "revêtir", "rouvrir", "secourir", "sentir",
+            "servir", "sortir", "souffrir", "soutenir", "souvenir", "survenir",
+            "tenir", "tressaillir", "venir", "vêtir",
+        ],
+
+        # ── 3e GROUPE : verbes en -oir ───────────────────────────────────────────
+        "3e groupe — -oir (avoir, voir, pouvoir…)": [
+            "avoir", "apercevoir", "asseoir", "boire", "choir", "croire",
+            "déchoir", "dépourvoir", "devoir", "échoir", "émouvoir", "falloir",
+            "mouvoir", "percevoir", "pleuvoir", "pourvoir", "pouvoir", "prévaloir",
+            "prévoir", "promouvoir", "rasseoir", "recevoir", "revoir", "savoir",
+            "seoir", "surseoir", "valoir", "voir", "vouloir",
+        ],
+
+        # ── 3e GROUPE : verbes en -ndre ──────────────────────────────────────────
+        "3e groupe — -ndre (prendre, rendre, attendre…)": [
+            "apprendre", "attendre", "comprendre", "confondre", "défendre",
+            "descendre", "entendre", "pendre", "prendre", "prétendre", "rendre",
+            "répandre", "répondre", "reprendre", "surprendre", "tendre", "vendre",
+            "étendre",
+        ],
+        "3e groupe — -indre / -oindre / -aindre (peindre, joindre…)": [
+            "atteindre", "craindre", "éteindre", "joindre", "peindre", "plaindre",
+            "poindre", "rejoindre", "reteindre", "retreindre", "teindre",
+        ],
+
+        # ── 3e GROUPE : verbes en -ire ───────────────────────────────────────────
+        "3e groupe — -ire (dire, faire, lire, écrire…)": [
+            "conduire", "construire", "confire", "décrire", "déplaire", "détruire",
+            "dire", "distraire", "écrire", "faire", "frire", "lire", "maudire",
+            "plaire", "prédire", "produire", "redire", "réduire", "réélire",
+            "relire", "rire", "satisfaire", "se taire", "sourire", "souscrire",
+            "soustraire", "suffire", "suivre", "surfaire", "taire", "traduire",
+            "traire", "transcrire",
+        ],
+
+        # ── 3e GROUPE : verbes en -re (autres) ──────────────────────────────────
+        "3e groupe — -re (être, mettre, battre, vivre…)": [
+            "être", "abattre", "accroître", "admettre", "apparaître", "battre",
+            "clore", "conclure", "connaître", "convaincre", "décroître", "disparaître",
+            "enclore", "foutre", "haïr", "interrompre", "mettre", "naître",
+            "occlure", "paraître", "paître", "permettre", "poursuivre", "promettre",
+            "reconnaître", "remettre", "renaître", "reparaître", "repaître", "revivre",
+            "rompre", "soumettre", "survivre", "transmettre", "transparaître",
+            "vaincre", "vivre",
+        ],
+    }
+    # Filtrer : ne garder que les verbes présents dans ACTIF
+    LISTES_VERBES = {
+        nom: [v for v in verbes if v in ACTIF]
+        for nom, verbes in LISTES_VERBES.items()
     }
 
     return render_template(
@@ -101,6 +229,7 @@ def cible():
         listes=LISTES_VERBES,
         verbes_passivables=VERBES_PASSIVABLES
     )
+
 
 # ============================================================
 # GÉNÉRATION D'UNE QUESTION
