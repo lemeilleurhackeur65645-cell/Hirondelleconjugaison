@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  {# ── SEO ── #}
+  <title>{{ verbe | capitalize }} — {{ label_mode }} {{ label_temps }} | Hirondelle Conjugaison</title>
+  <meta name="description" content="Conjugaison de {{ verbe }} à l'{{ label_mode | lower }} {{ label_temps | lower }} : {{ formes | join(', ') }}. Quiz interactif pour s'entraîner.">
+  <link rel="canonical" href="https://hirondelleconjugaison.onrender.com/conjugaison/{{ verbe }}/{{ mode }}/{{ temps }}">
+
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    /* ── Mise en page spécifique à cette page ── */
+    .seo-wrap {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 0 16px 60px;
+      text-align: left;
+    }
+
+    /* Fil d'Ariane */
+    .breadcrumb {
+      font-size: 0.82rem;
+      color: #64748b;
+      margin-bottom: 24px;
+    }
+    .breadcrumb a { color: #007bff; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb span { margin: 0 4px; }
+
+    /* Titre */
+    .seo-wrap h1 {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 6px;
+    }
+    .seo-wrap .sous-titre {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin: 0 0 28px;
+    }
+
+    /* Tableau de conjugaison */
+    .table-conjugaison {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 32px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(15,23,42,0.07);
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+    .table-conjugaison th {
+      background: linear-gradient(135deg, #007bff, #0056d6);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 12px 16px;
+      text-align: left;
+    }
+    .table-conjugaison td {
+      padding: 11px 16px;
+      font-size: 1rem;
+      color: #0f172a;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .table-conjugaison tr:last-child td { border-bottom: none; }
+    .table-conjugaison tr:nth-child(even) td { background: #f8fafc; }
+    .table-conjugaison .td-pronom {
+      color: #64748b;
+      font-size: 0.82rem;
+      width: 40%;
+    }
+    .table-conjugaison .td-forme {
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+
+    /* CTA quiz */
+    .cta-quiz {
+      background: linear-gradient(135deg, #e8f0ff, #f0f4ff);
+      border: 1px solid #c7d9ff;
+      border-radius: 16px;
+      padding: 24px 28px;
+      margin-bottom: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .cta-quiz p {
+      margin: 0;
+      font-size: 0.97rem;
+      color: #1e3a5f;
+      font-weight: 500;
+    }
+    .cta-quiz .btn { white-space: nowrap; }
+
+    /* Navigation autres temps */
+    .nav-section { margin-bottom: 28px; }
+    .nav-section h2 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+      margin: 0 0 12px;
+    }
+    .nav-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .nav-chip {
+      padding: 7px 14px;
+      background: #fff;
+      border: 1px solid #d0d7e2;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      color: #334155;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .nav-chip:hover {
+      background: #007bff;
+      color: #fff;
+      border-color: transparent;
+    }
+    .nav-chip.actif {
+      background: linear-gradient(135deg, #007bff, #0056d6);
+      color: #fff;
+      border-color: transparent;
+      pointer-events: none;
+    }
+
+    /* Lien retour accueil */
+    .lien-accueil {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 0.88rem;
+      color: #64748b;
+      text-decoration: none;
+    }
+    .lien-accueil:hover { color: #007bff; }
+  </style>
+</head>
+
+<body>
+<div class="seo-wrap">
+
+  {# ── Fil d'Ariane (SEO structured data) ── #}
+  <nav class="breadcrumb" aria-label="Fil d'Ariane">
+    <a href="/">Accueil</a>
+    <span>›</span>
+    <a href="/conjugaison/{{ verbe }}">{{ verbe | capitalize }}</a>
+    <span>›</span>
+    <a href="/conjugaison/{{ verbe }}/{{ mode }}/{{ temps }}">{{ label_mode }}</a>
+    <span>›</span>
+    <strong>{{ label_temps }}</strong>
+  </nav>
+
+  <h1>{{ verbe | capitalize }} — {{ label_mode }} {{ label_temps }}</h1>
+  <p class="sous-titre">Tableau complet avec quiz interactif</p>
+
+  {# ── Tableau de conjugaison ── #}
+  <table class="table-conjugaison">
+    <thead>
+      <tr>
+        <th>Personne</th>
+        <th>Conjugaison</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i in range(formes | length) %}
+      <tr>
+        <td class="td-pronom">{{ pronoms[i] if i < pronoms | length else '' }}</td>
+        <td class="td-forme">{{ formes[i] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {# ── CTA Quiz ── #}
+  <div class="cta-quiz">
+    <p>Teste tes connaissances sur <strong>{{ verbe }}</strong> à l'{{ label_mode | lower }} {{ label_temps | lower }}</p>
+    <a href="/cible?verbe={{ verbe }}&mode={{ mode }}&temps={{ temps }}" class="btn">S'entraîner →</a>
+  </div>
+
+  {# ── Navigation : autres temps du même mode ── #}
+  {% if autres_temps %}
+  <div class="nav-section">
+    <h2>Autres temps — {{ label_mode }}</h2>
+    <div class="nav-chips">
+      <span class="nav-chip actif">{{ label_temps }}</span>
+      {% for item in autres_temps %}
+      <a class="nav-chip" href="{{ item.url }}">{{ LABELS_TEMPS.get(item.temps, item.temps) }}</a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {# ── Navigation : autres modes ── #}
+  {% if autres_modes %}
+  <div class="nav-section">
+    <h2>Autres modes</h2>
+    <div class="nav-chips">
+      <span class="nav-chip actif">{{ label_mode }}</span>
+      {% for item in autres_modes %}
+      <a class="nav-chip" href="{{ item.url }}">{{ item.label }}</a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <a href="/" class="lien-accueil">← Retour à l'accueil</a>
+
+</div>
+
+{# ── Données structurées JSON-LD (Rich Snippets Google) ── #}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "{{ verbe | capitalize }} — {{ label_mode }} {{ label_temps }}",
+  "description": "Conjugaison complète de {{ verbe }} à l'{{ label_mode | lower }} {{ label_temps | lower }}.",
+  "url": "https://hirondelleconjugaison.onrender.com/conjugaison/{{ verbe }}/{{ mode }}/{{ temps }}",
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://hirondelleconjugaison.onrender.com/" },
+      { "@type": "ListItem", "position": 2, "name": "{{ verbe | capitalize }}", "item": "https://hirondelleconjugaison.onrender.com/conjugaison/{{ verbe }}" },
+      { "@type": "ListItem", "position": 3, "name": "{{ label_mode }} {{ label_temps }}" }
+    ]
+  }
+}
+</script>
+
+</body>
+</html>
