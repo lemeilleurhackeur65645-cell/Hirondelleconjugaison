@@ -33708,7 +33708,7 @@
       "imparfait": [
         "je jetais",
         "tu jetais",
-        "il jetais",
+        "il jetait",
         "nous jetions",
         "vous jetiez",
         "ils jetaient"
@@ -37234,12 +37234,12 @@
         "ils ont moulu"
       ],
       "imparfait": [
-        "je moulinais",
-        "tu moulinais",
-        "il moulinais",
+        "je moulais",
+        "tu moulais",
+        "il moulait",
         "nous moulions",
         "vous mouliez",
-        "ils moulinaient"
+        "ils moulaient"
       ],
       "plus-que-parfait": [
         "j'avais moulu",
@@ -39606,12 +39606,6 @@
         "ils paissent"
       ],
       "passé composé": [
-        "j'ai pu",
-        "tu as pu",
-        "il a pu",
-        "nous avons pu",
-        "vous avez pu",
-        "ils ont pu"
       ],
       "imparfait": [
         "je paissais",
@@ -39622,20 +39616,8 @@
         "ils paissaient"
       ],
       "plus-que-parfait": [
-        "j'avais pu",
-        "tu avais pu",
-        "il avait pu",
-        "nous avions pu",
-        "vous aviez pu",
-        "ils avaient pu"
       ],
       "passé antérieur": [
-        "j'eus pu",
-        "tu eus pu",
-        "il eut pu",
-        "nous eûmes pu",
-        "vous eûtes pu",
-        "ils eurent pu"
       ],
       "futur simple": [
         "je paîtrai",
@@ -39646,12 +39628,6 @@
         "ils paîtront"
       ],
       "futur antérieur": [
-        "j'aurai pu",
-        "tu auras pu",
-        "il aura pu",
-        "nous aurons pu",
-        "vous aurez pu",
-        "ils auront pu"
       ]
     },
     "conditionnel": {
@@ -39664,20 +39640,8 @@
         "ils paîtraient"
       ],
       "passé 1": [
-        "j'aurais pu",
-        "tu aurais pu",
-        "il aurait pu",
-        "nous aurions pu",
-        "vous auriez pu",
-        "ils auraient pu"
       ],
       "passé 2": [
-        "j'eusse pu",
-        "tu eusses pu",
-        "il eût pu",
-        "nous eussions pu",
-        "vous eussiez pu",
-        "ils eussent pu"
       ]
     },
     "subjonctif": {
@@ -39690,20 +39654,8 @@
         "qu'ils paissent"
       ],
       "passé": [
-        "que j'aie pu",
-        "que tu aies pu",
-        "qu'il ait pu",
-        "que nous ayons pu",
-        "que vous ayez pu",
-        "qu'ils aient pu"
       ],
       "plus-que-parfait": [
-        "que j'eusse pu",
-        "que tu eusses pu",
-        "qu'il eût pu",
-        "que nous eussions pu",
-        "que vous eussiez pu",
-        "qu'ils eussent pu"
       ]
     },
     "impératif": {
@@ -39713,9 +39665,6 @@
         "paissez"
       ],
       "passé": [
-        "aie pu",
-        "ayons pu",
-        "ayez pu"
       ]
     }
   },
@@ -74250,8 +74199,8 @@
         "ils ont moulé"
       ],
       "imparfait": [
-        "je moulai",
-        "tu moulai",
+        "je moulais",
+        "tu moulais",
         "il moulait",
         "nous moulions",
         "vous mouliez",
