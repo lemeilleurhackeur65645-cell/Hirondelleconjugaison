@@ -4,237 +4,483 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  {# ── SEO ── #}
-  <title>{{ verbe | capitalize }} — {{ label_mode }} {{ label_temps }} | Hirondelle Conjugaison</title>
-  <meta name="description" content="Conjugaison de {{ verbe }} à l'{{ label_mode | lower }} {{ label_temps | lower }} : {{ formes | join(', ') }}. Quiz interactif pour s'entraîner.">
+  <!-- Vérification Google Search Console -->
+  <meta name="google-site-verification" content="ui-YgD7jU6E1Z3Ti7rLcxAvVe1BLAuyZWCfb5jUoKjE">
+
+  <!-- SEO -->
+  <title>Conjugaison de {{ verbe }} — {{ label_mode }} {{ label_temps }} | Hirondelle</title>
+  <meta name="description" content="Conjugaison complète de {{ verbe }} à l'{{ label_mode | lower }} {{ label_temps | lower }} : {{ formes | join(', ') }}. Quiz interactif inclus pour s'entraîner — idéal bac de français.">
   <link rel="canonical" href="https://hirondelleconjugaison.onrender.com/conjugaison/{{ verbe }}/{{ mode }}/{{ temps }}">
 
+  <!-- Open Graph -->
+  <meta property="og:type"        content="article">
+  <meta property="og:url"         content="https://hirondelleconjugaison.onrender.com/conjugaison/{{ verbe }}/{{ mode }}/{{ temps }}">
+  <meta property="og:title"       content="Conjugaison de {{ verbe }} — {{ label_mode }} {{ label_temps }}">
+  <meta property="og:description" content="{{ formes | join(' · ') }}">
+  <meta property="og:image"       content="https://hirondelleconjugaison.onrender.com/static/img/logo.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/static/img/logo.png">
+
+  <!-- Données structurées JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Conjugaison de {{ verbe }} — {{ label_mode }} {{ label_temps }}",
+    "description": "Conjugaison complète de {{ verbe }} à l'{{ label_mode | lower }} {{ label_temps | lower }}.",
+    "url": "https://hirondelleconjugaison.onrender.com/conjugaison/{{ verbe }}/{{ mode }}/{{ temps }}",
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Accueil",              "item": "https://hirondelleconjugaison.onrender.com/" },
+        { "@type": "ListItem", "position": 2, "name": "{{ verbe | capitalize }}", "item": "https://hirondelleconjugaison.onrender.com/conjugaison/{{ verbe }}" },
+        { "@type": "ListItem", "position": 3, "name": "{{ label_mode }} {{ label_temps }}" }
+      ]
+    }
+  }
+  </script>
+
   <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+
   <style>
-    /* ── Mise en page spécifique à cette page ── */
-    .seo-wrap {
-      max-width: 700px;
-      margin: 0 auto;
-      padding: 0 16px 60px;
-      text-align: left;
-    }
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; }
 
-    /* Fil d'Ariane */
-    .breadcrumb {
-      font-size: 0.82rem;
-      color: #64748b;
-      margin-bottom: 24px;
-    }
-    .breadcrumb a { color: #007bff; text-decoration: none; }
-    .breadcrumb a:hover { text-decoration: underline; }
-    .breadcrumb span { margin: 0 4px; }
-
-    /* Titre */
-    .seo-wrap h1 {
-      font-size: 1.7rem;
-      font-weight: 700;
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 50%, #f5f0ff 100%);
+      background-attachment: fixed;
+      font-family: 'Inter', Arial, sans-serif;
       color: #0f172a;
-      margin: 0 0 6px;
-    }
-    .seo-wrap .sous-titre {
-      font-size: 0.95rem;
-      color: #64748b;
-      margin: 0 0 28px;
+      min-height: 100vh;
     }
 
-    /* Tableau de conjugaison */
-    .table-conjugaison {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 32px;
-      background: rgba(255,255,255,0.95);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(15,23,42,0.07);
-      border: 1px solid rgba(255,255,255,0.7);
-    }
-    .table-conjugaison th {
-      background: linear-gradient(135deg, #007bff, #0056d6);
-      color: #fff;
-      font-size: 0.85rem;
-      font-weight: 600;
-      padding: 12px 16px;
-      text-align: left;
-    }
-    .table-conjugaison td {
-      padding: 11px 16px;
-      font-size: 1rem;
-      color: #0f172a;
-      border-bottom: 1px solid #f1f5f9;
-    }
-    .table-conjugaison tr:last-child td { border-bottom: none; }
-    .table-conjugaison tr:nth-child(even) td { background: #f8fafc; }
-    .table-conjugaison .td-pronom {
-      color: #64748b;
-      font-size: 0.82rem;
-      width: 40%;
-    }
-    .table-conjugaison .td-forme {
-      font-weight: 600;
-      font-size: 1.05rem;
-    }
-
-    /* CTA quiz */
-    .cta-quiz {
-      background: linear-gradient(135deg, #e8f0ff, #f0f4ff);
-      border: 1px solid #c7d9ff;
-      border-radius: 16px;
-      padding: 24px 28px;
-      margin-bottom: 36px;
+    /* ── Barre de navigation ── */
+    .topbar {
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,123,255,0.12);
+      padding: 0 24px;
+      height: 56px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    .cta-quiz p {
-      margin: 0;
-      font-size: 0.97rem;
-      color: #1e3a5f;
-      font-weight: 500;
-    }
-    .cta-quiz .btn { white-space: nowrap; }
-
-    /* Navigation autres temps */
-    .nav-section { margin-bottom: 28px; }
-    .nav-section h2 {
-      font-size: 0.85rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #94a3b8;
-      margin: 0 0 12px;
-    }
-    .nav-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-    .nav-chip {
-      padding: 7px 14px;
-      background: #fff;
-      border: 1px solid #d0d7e2;
-      border-radius: 10px;
-      font-size: 0.88rem;
-      color: #334155;
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       text-decoration: none;
-      font-weight: 500;
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    .topbar-brand img {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+    }
+    .topbar-links { display: flex; gap: 8px; }
+    .topbar-links a {
+      padding: 7px 14px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      color: #334155;
       transition: all 0.15s;
     }
-    .nav-chip:hover {
+    .topbar-links a:hover { background: #f1f5f9; }
+    .topbar-links .btn-primary {
+      background: linear-gradient(135deg, #007bff, #0056d6);
+      color: #fff !important;
+    }
+    .topbar-links .btn-primary:hover { opacity: 0.9; background: linear-gradient(135deg, #007bff, #0056d6); }
+
+    /* ── Layout principal ── */
+    .page-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    /* ── Fil d'Ariane ── */
+    .breadcrumb {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .breadcrumb a { color: #007bff; text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb .sep { color: #cbd5e1; }
+
+    /* ── En-tête de la page ── */
+    .page-header { margin-bottom: 28px; }
+    .page-header .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #007bff22, #0056d622);
+      color: #0056d6;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .page-header h1 {
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 8px;
+      line-height: 1.2;
+    }
+    .page-header h1 span { color: #007bff; }
+    .page-header .subtitle {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin: 0;
+    }
+
+    /* ── Tableau de conjugaison ── */
+    .card {
+      background: rgba(255,255,255,0.97);
+      border-radius: 20px;
+      box-shadow: 0 4px 24px rgba(15,23,42,0.08), 0 1px 3px rgba(15,23,42,0.04);
+      border: 1px solid rgba(255,255,255,0.8);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .card-header {
+      background: linear-gradient(135deg, #007bff, #0056d6);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-header h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+    }
+    .card-header .chip-mode {
+      background: rgba(255,255,255,0.25);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .table-conj {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .table-conj tr { border-bottom: 1px solid #f1f5f9; }
+    .table-conj tr:last-child { border-bottom: none; }
+    .table-conj tr:nth-child(even) td { background: #f8fafc; }
+    .table-conj td {
+      padding: 13px 24px;
+      font-size: 1rem;
+      color: #0f172a;
+    }
+    .table-conj .td-num {
+      width: 36px;
+      color: #cbd5e1;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-align: center;
+      padding-right: 0;
+    }
+    .table-conj .td-forme {
+      font-weight: 600;
+      font-size: 1.08rem;
+      letter-spacing: 0.01em;
+    }
+    /* Mettre le verbe en valeur dans chaque forme */
+    .table-conj .td-forme em {
+      font-style: normal;
+      color: #007bff;
+    }
+
+    /* ── CTA Quiz — pièce maîtresse ── */
+    .cta-quiz {
+      background: linear-gradient(135deg, #007bff, #0056d6);
+      border-radius: 20px;
+      padding: 28px 32px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      box-shadow: 0 8px 32px rgba(0,123,255,0.25);
+    }
+    .cta-quiz-text h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 6px;
+    }
+    .cta-quiz-text p {
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.8);
+      margin: 0;
+    }
+    .btn-cta {
+      display: inline-block;
+      background: #fff;
+      color: #0056d6;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 12px 24px;
+      border-radius: 12px;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: all 0.15s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+    .btn-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+
+    /* ── Navigation modes / temps ── */
+    .nav-block { margin-bottom: 20px; }
+    .nav-block-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #94a3b8;
+      margin: 0 0 10px;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      padding: 8px 16px;
+      background: rgba(255,255,255,0.9);
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 0.86rem;
+      font-weight: 500;
+      color: #334155;
+      text-decoration: none;
+      transition: all 0.15s;
+      box-shadow: 0 1px 3px rgba(15,23,42,0.05);
+    }
+    .chip:hover {
       background: #007bff;
       color: #fff;
       border-color: transparent;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,123,255,0.2);
     }
-    .nav-chip.actif {
+    .chip.actif {
       background: linear-gradient(135deg, #007bff, #0056d6);
       color: #fff;
       border-color: transparent;
       pointer-events: none;
+      box-shadow: 0 4px 12px rgba(0,123,255,0.25);
     }
 
-    /* Lien retour accueil */
-    .lien-accueil {
-      display: inline-block;
-      margin-top: 8px;
-      font-size: 0.88rem;
-      color: #64748b;
-      text-decoration: none;
+    /* ── Encart astuce pédagogique ── */
+    .tip-box {
+      background: rgba(255,255,255,0.7);
+      border: 1.5px solid rgba(0,123,255,0.15);
+      border-radius: 16px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
     }
-    .lien-accueil:hover { color: #007bff; }
+    .tip-box .tip-icon {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .tip-box .tip-content h4 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 6px;
+    }
+    .tip-box .tip-content p {
+      font-size: 0.86rem;
+      color: #475569;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    /* ── Footer minimal ── */
+    .page-footer {
+      text-align: center;
+      padding: 32px 0 0;
+      font-size: 0.82rem;
+      color: #94a3b8;
+    }
+    .page-footer a { color: #007bff; text-decoration: none; }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .topbar-links a:not(.btn-primary) { display: none; }
+      .cta-quiz { flex-direction: column; text-align: center; }
+      .card-header { flex-direction: column; gap: 8px; align-items: flex-start; }
+    }
   </style>
 </head>
 
 <body>
-<div class="seo-wrap">
 
-  {# ── Fil d'Ariane (SEO structured data) ── #}
+<!-- Barre de navigation -->
+<nav class="topbar">
+  <a class="topbar-brand" href="/">
+    <img src="/static/img/logo.png" alt="Hirondelle logo">
+    Hirondelle Conjugaison
+  </a>
+  <div class="topbar-links">
+    <a href="/cible">Révision ciblée</a>
+    <a href="/" class="btn-primary">Lancer un quiz →</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- Fil d'Ariane -->
   <nav class="breadcrumb" aria-label="Fil d'Ariane">
     <a href="/">Accueil</a>
-    <span>›</span>
+    <span class="sep">›</span>
     <a href="/conjugaison/{{ verbe }}">{{ verbe | capitalize }}</a>
-    <span>›</span>
-    <a href="/conjugaison/{{ verbe }}/{{ mode }}/{{ temps }}">{{ label_mode }}</a>
-    <span>›</span>
+    <span class="sep">›</span>
+    <span>{{ label_mode }}</span>
+    <span class="sep">›</span>
     <strong>{{ label_temps }}</strong>
   </nav>
 
-  <h1>{{ verbe | capitalize }} — {{ label_mode }} {{ label_temps }}</h1>
-  <p class="sous-titre">Tableau complet avec quiz interactif</p>
+  <!-- En-tête -->
+  <header class="page-header">
+    <div class="badge">{{ label_mode }}</div>
+    <h1>Conjugaison de <span>{{ verbe }}</span><br>{{ label_temps }}</h1>
+    <p class="subtitle">Tableau complet · Quiz interactif · Lycée &amp; Bac de français</p>
+  </header>
 
-  {# ── Tableau de conjugaison ── #}
-  <table class="table-conjugaison">
-    <thead>
-      <tr>
-        <th>Personne</th>
-        <th>Conjugaison</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for i in range(formes | length) %}
-      <tr>
-        <td class="td-pronom">{{ pronoms[i] if i < pronoms | length else '' }}</td>
-        <td class="td-forme">{{ formes[i] }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <!-- Tableau de conjugaison -->
+  <div class="card">
+    <div class="card-header">
+      <h2>{{ verbe | capitalize }} — {{ label_temps }}</h2>
+      <span class="chip-mode">{{ label_mode }}</span>
+    </div>
+    <table class="table-conj" aria-label="Conjugaison de {{ verbe }} {{ label_mode }} {{ label_temps }}">
+      <tbody>
+        {% for i in range(formes | length) %}
+        <tr>
+          <td class="td-num">{{ i + 1 }}</td>
+          <td class="td-forme">{{ formes[i] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
-  {# ── CTA Quiz ── #}
+  <!-- CTA Quiz -->
   <div class="cta-quiz">
-    <p>Teste tes connaissances sur <strong>{{ verbe }}</strong> à l'{{ label_mode | lower }} {{ label_temps | lower }}</p>
-    <a href="/cible?verbe={{ verbe }}&mode={{ mode }}&temps={{ temps }}" class="btn">S'entraîner →</a>
+    <div class="cta-quiz-text">
+      <h3>Teste tes connaissances maintenant</h3>
+      <p>Quiz ciblé sur <strong>{{ verbe }}</strong> · {{ label_mode }} {{ label_temps }} · Résultats immédiats</p>
+    </div>
+    <a href="/cible" class="btn-cta">S'entraîner →</a>
   </div>
 
-  {# ── Navigation : autres temps du même mode ── #}
+  <!-- Astuce pédagogique selon le mode -->
+  {% if mode == "subjonctif" %}
+  <div class="tip-box">
+    <div class="tip-icon">💡</div>
+    <div class="tip-content">
+      <h4>Comment reconnaître le subjonctif ?</h4>
+      <p>Le subjonctif s'emploie après des verbes exprimant la volonté, le doute, la crainte ou un sentiment. Repère les conjonctions <em>que</em>, <em>bien que</em>, <em>pour que</em>, <em>avant que</em>… La plupart du temps, il suit un verbe conjugué à un autre mode.</p>
+    </div>
+  </div>
+  {% elif mode == "conditionnel" %}
+  <div class="tip-box">
+    <div class="tip-icon">💡</div>
+    <div class="tip-content">
+      <h4>Le conditionnel en bref</h4>
+      <p>Le conditionnel présent exprime une action hypothétique ou un souhait poli. Il se construit sur le radical du futur + les terminaisons de l'imparfait (-ais, -ais, -ait, -ions, -iez, -aient). Attention à ne pas le confondre avec l'imparfait à l'oral !</p>
+    </div>
+  </div>
+  {% elif mode == "indicatif" and temps == "passé simple" %}
+  <div class="tip-box">
+    <div class="tip-icon">💡</div>
+    <div class="tip-content">
+      <h4>Le passé simple : temps littéraire</h4>
+      <p>Le passé simple s'utilise principalement à l'écrit et dans les textes littéraires. Il exprime une action révolue, délimitée dans le temps. À l'oral, on le remplace par le passé composé. Au bac, il est indispensable pour l'analyse de texte.</p>
+    </div>
+  </div>
+  {% elif mode == "indicatif" and temps == "subjonctif imparfait" %}
+  <div class="tip-box">
+    <div class="tip-icon">💡</div>
+    <div class="tip-content">
+      <h4>Subjonctif imparfait : temps littéraire</h4>
+      <p>Peu utilisé à l'oral aujourd'hui, le subjonctif imparfait reste présent dans les textes du XVIIe au XIXe siècle. Il s'emploie dans les subordonnées quand le verbe principal est au passé. Sa forme se reconnaît à la terminaison en <em>-sse</em>, <em>-sses</em>, <em>-t</em> (accent circonflexe), <em>-ssions</em>, <em>-ssiez</em>, <em>-ssent</em>.</p>
+    </div>
+  </div>
+  {% elif mode == "impératif" %}
+  <div class="tip-box">
+    <div class="tip-icon">💡</div>
+    <div class="tip-content">
+      <h4>L'impératif : 3 personnes seulement</h4>
+      <p>L'impératif ne se conjugue qu'à trois personnes : 2e singulier (<em>tu</em>), 1re pluriel (<em>nous</em>) et 2e pluriel (<em>vous</em>). Attention : les verbes du 1er groupe et quelques autres perdent le <em>-s</em> final à la 2e personne du singulier (<em>mange !</em> et non <em>manges !</em>), sauf devant <em>-y</em> et <em>-en</em>.</p>
+    </div>
+  </div>
+  {% else %}
+  <div class="tip-box">
+    <div class="tip-icon">💡</div>
+    <div class="tip-content">
+      <h4>Méthode pour mémoriser</h4>
+      <p>Répète chaque forme à voix haute en ajoutant une phrase courte : <em>« {{ formes[0] if formes else '' }} tous les jours »</em>. La mémoire auditive est souvent plus efficace que la mémoire visuelle pour la conjugaison. Puis entraîne-toi avec le quiz pour tester ce que tu as retenu.</p>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Navigation : autres temps du même mode -->
   {% if autres_temps %}
-  <div class="nav-section">
-    <h2>Autres temps — {{ label_mode }}</h2>
-    <div class="nav-chips">
-      <span class="nav-chip actif">{{ label_temps }}</span>
+  <div class="nav-block">
+    <p class="nav-block-title">Autres temps — {{ label_mode }}</p>
+    <div class="chips">
+      <span class="chip actif">{{ label_temps }}</span>
       {% for item in autres_temps %}
-      <a class="nav-chip" href="{{ item.url }}">{{ LABELS_TEMPS.get(item.temps, item.temps) }}</a>
+      <a class="chip" href="{{ item.url }}">{{ LABELS_TEMPS.get(item.temps, item.temps) }}</a>
       {% endfor %}
     </div>
   </div>
   {% endif %}
 
-  {# ── Navigation : autres modes ── #}
+  <!-- Navigation : autres modes -->
   {% if autres_modes %}
-  <div class="nav-section">
-    <h2>Autres modes</h2>
-    <div class="nav-chips">
-      <span class="nav-chip actif">{{ label_mode }}</span>
+  <div class="nav-block">
+    <p class="nav-block-title">Autres modes</p>
+    <div class="chips">
+      <span class="chip actif">{{ label_mode }}</span>
       {% for item in autres_modes %}
-      <a class="nav-chip" href="{{ item.url }}">{{ item.label }}</a>
+      <a class="chip" href="{{ item.url }}">{{ item.label }}</a>
       {% endfor %}
     </div>
   </div>
   {% endif %}
 
-  <a href="/" class="lien-accueil">← Retour à l'accueil</a>
+  <!-- Footer -->
+  <footer class="page-footer">
+    <p><a href="/">Hirondelle Conjugaison</a> · Quiz interactif de conjugaison française · <a href="/cible">Révision ciblée</a></p>
+  </footer>
 
-</div>
-
-{# ── Données structurées JSON-LD (Rich Snippets Google) ── #}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "{{ verbe | capitalize }} — {{ label_mode }} {{ label_temps }}",
-  "description": "Conjugaison complète de {{ verbe }} à l'{{ label_mode | lower }} {{ label_temps | lower }}.",
-  "url": "https://hirondelleconjugaison.onrender.com/conjugaison/{{ verbe }}/{{ mode }}/{{ temps }}",
-  "breadcrumb": {
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://hirondelleconjugaison.onrender.com/" },
-      { "@type": "ListItem", "position": 2, "name": "{{ verbe | capitalize }}", "item": "https://hirondelleconjugaison.onrender.com/conjugaison/{{ verbe }}" },
-      { "@type": "ListItem", "position": 3, "name": "{{ label_mode }} {{ label_temps }}" }
-    ]
-  }
-}
-</script>
+</div><!-- /page-wrap -->
 
 </body>
 </html>
