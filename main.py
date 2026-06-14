@@ -771,15 +771,89 @@ def page_conjugaison(verbe, mode, temps):
     )
 
 
+@app.route("/conjugaisons")
+def page_conjugaisons():
+    """Page de recherche et exploration de tous les verbes."""
+
+    # Classifier les verbes par groupe
+    g1, g2, g3 = [], [], []
+    for v in sorted(ACTIF.keys()):
+        imparfait = ACTIF[v].get("indicatif", {}).get("imparfait", [])
+        est_g2 = any("issais" in f or "issait" in f or "issions" in f for f in imparfait)
+        if v.endswith("er"):
+            g1.append(v)
+        elif v.endswith("ir") and est_g2:
+            g2.append(v)
+        else:
+            g3.append(v)
+
+    # Verbes essentiels bac
+    top_verbes = ["être", "avoir", "faire", "aller", "vouloir", "pouvoir",
+                  "savoir", "prendre", "venir", "voir", "partir", "mettre",
+                  "dire", "croire", "écrire", "lire", "vivre", "connaître"]
+
+    # Tous les verbes triés pour le datalist
+    tous_verbes = sorted(ACTIF.keys())
+
+    return render_template(
+        "conjugaisons.html",
+        g1=g1, g2=g2, g3=g3,
+        top_verbes=[v for v in top_verbes if v in ACTIF],
+        tous_verbes=tous_verbes,
+        total=len(ACTIF),
+    )
+
+
 @app.route("/conjugaison/<verbe>")
 def page_verbe(verbe):
-    """Page d'accueil d'un verbe — redirige vers indicatif/présent."""
+    """Page centrale d'un verbe — tableau récapitulatif de tous les modes."""
     if verbe not in ACTIF:
         return render_template("404.html"), 404
+
     modes_verbe = ACTIF[verbe]
-    premier_mode = list(modes_verbe.keys())[0]
-    premier_temps = list(modes_verbe[premier_mode].keys())[0]
-    return redirect(f"/conjugaison/{verbe}/{premier_mode}/{premier_temps}")
+
+    # Construire un résumé : pour chaque mode, afficher le présent (ou premier temps dispo)
+    resume_modes = {}
+    for mode, temps_dict in modes_verbe.items():
+        temps_prefere = "présent" if "présent" in temps_dict else list(temps_dict.keys())[0]
+        resume_modes[mode] = {
+            "label": LABELS_MODES.get(mode, mode.capitalize()),
+            "temps": temps_prefere,
+            "label_temps": LABELS_TEMPS.get(temps_prefere, temps_prefere.capitalize()),
+            "formes": temps_dict[temps_prefere],
+            "tous_temps": [
+                {"temps": t, "label": LABELS_TEMPS.get(t, t.capitalize()),
+                 "url": f"/conjugaison/{verbe}/{mode}/{t}"}
+                for t in temps_dict.keys()
+            ],
+        }
+
+    # Verbes de la même famille (préfixés)
+    racine = verbe
+    for prefixe in ("re", "dé", "pré", "sur", "sous", "con", "pro", "dis"):
+        if verbe.startswith(prefixe) and len(verbe) > len(prefixe) + 2:
+            racine = verbe[len(prefixe):]
+            break
+    famille = sorted([v for v in ACTIF if v != verbe and
+                      (v.endswith(racine) or racine.endswith(v.lstrip("se ").lstrip("s'"))
+                       or (len(racine) > 4 and racine in v))])[:6]
+
+    # Verbes fréquents du même mode principal
+    mode_principal = list(modes_verbe.keys())[0]
+    verbes_meme_mode = [v for v in ["être", "avoir", "faire", "aller", "vouloir",
+                                     "pouvoir", "prendre", "venir", "voir", "savoir"]
+                        if v != verbe and v in ACTIF][:6]
+
+    return render_template(
+        "verbe.html",
+        verbe=verbe,
+        resume_modes=resume_modes,
+        famille=famille,
+        verbes_meme_mode=verbes_meme_mode,
+        LABELS_MODES=LABELS_MODES,
+        LABELS_TEMPS=LABELS_TEMPS,
+        total=len(ACTIF),
+    )
 
 
 @app.route("/sitemap.xml")
