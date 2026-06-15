@@ -89,7 +89,7 @@ def cible():
     # Listes de verbes par groupe grammatical
     LISTES_VERBES = {
         # ── 1er GROUPE : verbes en -er ──────────────────────────────────────────
-        "1er groupe — verbes courants": [
+        "1er groupe — A à C": [
             "aimer", "aller", "amener", "amuser", "annoncer", "apporter", "appeler",
             "arriver", "avancer", "avouer", "baisser", "briser", "cacher", "calmer",
             "caresser", "casser", "causer", "céder", "cesser", "changer", "chanter",
