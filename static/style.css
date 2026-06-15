@@ -669,3 +669,159 @@ body.mobile-mode .settings-popup {
    ACCESSIBILITÉ
    ============================================================ */
 :focus { outline: 3px solid rgba(0,119,230,0.12); outline-offset: 2px; }
+
+/* ============================================================
+   TOPBAR UNIVERSELLE
+   ============================================================ */
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    height: 56px;
+    background: rgba(255, 255, 255, 0.93);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(0, 123, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
+}
+
+.topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #0f172a;
+    flex-shrink: 0;
+}
+.topbar-brand img {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+}
+.topbar-brand span { white-space: nowrap; }
+
+.topbar-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Lien simple */
+.topbar-nav-link {
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #334155;
+    text-decoration: none;
+    transition: background 0.15s;
+    white-space: nowrap;
+}
+.topbar-nav-link:hover { background: #f1f5f9; }
+
+/* Bouton CTA */
+.topbar-nav-cta {
+    padding: 8px 18px;
+    background: linear-gradient(135deg, #007bff, #0056d6);
+    color: #fff !important;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.28);
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+.topbar-nav-cta:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0, 123, 255, 0.35);
+}
+
+/* Dropdown Quiz */
+.topbar-dropdown { position: relative; }
+
+.topbar-nav-btn {
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #334155;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background 0.15s;
+    white-space: nowrap;
+}
+.topbar-nav-btn svg {
+    width: 12px;
+    height: 12px;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+}
+.topbar-nav-btn:hover,
+.topbar-nav-btn.open { background: #f1f5f9; }
+.topbar-nav-btn.open svg { transform: rotate(180deg); }
+
+.topbar-dd-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(15, 23, 42, 0.14);
+    border: 1px solid #e8edf4;
+    padding: 8px;
+    min-width: 250px;
+    z-index: 300;
+}
+.topbar-dd-menu.open { display: block; }
+
+.topbar-dd-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #0f172a;
+    transition: background 0.12s;
+}
+.topbar-dd-item:hover { background: #f8fafc; }
+
+.topbar-dd-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+
+.topbar-dd-text strong {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 2px;
+}
+.topbar-dd-text span {
+    font-size: 0.78rem;
+    color: #64748b;
+    line-height: 1.4;
+}
+
+.topbar-dd-sep {
+    height: 1px;
+    background: #f1f5f9;
+    margin: 4px 0;
+}
+
+/* Script topbar dropdown — injecté une fois */
+@media (max-width: 600px) {
+    .topbar-brand span { display: none; }
+    .topbar-nav-link { display: none; }
+}
