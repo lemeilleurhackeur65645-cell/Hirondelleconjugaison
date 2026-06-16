@@ -376,23 +376,23 @@ function buildShareText() {
     if (TAUX === 100) {
         emoji = '🏆';
         perf = `SCORE PARFAIT — ${SCORE}/${TOTAL} (100%)`;
-        defi = `Saurez-vous faire aussi bien ? Le quiz est gratuit, sans pub, sans inscription.`;
+        defi = `Saurez-vous faire aussi bien ? Essayez de faire autant que moi sur ce site.`;
     } else if (TAUX >= 90) {
         emoji = '🔥';
         perf = `${SCORE}/${TOTAL} au quiz de conjugaison française (${TAUX}%)`;
-        defi = `Quasiment parfait. Je vous défie de faire mieux — c'est gratuit et sans pub.`;
+        defi = `Quasiment parfait. Je vous défie de faire mieux sur ce site.`;
     } else if (TAUX >= 80) {
         emoji = '🎯';
         perf = `${SCORE}/${TOTAL} au quiz de conjugaison française (${TAUX}%)`;
-        defi = `Pas mal, mais peut mieux faire. Essayez de me battre — c'est gratuit.`;
+        defi = `Pas mal, mais peut mieux faire. Essayez de me battre (j'ai utilisé ce site).`;
     } else if (TAUX >= 60) {
         emoji = '📈';
         perf = `${SCORE}/${TOTAL} au quiz de conjugaison française (${TAUX}%)`;
-        defi = `Le subjonctif m'a eu… À votre tour ! Gratuit, sans pub, sans compte.`;
+        defi = `Le subjonctif m'a eu… À votre tour ! Essayez ce site.`;
     } else {
         emoji = '😅';
         perf = `${SCORE}/${TOTAL} au quiz de conjugaison française (${TAUX}%)`;
-        defi = `C'est dur la conjugaison française ! Testez-vous — gratuit et sans pub.`;
+        defi = `C'est dur la conjugaison française ! Essayez ce site.`;
     }
 
     return `${emoji} ${perf}\n\n${defi}\n\n👉 ${SITE}`;
