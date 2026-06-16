@@ -1,9 +1,9 @@
 from flask import Flask, request, render_template, redirect, url_for, session, flash
-
 import random
 import time
 import json
 import os
+import uuid
 from pathlib import Path
 
 # ============================================================
@@ -49,6 +49,15 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "secret123")
 
 # ============================================================
+# STOCKAGE EN MÉMOIRE DES LISTES DE QUESTIONS CIBLÉES
+# Les cookies Flask sont limités à 4KB — impossible d'y stocker
+# des centaines de questions. On les garde côté serveur,
+# et on ne met qu'un UUID dans la session.
+# ============================================================
+_QUESTIONS_STORE: dict = {}  # {uuid_str: [liste de tuples]}
+
+
+# ============================================================
 # ROUTES DE BASE
 # ============================================================
 
@@ -89,7 +98,7 @@ def cible():
     # Listes de verbes par groupe grammatical
     LISTES_VERBES = {
         # ── 1er GROUPE : verbes en -er ──────────────────────────────────────────
-        "1er groupe — A à C": [
+        "1er groupe — verbes courants": [
             "aimer", "aller", "amener", "amuser", "annoncer", "apporter", "appeler",
             "arriver", "avancer", "avouer", "baisser", "briser", "cacher", "calmer",
             "caresser", "casser", "causer", "céder", "cesser", "changer", "chanter",
@@ -370,22 +379,26 @@ def cible_start():
     session["start"] = time.time()
     session["cible_modes"] = request.form.getlist("modes")
     session["cible_personnes"] = request.form.getlist("personnes")
-    session["cible_verbes"] = request.form.getlist("verbes")
-
-    # VOIX (actif/passif)
     session["cible_voix"] = request.form.getlist("voix")
 
-    # Dédupliquer en conservant l'ordre
-    session["cible_verbes"] = list(dict.fromkeys(session["cible_verbes"]))
+    # Récupérer les verbes depuis le formulaire SANS les stocker directement en session
+    # (un cookie Flask est limité à 4KB — 543 verbes le dépassent largement)
+    raw_verbes = list(dict.fromkeys(request.form.getlist("verbes")))  # dédupliquer
 
-    # Si l'utilisateur a choisi uniquement le passif, ne garder que les verbes passivables
+    # Si uniquement passif, filtrer sur les passivables
     if session["cible_voix"] == ["passif"]:
-        session["cible_verbes"] = [v for v in session["cible_verbes"] if v in VERBES_PASSIVABLES]
+        raw_verbes = [v for v in raw_verbes if v in VERBES_PASSIVABLES]
 
-    # Si après filtrage il n'y a plus de verbes, prévenir et renvoyer à la page
-    if not session["cible_verbes"]:
-        flash("Aucun verbe passivables sélectionné. Choisissez d'autres verbes ou activez la voix active.")
+    if not raw_verbes:
+        flash("Aucun verbe passivable sélectionné. Choisissez d'autres verbes ou activez la voix active.")
         return redirect("/cible")
+
+    # Stocker en session seulement si la liste est courte (≤ 30 verbes)
+    # Pour les sélections larges, on passe par le store mémoire _QUESTIONS_STORE
+    if len(raw_verbes) <= 30:
+        session["cible_verbes"] = raw_verbes
+    else:
+        session["cible_verbes"] = []  # sera lu depuis le store via questions_cibles_id
 
     raw_temps = request.form.getlist("temps")
     session["cible_temps"] = []
@@ -396,11 +409,12 @@ def cible_start():
         except Exception:
             continue
 
-    if not session["cible_modes"] or not session["cible_temps"] or not session["cible_personnes"] or not session["cible_verbes"]:
+    if not session["cible_modes"] or not session["cible_temps"] or not session["cible_personnes"] or not raw_verbes:
         flash("Veuillez sélectionner au moins un mode, un temps, une personne et un verbe.")
         return redirect("/cible")
 
     session["questions_cibles"] = []
+    questions_cibles = []
 
     # Déterminer la base selon la voix
     voix = session["cible_voix"]
@@ -411,7 +425,7 @@ def cible_start():
     else:
         base = {**ACTIF, **PASSIF}  # union logique
 
-    for verbe in session["cible_verbes"]:
+    for verbe in raw_verbes:
         if verbe not in base:
             continue
         modes_dict = base[verbe]
@@ -433,9 +447,16 @@ def cible_start():
                 }[personne])
                 if idx >= len(formes):
                     continue
-                session["questions_cibles"].append((verbe, mode, temps, personne))
+                questions_cibles.append((verbe, mode, temps, personne))
 
-    random.shuffle(session["questions_cibles"])
+    random.shuffle(questions_cibles)
+
+    # Stocker côté serveur (pas dans le cookie — trop volumineux)
+    qid = str(uuid.uuid4())
+    _QUESTIONS_STORE[qid] = questions_cibles
+    session["questions_cibles_id"] = qid
+    session["questions_cibles"] = []  # vider pour éviter tout résidu
+
     return redirect("/quiz")
 
 # ============================================================
@@ -546,14 +567,18 @@ def quiz():
             base = ACTIF
             voix_question = "active"
 
-        # CORRECTION : suppression de la vérification de cohérence par parsing de string.
-        # La voix est maintenant portée directement par le flag booléen `base`,
-        # déterminé avant l'appel. generer_question() reçoit la bonne base dès le départ.
+        # Lire les verbes depuis le store mémoire (pas depuis la session — trop volumineux)
+        qid = session.get("questions_cibles_id")
+        verbes_cibles = None
+        if qid and qid in _QUESTIONS_STORE:
+            # Extraire la liste unique des verbes depuis les questions stockées
+            verbes_cibles = list(dict.fromkeys(q[0] for q in _QUESTIONS_STORE[qid]))
+
         verbe, mode_v, temps, sujet, bonne, question = generer_question(
             modes=session.get("cible_modes"),
             temps=session.get("cible_temps"),
             personnes=session.get("cible_personnes"),
-            verbes=session.get("cible_verbes"),
+            verbes=verbes_cibles or session.get("cible_verbes"),
             base=base,
             voix_question=voix_question
         )
