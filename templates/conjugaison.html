@@ -9,7 +9,7 @@
 
   <!-- SEO -->
   <title>Conjugaison de {{ verbe }} — {{ label_mode }} {{ label_temps }} | Hirondelle</title>
-  <meta name="description" content="Conjugaison complète de {{ verbe }} à l'{{ label_mode | lower }} {{ label_temps | lower }} : {{ formes | join(', ') }}. Quiz interactif inclus pour s'entraîner — idéal bac de français.">
+  <meta name="description" content="Conjugaison de {{ verbe }} à l'{{ label_mode | lower }} {{ label_temps | lower }} : {{ formes[0] if formes else '' }}… Quiz intégré, idéal bac de français.">
   <link rel="canonical" href="https://hirondelleconjugaison.onrender.com/conjugaison/{{ verbe }}/{{ mode }}/{{ temps }}">
 
   <!-- Open Graph -->
