@@ -60,7 +60,17 @@ _QUESTIONS_STORE: dict = {}  # {uuid_str: [liste de tuples]}
 # ============================================================
 # ROUTES DE BASE
 # ============================================================
-
+@app.route("/robots.txt")
+def robots_txt():
+    from flask import Response
+    content = (
+        "User-agent: *\n"
+        "Allow: /\n"
+        "\n"
+        "Sitemap: https://hirondelleconjugaison.onrender.com/sitemap.xml\n"
+    )
+    return Response(content, mimetype="text/plain")
+    
 @app.route("/")
 def index():
     session.clear()
