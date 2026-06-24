@@ -9,3 +9,4 @@ psycopg2-binary
 flask-login
 flask-bcrypt
 authlib
+requests
