@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ma progression | Hirondelle Conjugaison</title>
+    <link rel="icon" type="image/png" href="/static/img/logo.png">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body { padding-top: 56px; }
+        .prog-wrap { max-width: 760px; margin: 32px auto 60px; padding: 0 20px; text-align: left; }
+
+        .prog-header { margin-bottom: 24px; }
+        .prog-header h1 { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0 0 6px; }
+        .prog-header p { font-size: 0.9rem; color: #64748b; margin: 0; }
+
+        .prog-stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
+        @media (max-width: 560px) { .prog-stats-row { grid-template-columns: 1fr; } }
+        .prog-stat-card {
+            background: rgba(255,255,255,0.97); border-radius: 18px; padding: 20px;
+            box-shadow: 0 4px 20px rgba(15,23,42,0.07); text-align: center;
+        }
+        .prog-stat-card strong { display: block; font-size: 1.8rem; font-weight: 800; color: #007bff; }
+        .prog-stat-card span { font-size: 0.78rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em; }
+
+        .prog-section { background: rgba(255,255,255,0.97); border-radius: 18px; padding: 22px 24px; margin-bottom: 18px; box-shadow: 0 4px 20px rgba(15,23,42,0.07); }
+        .prog-section h2 { font-size: 0.95rem; font-weight: 700; color: #0f172a; margin: 0 0 16px; }
+
+        .mode-bar-row { margin-bottom: 12px; }
+        .mode-bar-row:last-child { margin-bottom: 0; }
+        .mode-bar-top { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px; }
+        .mode-bar-top strong { color: #0f172a; font-weight: 600; text-transform: capitalize; }
+        .mode-bar-top span { color: #64748b; }
+        .mode-bar-track { height: 8px; background: #f1f5f9; border-radius: 6px; overflow: hidden; }
+        .mode-bar-fill { height: 100%; background: linear-gradient(135deg, #007bff, #0056d6); border-radius: 6px; }
+
+        .revoir-list { display: flex; flex-wrap: wrap; gap: 8px; }
+        .revoir-chip {
+            display: flex; align-items: center; gap: 6px;
+            background: #fff5f5; border: 1.5px solid #fecaca; color: #b91c1c;
+            border-radius: 10px; padding: 8px 14px; font-size: 0.85rem; font-weight: 600;
+            text-decoration: none;
+        }
+        .revoir-chip:hover { background: #fee2e2; }
+        .revoir-chip .count { font-size: 0.72rem; color: #dc2626; }
+
+        .historique-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.86rem;
+        }
+        .historique-item:last-child { border-bottom: none; }
+        .historique-verbe { font-weight: 600; color: #0f172a; }
+        .historique-meta { color: #94a3b8; font-size: 0.78rem; }
+        .historique-statut { font-size: 1.1rem; }
+
+        .empty-state { text-align: center; padding: 40px 20px; color: #94a3b8; font-size: 0.9rem; }
+        .empty-state a {
+            display: inline-block; margin-top: 14px; background: linear-gradient(135deg, #007bff, #0056d6);
+            color: #fff; font-weight: 700; padding: 10px 22px; border-radius: 10px; text-decoration: none; font-size: 0.86rem;
+        }
+    </style>
+</head>
+<body>
+{% include '_topbar.html' %}
+
+<div class="prog-wrap">
+    <div class="prog-header">
+        <h1>Ta progression</h1>
+        <p>L'historique complet de tes sessions d'entraînement, mis à jour en temps réel.</p>
+    </div>
+
+    {% if total == 0 %}
+    <div class="prog-section">
+        <div class="empty-state">
+            <p>Tu n'as pas encore fait de quiz connecté(e). Lance-toi !</p>
+            <a href="/quiz?mode=entrainement">Commencer l'entraînement →</a>
+        </div>
+    </div>
+    {% else %}
+
+    <div class="prog-stats-row">
+        <div class="prog-stat-card">
+            <strong>{{ total }}</strong>
+            <span>Questions faites</span>
+        </div>
+        <div class="prog-stat-card">
+            <strong>{{ correctes }}</strong>
+            <span>Bonnes réponses</span>
+        </div>
+        <div class="prog-stat-card">
+            <strong>{{ taux }}%</strong>
+            <span>Taux de réussite</span>
+        </div>
+    </div>
+
+    {% if par_mode %}
+    <div class="prog-section">
+        <h2>📊 Réussite par mode grammatical</h2>
+        {% for mode, stats in par_mode.items() %}
+        <div class="mode-bar-row">
+            <div class="mode-bar-top">
+                <strong>{{ mode }}</strong>
+                <span>{{ stats.correctes }}/{{ stats.total }} · {{ stats.taux }}%</span>
+            </div>
+            <div class="mode-bar-track">
+                <div class="mode-bar-fill" style="width: {{ stats.taux }}%;"></div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if verbes_a_revoir %}
+    <div class="prog-section">
+        <h2>🎯 Verbes à réviser en priorité</h2>
+        <div class="revoir-list">
+            {% for verbe, nb in verbes_a_revoir %}
+            <a href="/conjugaison/{{ verbe }}" class="revoir-chip">
+                {{ verbe }} <span class="count">({{ nb }} erreur{{ 's' if nb > 1 else '' }})</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if historique_recent %}
+    <div class="prog-section">
+        <h2>🕒 Activité récente</h2>
+        {% for r in historique_recent %}
+        <div class="historique-item">
+            <div>
+                <span class="historique-verbe">{{ r.verbe }}</span>
+                <span class="historique-meta"> · {{ r.mode }} {{ r.temps }}</span>
+            </div>
+            <span class="historique-statut">{{ "✅" if r.correct else "❌" }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% endif %}
+</div>
+</body>
+</html>

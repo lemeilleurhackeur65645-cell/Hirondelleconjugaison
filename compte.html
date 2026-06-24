@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mon compte | Hirondelle Conjugaison</title>
+    <link rel="icon" type="image/png" href="/static/img/logo.png">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body { padding-top: 56px; }
+        .compte-wrap { max-width: 520px; margin: 32px auto 60px; padding: 0 20px; text-align: left; }
+
+        .compte-hero {
+            display: flex; align-items: center; gap: 16px; margin-bottom: 24px;
+        }
+        .compte-avatar {
+            width: 64px; height: 64px; border-radius: 50%;
+            background: linear-gradient(135deg, #007bff, #0056d6);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1.6rem; font-weight: 800; flex-shrink: 0;
+        }
+        .compte-hero h1 { font-size: 1.3rem; font-weight: 800; color: #0f172a; margin: 0 0 3px; }
+        .compte-hero p { font-size: 0.85rem; color: #64748b; margin: 0; }
+
+        .compte-card {
+            background: rgba(255,255,255,0.97); border-radius: 18px;
+            box-shadow: 0 4px 20px rgba(15,23,42,0.07); padding: 22px 24px; margin-bottom: 16px;
+        }
+        .compte-card h2 { font-size: 0.85rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 14px; }
+        .compte-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+        .compte-row:last-child { border-bottom: none; }
+        .compte-row span:first-child { color: #64748b; }
+        .compte-row span:last-child { font-weight: 600; color: #0f172a; }
+
+        .methode-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700;
+        }
+        .methode-email { background: #eff6ff; color: #1d4ed8; }
+        .methode-google { background: #fef9e7; color: #b45309; }
+        .methode-github { background: #f3f4f6; color: #1f2937; }
+
+        .compte-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .compte-btn {
+            flex: 1; text-align: center; padding: 11px; border-radius: 10px;
+            font-weight: 700; font-size: 0.88rem; text-decoration: none;
+        }
+        .compte-btn-primary { background: linear-gradient(135deg, #007bff, #0056d6); color: #fff; }
+        .compte-btn-secondary { background: #f1f5f9; color: #334155; }
+    </style>
+</head>
+<body>
+{% include '_topbar.html' %}
+
+<div class="compte-wrap">
+
+    <div class="compte-hero">
+        <div class="compte-avatar">{{ (current_user.nom or current_user.email)[0] | upper }}</div>
+        <div>
+            <h1>{{ current_user.nom or current_user.email.split('@')[0] }}</h1>
+            <p>Membre depuis le {{ current_user.date_creation.strftime('%d/%m/%Y') }}</p>
+        </div>
+    </div>
+
+    <div class="compte-card">
+        <h2>Informations du compte</h2>
+        <div class="compte-row">
+            <span>Email</span>
+            <span>{{ current_user.email }}</span>
+        </div>
+        <div class="compte-row">
+            <span>Prénom</span>
+            <span>{{ current_user.nom or "Non renseigné" }}</span>
+        </div>
+        <div class="compte-row">
+            <span>Méthode de connexion</span>
+            <span>
+                <span class="methode-badge methode-{{ current_user.methode_connexion }}">
+                    {% if current_user.methode_connexion == 'google' %}🔵 Google
+                    {% elif current_user.methode_connexion == 'github' %}⚫ Github
+                    {% else %}✉️ Email{% endif %}
+                </span>
+            </span>
+        </div>
+    </div>
+
+    <div class="compte-card">
+        <h2>Actions</h2>
+        <div class="compte-actions">
+            <a href="/progression" class="compte-btn compte-btn-primary">📊 Voir ma progression</a>
+            <a href="/deconnexion" class="compte-btn compte-btn-secondary">🚪 Déconnexion</a>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

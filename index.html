@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="ui-YgD7jU6E1Z3Ti7rLcxAvVe1BLAuyZWCfb5jUoKjE">
+
+    <title>Hirondelle Conjugaison — Quiz interactif de conjugaison française</title>
+    <meta name="description" content="Quiz de conjugaison française : 550 verbes, tous modes et temps. Gratuit, sans pub. Idéal bac de français.">
+    <link rel="canonical" href="https://hirondelleconjugaison.onrender.com/">
+    <meta property="og:type"        content="website">
+    <meta property="og:url"         content="https://hirondelleconjugaison.onrender.com/">
+    <meta property="og:title"       content="Hirondelle Conjugaison — Quiz interactif de conjugaison française">
+    <meta property="og:description" content="Quiz de conjugaison française : près de 550 verbes, tous les temps et modes, bilan d'erreurs et révision ciblée. Idéal lycée.">
+    <meta property="og:image"       content="https://hirondelleconjugaison.onrender.com/static/img/logo.png">
+    <meta property="og:locale"      content="fr_FR">
+    <meta name="twitter:card"       content="summary">
+    <meta name="twitter:title"      content="Hirondelle Conjugaison — Quiz interactif">
+    <meta name="twitter:description" content="Près de 550 verbes, tous les modes, progression garantie. Idéal pour le bac.">
+    <meta name="twitter:image"      content="https://hirondelleconjugaison.onrender.com/static/img/logo.png">
+    <link rel="icon" type="image/png" href="/static/img/logo.png">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Hirondelle Conjugaison",
+      "url": "https://hirondelleconjugaison.onrender.com/",
+      "description": "Quiz et cours de conjugaison française. Près de 550 verbes, tous les temps et modes, sans pub.",
+      "inLanguage": "fr"
+    }
+    </script>
+
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body { padding-top: 56px; }
+
+        .hero { padding: 48px 20px 36px; text-align: center; }
+        .hero-logo {
+            width: var(--logo-size); height: var(--logo-size);
+            border-radius: 20px; box-shadow: 0 12px 36px rgba(15,23,42,0.14);
+            margin-bottom: 20px; transform: translateX(var(--logo-x));
+        }
+        .hero h1 { font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 800; color: #0f172a; margin: 0 0 10px; line-height: 1.2; }
+        .hero-sub { font-size: 0.95rem; color: #64748b; margin: 0 0 18px; max-width: 520px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+        .hero-badges { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px;
+            background: rgba(255,255,255,0.9); border: 1.5px solid rgba(0,123,255,0.2);
+            border-radius: 20px; font-size: 0.78rem; font-weight: 700; color: #0056d6; letter-spacing: 0.02em;
+        }
+
+        .welcome-bar { max-width: 960px; margin: 32px auto 28px; padding: 0 20px; }
+        .welcome-card {
+            background: linear-gradient(135deg, #007bff, #0056d6);
+            border-radius: 24px; padding: 28px 32px;
+            box-shadow: 0 12px 36px rgba(0,123,255,0.25);
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 20px; color: #fff;
+        }
+        .welcome-text h1 { font-size: 1.5rem; font-weight: 800; margin: 0 0 6px; color: #fff; }
+        .welcome-text p { font-size: 0.9rem; margin: 0; color: rgba(255,255,255,0.85); }
+        .welcome-stats { display: flex; gap: 24px; }
+        .welcome-stat { text-align: center; }
+        .welcome-stat strong { display: block; font-size: 1.6rem; font-weight: 800; }
+        .welcome-stat span { font-size: 0.72rem; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.04em; }
+        .welcome-cta {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #fff; color: #0056d6; font-weight: 700; font-size: 0.92rem;
+            padding: 12px 22px; border-radius: 12px; text-decoration: none;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.15); white-space: nowrap;
+        }
+        .welcome-cta:hover { opacity: 0.92; transform: translateY(-1px); }
+
+        .resume-row { max-width: 960px; margin: 0 auto 28px; padding: 0 20px; display: flex; gap: 12px; flex-wrap: wrap; }
+        .resume-chip {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(255,255,255,0.95); border: 1.5px solid #e2e8f0;
+            border-radius: 14px; padding: 12px 18px; text-decoration: none;
+            color: #0f172a; font-size: 0.86rem; font-weight: 600;
+            box-shadow: 0 2px 10px rgba(15,23,42,0.05); transition: all 0.15s;
+        }
+        .resume-chip:hover { border-color: #007bff; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,123,255,0.15); }
+        .resume-chip .resume-icon { font-size: 1.1rem; }
+
+        .menu-cards {
+            display: flex; justify-content: center; align-items: stretch; gap: 20px;
+            padding: 0 20px 60px; max-width: 960px; margin: 0 auto; flex-wrap: wrap;
+        }
+        .main-card {
+            flex: 1 1 380px; max-width: 440px;
+            background: rgba(255,255,255,0.97); border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(15,23,42,0.09); border: 1.5px solid rgba(255,255,255,0.8);
+            padding: 32px 28px 28px; display: flex; flex-direction: column;
+            text-align: left; transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .main-card:hover { transform: translateY(-3px); box-shadow: 0 16px 48px rgba(15,23,42,0.12); }
+        .card-icon { font-size: 2.2rem; margin-bottom: 14px; }
+        .card-title { font-size: 1.4rem; font-weight: 800; color: #0f172a; margin: 0 0 6px; }
+        .card-tagline {
+            font-size: 0.82rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.07em; color: #007bff; margin: 0 0 14px;
+        }
+        .card-desc { font-size: 0.93rem; color: #475569; line-height: 1.65; margin: 0 0 22px; flex-grow: 1; }
+        .card-desc strong { color: #0f172a; }
+        .card-args { list-style: none; padding: 0; margin: 0 0 24px; display: flex; flex-direction: column; gap: 7px; }
+        .card-args li { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 600; color: #334155; }
+        .card-args li::before { content: "✓"; color: #007bff; font-weight: 800; font-size: 0.9rem; flex-shrink: 0; }
+        .card-actions { display: flex; flex-direction: column; gap: 10px; }
+        .card-btn {
+            display: flex; align-items: center; justify-content: space-between; padding: 13px 18px;
+            border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 0.9rem;
+            transition: all 0.15s; border: none; cursor: pointer; width: 100%; box-sizing: border-box;
+        }
+        .card-btn-primary {
+            background: linear-gradient(135deg, #007bff, #0056d6); color: #fff;
+            box-shadow: 0 4px 14px rgba(0,123,255,0.3);
+        }
+        .card-btn-primary:hover { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,123,255,0.35); }
+        .card-btn-secondary { background: #f1f5f9; color: #334155; }
+        .card-btn-secondary:hover { background: #e2e8f0; transform: translateY(-1px); }
+        .card-btn-ghost { background: transparent; color: #007bff; border: 1.5px solid rgba(0,123,255,0.3); }
+        .card-btn-ghost:hover { background: rgba(0,123,255,0.06); }
+        .card-btn-arrow { font-size: 1rem; }
+
+        .modes-info-toggle {
+            margin-top: 12px; display: flex; align-items: center; gap: 6px;
+            background: none; border: none; cursor: pointer; font-size: 0.8rem;
+            font-weight: 600; color: #94a3b8; padding: 0; transition: color 0.15s;
+        }
+        .modes-info-toggle:hover { color: #007bff; }
+        .modes-info-box {
+            display: none; margin-top: 12px; background: #f8fafc; border: 1px solid #e2e8f0;
+            border-radius: 12px; padding: 14px 16px; font-size: 0.82rem; color: #475569; line-height: 1.6;
+        }
+        .modes-info-box.open { display: block; }
+        .modes-info-box strong { color: #0f172a; display: block; margin-bottom: 2px; }
+        .modes-info-row { margin-bottom: 10px; }
+        .modes-info-row:last-child { margin-bottom: 0; }
+
+        .signup-banner { max-width: 960px; margin: 0 auto 40px; padding: 0 20px; }
+        .signup-card {
+            background: rgba(255,255,255,0.8); border: 1.5px dashed rgba(0,123,255,0.3);
+            border-radius: 20px; padding: 22px 26px; display: flex; align-items: center;
+            justify-content: space-between; gap: 16px; flex-wrap: wrap;
+        }
+        .signup-card p { margin: 0; font-size: 0.88rem; color: #475569; }
+        .signup-card strong { color: #0f172a; }
+        .signup-card a {
+            background: linear-gradient(135deg, #007bff, #0056d6); color: #fff; font-weight: 700;
+            font-size: 0.86rem; padding: 10px 20px; border-radius: 10px; text-decoration: none; white-space: nowrap;
+        }
+
+        .page-footer-main { text-align: center; padding: 0 20px 40px; font-size: 0.82rem; color: #94a3b8; }
+        .page-footer-main a { color: #007bff; text-decoration: none; }
+    </style>
+</head>
+
+<script>
+(function(){
+    const sx = localStorage.getItem('logo_x');
+    const ss = localStorage.getItem('logo_size');
+    if (sx) document.documentElement.style.setProperty('--logo-x', sx);
+    if (ss) document.documentElement.style.setProperty('--logo-size', ss);
+})();
+</script>
+
+<body>
+{% include '_topbar.html' %}
+
+<div id="annonce-overlay" class="annonce-overlay" role="dialog" aria-modal="true" aria-labelledby="annonce-title">
+  <div class="annonce-card">
+    <div class="annonce-header">
+      <span class="annonce-icon">🎉</span>
+      <h2 id="annonce-title">Bonne nouvelle !</h2>
+    </div>
+    <p class="annonce-body">La 4e version du site est sortie.<br>L'URL du site ne sera maintenant que&nbsp;:</p>
+    <p class="annonce-url">hirondelleconjugaison.onrender.com</p>
+    <p class="annonce-hint">Tape <code>0102</code> sur ton clavier pour accéder au site actuel.</p>
+  </div>
+</div>
+
+<button id="settings-gear" class="settings-gear" aria-expanded="false" aria-controls="settings-popup" aria-label="Paramètres">
+  <svg viewBox="0 0 24 24" width="36" height="36" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 2.5 L13.2 2.5 L13.7 5 A7 7 0 0 1 16 6 L18 4.5 L19.5 6 L18 8 A7 7 0 0 1 19 10.3 L21.5 10.8 L21.5 13.2 L19 13.7 A7 7 0 0 1 18 16 L19.5 18 L18 19.5 L16 18 A7 7 0 0 1 13.7 19 L13.2 21.5 L10.8 21.5 L10.3 19 A7 7 0 0 1 8 18 L6 19.5 L4.5 18 L6 16 A7 7 0 0 1 5 13.7 L2.5 13.2 L2.5 10.8 L5 10.3 A7 7 0 0 1 6 8 L4.5 6 L6 4.5 L8 6 A7 7 0 0 1 10.3 5 L10.8 2.5 Z" fill="none" stroke="white" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="12" cy="12" r="3" fill="none" stroke="white" stroke-width="1.5"/>
+  </svg>
+</button>
+<div id="settings-popup" class="settings-popup" role="dialog" aria-hidden="true" aria-labelledby="settings-title">
+  <div class="settings-popup-inner">
+    <h2 id="settings-title">Paramètres</h2>
+    <div class="setting-block">
+      <label class="setting-label">Interface</label>
+      <div class="switch-container interface-switch" role="group" aria-label="Interface mobile ou PC">
+        <span class="switch-label">Mobile</span>
+        <label class="switch" aria-hidden="true">
+          <input type="checkbox" id="interface-toggle" aria-checked="true"/>
+          <span class="slider"></span>
+        </label>
+        <span class="switch-label">PC</span>
+      </div>
+      <p class="muted small-note">Active Mobile pour adapter l'interface à ton téléphone.</p>
+    </div>
+    <div class="setting-block">
+      <p class="muted">Cliquez de nouveau sur l'engrenage pour fermer.</p>
+    </div>
+  </div>
+</div>
+
+{% if current_user.is_authenticated %}
+<div class="welcome-bar">
+    <div class="welcome-card">
+        <div class="welcome-text">
+            <h1>Bon retour, {{ current_user.nom or current_user.email.split('@')[0] }} !</h1>
+            <p>Prêt(e) à continuer ta progression en conjugaison ?</p>
+        </div>
+        <div class="welcome-stats">
+            <div class="welcome-stat">
+                <strong>{{ stats.total }}</strong>
+                <span>Questions faites</span>
+            </div>
+            <div class="welcome-stat">
+                <strong>{{ stats.taux }}%</strong>
+                <span>Réussite</span>
+            </div>
+        </div>
+        <a href="/quiz?mode=entrainement" class="welcome-cta">Continuer l'entraînement →</a>
+    </div>
+</div>
+
+<div class="resume-row">
+    <a href="/progression" class="resume-chip">
+        <span class="resume-icon">📊</span> Voir ma progression détaillée
+    </a>
+    {% if stats.verbe_a_revoir %}
+    <a href="/cible" class="resume-chip">
+        <span class="resume-icon">🎯</span> Reprendre « {{ stats.verbe_a_revoir }} » — ton point faible
+    </a>
+    {% endif %}
+    <a href="/compte" class="resume-chip">
+        <span class="resume-icon">⚙️</span> Mon compte
+    </a>
+</div>
+
+{% else %}
+<div class="hero">
+    <img src="/static/img/logo.png" alt="Hirondelle Conjugaison" class="hero-logo" id="site-logo">
+    <h1>Hirondelle Conjugaison</h1>
+    <p class="hero-sub">La conjugaison française maîtrisée grâce à la pratique. Quiz interactifs, bilan instantané, progression mesurable.</p>
+    <div class="hero-badges">
+        <span class="hero-badge">🔥 PRÈS DE 550 VERBES</span>
+        <span class="hero-badge">📈 UNE PROGRESSION ASSURÉE</span>
+        <span class="hero-badge">🎯 TOUS LES MODES ET TEMPS</span>
+        <span class="hero-badge">⚡ RÉSULTATS IMMÉDIATS</span>
+        <span class="hero-badge">🚫 ZÉRO PUBLICITÉ</span>
+    </div>
+</div>
+{% endif %}
+
+<div class="menu-cards">
+
+    <div class="main-card">
+        <div class="card-icon">🎯</div>
+        <div class="card-tagline">MODES DE RÉVISION ADAPTÉS</div>
+        <h2 class="card-title">S'entraîner</h2>
+        <p class="card-desc">
+            Teste tes connaissances avec des quiz <strong>dynamiques et personnalisables</strong>.
+            Un verbe, un temps, un mode — et tu dois trouver la bonne conjugaison.
+            Bilan immédiat, erreurs détaillées, révision des points faibles :
+            <strong>tout est fait pour que tu progresses vite, sans t'ennuyer.</strong>
+        </p>
+        <ul class="card-args">
+            <li>Entraînement infini sans limite de temps</li>
+            <li>Évaluation chronométrée style examen (10 questions, 5 min)</li>
+            <li>Quiz ciblé : choisis toi-même le verbe et le mode</li>
+            <li>Bilan d'erreurs détaillé après chaque session</li>
+            <li>100 % gratuit — zéro publicité</li>
+        </ul>
+        <div class="card-actions">
+            <a href="/quiz?mode=entrainement" class="card-btn card-btn-primary">
+                Commencer l'entraînement <span class="card-btn-arrow">→</span>
+            </a>
+            <a href="/quiz?mode=evaluation" class="card-btn card-btn-ghost">
+                Mode évaluation ⏱️ <span class="card-btn-arrow">→</span>
+            </a>
+            <a href="/cible" class="card-btn card-btn-ghost">
+                Quiz ciblé 🔬 <span class="card-btn-arrow">→</span>
+            </a>
+        </div>
+        <button class="modes-info-toggle" onclick="toggleModesInfo(this)" aria-expanded="false">
+            <span>?</span> Quelle différence entre ces modes ?
+        </button>
+        <div class="modes-info-box">
+            <div class="modes-info-row">
+                <strong>🎯 Entraînement</strong>
+                Questions infinies, aucun timer, tu vas à ton rythme.
+            </div>
+            <div class="modes-info-row">
+                <strong>⏱️ Évaluation</strong>
+                10 questions, 5 minutes chrono, score final sur 10.
+            </div>
+            <div class="modes-info-row">
+                <strong>🔬 Quiz ciblé</strong>
+                Tu choisis précisément le verbe, le mode et le temps à travailler.
+            </div>
+        </div>
+    </div>
+
+    <div class="main-card">
+        <div class="card-icon">📖</div>
+        <div class="card-tagline">TOUTES LES CONJUGAISONS D'UN COUP D'ŒIL</div>
+        <h2 class="card-title">Apprendre</h2>
+        <p class="card-desc">
+            Consulte la conjugaison complète de <strong>près de 550 verbes français</strong> —
+            tous les temps, tous les modes, tous les groupes grammaticaux.
+            Des tableaux clairs, et un <strong>quiz intégré sur chaque page</strong>
+            pour transformer la consultation en apprentissage actif.
+        </p>
+        <ul class="card-args">
+            <li>Près de 550 verbes — du plus courant au plus rare</li>
+            <li>9 000+ pages de conjugaison indexées</li>
+            <li>Indicatif, subjonctif, conditionnel, impératif</li>
+            <li>Recherche instantanée par verbe, groupe ou mode</li>
+            <li>Aucune pub, aucun tracking</li>
+        </ul>
+        <div class="card-actions">
+            <a href="/conjugaisons" class="card-btn card-btn-primary">
+                Explorer les conjugaisons <span class="card-btn-arrow">→</span>
+            </a>
+            <a href="/conjugaison/faire/indicatif/pr%C3%A9sent" class="card-btn card-btn-ghost">
+                Exemple : faire au présent <span class="card-btn-arrow">→</span>
+            </a>
+            <a href="/conjugaison/être/subjonctif/pr%C3%A9sent" class="card-btn card-btn-ghost">
+                Exemple : être au subjonctif <span class="card-btn-arrow">→</span>
+            </a>
+        </div>
+    </div>
+
+</div>
+
+{% if not current_user.is_authenticated %}
+<div class="signup-banner">
+    <div class="signup-card">
+        <p><strong>Crée un compte gratuit</strong> pour sauvegarder ta progression et débloquer tes statistiques détaillées.</p>
+        <a href="/inscription">S'inscrire →</a>
+    </div>
+</div>
+{% endif %}
+
+<footer class="page-footer-main">
+    <a href="/changelog">Journal des modifications</a> ·
+    <a href="/conjugaisons">Tous les verbes</a>
+</footer>
+
+<script src="/static/js/settings.js" defer></script>
+<script>
+window.setLogo = function(x, size) {
+    if (x    !== undefined) { document.documentElement.style.setProperty('--logo-x',    x);    localStorage.setItem('logo_x',    x); }
+    if (size !== undefined) { document.documentElement.style.setProperty('--logo-size', size); localStorage.setItem('logo_size', size); }
+};
+
+function toggleModesInfo(btn) {
+    const box = btn.nextElementSibling;
+    const open = box.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open);
+}
+
+(function() {
+    const CODE = '0102', STORAGE = 'annonce_v4_dismissed';
+    const overlay = document.getElementById('annonce-overlay');
+    if (localStorage.getItem(STORAGE) === '1') { overlay.style.display = 'none'; return; }
+    let typed = '';
+    document.addEventListener('keydown', function(e) {
+        if (e.key >= '0' && e.key <= '9') {
+            typed += e.key;
+            if (typed.length > CODE.length) typed = typed.slice(-CODE.length);
+            if (typed === CODE) {
+                overlay.classList.add('annonce-fadeout');
+                setTimeout(function() { overlay.style.display = 'none'; }, 400);
+                localStorage.setItem(STORAGE, '1');
+            }
+        }
+    });
+})();
+</script>
+</body>
+</html>
