@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mon compte | Hirondelle Conjugaison</title>
+    <link rel="icon" type="image/png" href="/static/img/logo.png">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .compte-wrap { max-width: 480px; margin: 60px auto; padding: 0 20px; text-align: left; }
+        .compte-card {
+            background: rgba(255,255,255,0.97); border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(15,23,42,0.09); padding: 28px;
+        }
+        .compte-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #f1f5f9; font-size:0.9rem; }
+        .compte-row:last-child { border-bottom:none; }
+        .compte-row span:first-child { color:#64748b; }
+        .compte-row span:last-child { font-weight:600; color:#0f172a; }
+    </style>
+</head>
+<body>
+{% include '_topbar.html' %}
+<div class="compte-wrap">
+    <div class="compte-card">
+        <h1 style="font-size:1.3rem;margin:0 0 16px;">Mon compte</h1>
+        <div class="compte-row"><span>Email</span><span>{{ current_user.email }}</span></div>
+        <div class="compte-row"><span>Prénom</span><span>{{ current_user.nom or "—" }}</span></div>
+        <div class="compte-row"><span>Connexion via</span><span>{{ current_user.methode_connexion | capitalize }}</span></div>
+        <div class="compte-row"><span>Membre depuis</span><span>{{ current_user.date_creation.strftime('%d/%m/%Y') }}</span></div>
+        <a href="/deconnexion" class="btn" style="display:inline-block;margin-top:18px;">Se déconnecter</a>
+    </div>
+</div>
+</body>
+</html>
