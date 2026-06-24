@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="ui-YgD7jU6E1Z3Ti7rLcxAvVe1BLAuyZWCfb5jUoKjE">
+    <title>Quiz ciblé | Hirondelle Conjugaison</title>
+    <meta name="description" content="Choisis le verbe, le mode et le temps à réviser. Quiz de conjugaison française personnalisé, gratuit et sans pub.">
+    <link rel="icon" type="image/png" href="/static/img/logo.png">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+{% include '_topbar.html' %}
+
+<button id="settings-gear" class="settings-gear" aria-expanded="false" aria-controls="settings-popup" aria-label="Paramètres">
+  <svg viewBox="0 0 24 24" width="36" height="36" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" role="img">
+    <path
+      d="M12 2.5
+         L13.2 2.5
+         L13.7 5
+         A7 7 0 0 1 16 6
+         L18 4.5
+         L19.5 6
+         L18 8
+         A7 7 0 0 1 19 10.3
+         L21.5 10.8
+         L21.5 13.2
+         L19 13.7
+         A7 7 0 0 1 18 16
+         L19.5 18
+         L18 19.5
+         L16 18
+         A7 7 0 0 1 13.7 19
+         L13.2 21.5
+         L10.8 21.5
+         L10.3 19
+         A7 7 0 0 1 8 18
+         L6 19.5
+         L4.5 18
+         L6 16
+         A7 7 0 0 1 5 13.7
+         L2.5 13.2
+         L2.5 10.8
+         L5 10.3
+         A7 7 0 0 1 6 8
+         L4.5 6
+         L6 4.5
+         L8 6
+         A7 7 0 0 1 10.3 5
+         L10.8 2.5
+         Z"
+      fill="none"
+      stroke="black"
+      stroke-width="1.5"
+      stroke-linejoin="round"
+      stroke-linecap="round"
+    />
+    <circle
+      cx="12"
+      cy="12"
+      r="3"
+      fill="none"
+      stroke="black"
+      stroke-width="1.5"
+    />
+  </svg>
+</button>
+
+<!-- POPUP (UN SEUL exemplaire, placé dans le body) -->
+<div id="settings-popup" class="settings-popup" role="dialog" aria-hidden="true" aria-labelledby="settings-title">
+  <div class="settings-popup-inner">
+    <h2 id="settings-title">Paramètres</h2>
+
+    <!-- Interface switch -->
+    <div class="setting-block">
+      <label class="setting-label">Interface</label>
+
+      <div class="switch-container interface-switch" role="group" aria-label="Interface mobile ou PC">
+        <span class="switch-label">Mobile</span>
+
+        <label class="switch" aria-hidden="true">
+          <input type="checkbox" id="interface-toggle" aria-checked="true" />
+          <span class="slider" aria-hidden="true"></span>
+        </label>
+
+        <span class="switch-label">PC</span>
+      </div>
+
+      <p class="muted small-note">Active Mobile pour adapter l'interface à ton téléphone.</p>
+    </div>
+
+    <div class="setting-block">
+      <p class="muted">Cliquez de nouveau sur l'engrenage pour fermer.</p>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+    <h1>Révision ciblée</h1>
+
+    <!-- MESSAGES FLASH -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash">
+          {% for msg in messages %}
+            <p>{{ msg }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form action="/cible_start" method="POST" id="cible-form">
+
+        <!-- MODES -->
+        <div class="section" id="sec-modes">
+            <h2>Modes</h2>
+            <div class="chips">
+                {% for m in modes %}
+                <label class="chip">
+                    <input type="checkbox" name="modes" value="{{ m }}">
+                    {{ m|capitalize }}
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- TEMPS -->
+        <div class="section disabled" id="sec-temps">
+            <h2>Temps</h2>
+            <div class="chips" id="temps-container"></div>
+        </div>
+
+        <!-- PERSONNES -->
+        <div class="section disabled" id="sec-personnes">
+            <h2>Personnes</h2>
+            <div class="chips">
+                <label class="chip"><input type="checkbox" name="personnes" value="1s"> 1re personne du singulier</label>
+                <label class="chip"><input type="checkbox" name="personnes" value="2s"> 2e personne du singulier</label>
+                <label class="chip"><input type="checkbox" name="personnes" value="3s"> 3e personne du singulier</label>
+                <label class="chip"><input type="checkbox" name="personnes" value="1p"> 1re personne du pluriel</label>
+                <label class="chip"><input type="checkbox" name="personnes" value="2p"> 2e personne du pluriel</label>
+                <label class="chip"><input type="checkbox" name="personnes" value="3p"> 3e personne du pluriel</label>
+            </div>
+        </div>
+        
+        <!-- VOIX -->
+        <div class="section disabled" id="sec-voix">
+            <h2>Voix</h2>
+            <div class="chips">
+                <label class="chip"><input type="checkbox" name="voix" value="actif"> Actif</label>
+                <label class="chip"><input type="checkbox" name="voix" value="passif"> Passif</label>
+            </div>
+        </div>
+
+                <!-- VERBES -->
+        <div class="section disabled" id="sec-verbes">
+            <h2>Verbes</h2>
+
+            <!-- Sélection par listes -->
+            <div class="chips" style="border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px;">
+                {% for liste_id, verbes in listes.items() %}
+                    <label class="chip list-chip" data-liste="{{ liste_id }}">
+                        <input type="checkbox" name="listes_verbes" value="{{ liste_id }}">
+                        {{ liste_id|capitalize }}
+                    </label>
+                {% endfor %}
+                <label class="chip list-chip" data-liste="all">
+                    <input type="checkbox" name="listes_verbes" value="all">
+                    Tous
+                </label>
+            </div>
+
+            <!-- Sélection individuelle -->
+            <div class="chips" id="verbes-container">
+                {% for liste_id, verbes in listes.items() %}
+                    {% for v in verbes %}
+                    <label class="chip verb-chip"
+                            data-liste="{{ liste_id }}"
+                            data-passivable="{{ 'yes' if v in verbes_passivables else 'no' }}">
+                        <input type="checkbox" name="verbes" value="{{ v }}">
+                        {{ v }}
+                    </label>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+        
+        <p id="note-passif" style="display:none; color:#444; font-size:14px; margin-bottom:10px;">
+            Certains verbes passivables manquent et seront implantés le plus tôt possible.
+        </p>
+
+        <button type="submit" class="start-btn" id="start-btn" disabled>Commencer</button>
+
+
+    </form>
+</div>
+
+<script>
+/* ------------------------------
+   1) TEMPS DYNAMIQUES PAR MODE
+   ------------------------------ */
+const modesTemps = {{ modes_temps_json|safe }};
+const modesInputs = document.querySelectorAll('#sec-modes input');
+
+function updateTemps() {
+    const selected = Array.from(modesInputs)
+        .filter(i => i.checked)
+        .map(i => i.value);
+
+    const container = document.getElementById('temps-container');
+    container.innerHTML = "";
+
+    if (selected.length > 0) {
+        selected.forEach(mode => {
+            const tempsList = modesTemps[mode] || [];
+
+            tempsList.forEach(t => {
+                const label = document.createElement('label');
+                label.className = 'chip';
+
+                const fullLabel = `${mode} ${t}`;
+                const fullValue = `${mode}|${t}`;
+
+                label.innerHTML = `
+                    <input type="checkbox" name="temps" value="${fullValue}">
+                    ${fullLabel}
+                `;
+
+                label.onclick = () => {
+                    const inp = label.querySelector('input');
+                    setTimeout(() => {
+                        label.classList.toggle('active', inp.checked);
+                        updateLocks();
+                    }, 10);
+                };
+
+                container.appendChild(label);
+            });
+        });
+    }
+
+    updateLocks();
+}
+
+modesInputs.forEach(i => i.onchange = updateTemps);
+
+
+/* ------------------------------
+   2) LISTES DE VERBES
+   ------------------------------ */
+const verbChips = document.querySelectorAll(".verb-chip");
+const listChips = document.querySelectorAll(".list-chip");
+
+listChips.forEach(chip => {
+    chip.onclick = () => {
+        const inp = chip.querySelector('input');
+        const listId = chip.dataset.liste;
+
+        setTimeout(() => {
+            const isChecked = inp.checked;
+            chip.classList.toggle('active', isChecked);
+
+            const targets = listId === "all"
+                ? verbChips
+                : document.querySelectorAll(`.verb-chip[data-liste="${listId}"]`);
+
+            targets.forEach(v => {
+                const vInp = v.querySelector('input');
+                vInp.checked = isChecked;
+                v.classList.toggle('active', isChecked);
+            });
+
+            updateLocks();
+        }, 10);
+    };
+});
+
+
+/* ------------------------------
+   3) VERROUILLAGE DES SECTIONS
+   ------------------------------ */
+function updateLocks() {
+
+    const startBtn = document.getElementById('start-btn');
+
+    const mOk = document.querySelectorAll('#sec-modes input:checked').length > 0;
+    const tOk = document.querySelectorAll('#sec-temps input:checked').length > 0;
+    const pOk = document.querySelectorAll('#sec-personnes input:checked').length > 0;
+    const vOk = document.querySelectorAll('#sec-verbes input[name="verbes"]:checked').length > 0;
+    const vX = document.querySelectorAll('#sec-voix input[name="voix"]:checked').length > 0;
+
+    // Verrouillage des sections
+    document.getElementById('sec-temps').classList.toggle('disabled', !mOk);
+    document.getElementById('sec-personnes').classList.toggle('disabled', !mOk || !tOk);
+    document.getElementById('sec-voix').classList.toggle('disabled', !mOk || !tOk || !pOk);
+    document.getElementById('sec-verbes').classList.toggle('disabled', !mOk || !tOk || !pOk || !vX);
+
+    // Activation du bouton
+    startBtn.disabled = !(mOk && tOk && pOk && vX && vOk);
+}
+
+
+/* ------------------------------
+   4) ACTIVATION VISUELLE DES CHIPS
+   ------------------------------ */
+document.querySelectorAll('.chip').forEach(c => {
+    const inp = c.querySelector('input');
+
+    if (c.classList.contains("list-chip")) return;
+
+    if (inp) {
+        c.onclick = () => setTimeout(() => {
+            c.classList.toggle('active', inp.checked);
+            updateLocks();
+        }, 10);
+    }
+});
+    /* ------------------------------
+   5) FILTRAGE DES VERBES PASSIVABLES
+   ------------------------------ */
+const voixInputs = document.querySelectorAll('#sec-voix input[name="voix"]');
+
+function updateVerbesPassif() {
+    const actif = document.querySelector('#sec-voix input[value="actif"]').checked;
+    const passif = document.querySelector('#sec-voix input[value="passif"]').checked;
+
+    verbChips.forEach(chip => {
+        const isPassivable = chip.dataset.passivable === "yes";
+
+        if (!actif && passif) {
+            // Passif seul → afficher uniquement les passivables
+            chip.style.display = isPassivable ? "inline-flex" : "none";
+            chip.querySelector('input').checked = false;
+            chip.classList.remove('active');
+        } else {
+            // Actif ou Actif+Passif → afficher tous les verbes
+            chip.style.display = "inline-flex";
+        }
+    });
+
+    updateLocks();
+}
+
+voixInputs.forEach(inp => inp.addEventListener('change', updateVerbesPassif));
+/* ------------------------------
+   6) NOTE POUR LE MODE PASSIF SEUL
+   ------------------------------ */
+function updateNotePassif() {
+    const actif = document.querySelector('#sec-voix input[value="actif"]').checked;
+    const passif = document.querySelector('#sec-voix input[value="passif"]').checked;
+
+    const note = document.getElementById("note-passif");
+
+    // Afficher la note uniquement si passif seul est coché
+    if (!actif && passif) {
+        note.style.display = "block";
+    } else {
+        note.style.display = "none";
+    }
+}
+
+voixInputs.forEach(inp => inp.addEventListener('change', updateNotePassif));
+
+</script>
+<script src="/static/js/settings.js" defer></script>
+
+</body>
+</html>

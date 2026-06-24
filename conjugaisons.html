@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-site-verification" content="ui-YgD7jU6E1Z3Ti7rLcxAvVe1BLAuyZWCfb5jUoKjE">
+  <title>Conjugaison française — {{ total }} verbes disponibles | Hirondelle</title>
+  <meta name="description" content="Conjugaison complète de {{ total }} verbes français : tous les temps, tous les modes, tous les groupes grammaticaux. Recherche instantanée et quiz intégré sur chaque page.">
+  <link rel="canonical" href="https://hirondelleconjugaison.onrender.com/conjugaisons">
+  <meta property="og:title" content="Conjugaison française — {{ total }} verbes | Hirondelle">
+  <meta property="og:description" content="{{ total }} verbes, 9000+ tableaux de conjugaison avec quiz intégré. Idéal pour le bac.">
+  <link rel="icon" type="image/png" href="/static/img/logo.png">
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; background: linear-gradient(135deg,#f0f4ff 0%,#e8f0fe 50%,#f5f0ff 100%); background-attachment: fixed; font-family: Arial, sans-serif; color: #0f172a; min-height: 100vh; }
+
+    /* TOPBAR */
+    .topbar { position: sticky; top: 0; z-index: 100; height: 56px; background: rgba(255,255,255,0.92); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(0,123,255,0.1); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; box-shadow: 0 2px 12px rgba(15,23,42,0.06); }
+    .topbar-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 0.95rem; color: #0f172a; }
+    .topbar-brand img { width: 28px; height: 28px; border-radius: 7px; }
+    .topbar-links { display: flex; gap: 6px; align-items: center; }
+    .topbar-links a { padding: 7px 14px; border-radius: 10px; font-size: 0.86rem; font-weight: 600; color: #334155; text-decoration: none; transition: background .15s; }
+    .topbar-links a:hover { background: #f1f5f9; }
+    .topbar-links .cta { background: linear-gradient(135deg,#007bff,#0056d6); color: #fff !important; box-shadow: 0 4px 12px rgba(0,123,255,0.25); }
+    .topbar-links .cta:hover { opacity: .9; }
+
+    /* PAGE */
+    .page-wrap { max-width: 900px; margin: 0 auto; padding: 36px 20px 80px; }
+
+    /* HERO */
+    .hero { text-align: center; margin-bottom: 36px; }
+    .hero h1 { font-size: clamp(1.5rem,4vw,2.2rem); font-weight: 800; margin: 0 0 10px; }
+    .hero h1 span { color: #007bff; }
+    .hero p { font-size: .95rem; color: #64748b; margin: 0 0 20px; line-height: 1.6; }
+    .hero-stats { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+    .stat-badge { background: rgba(255,255,255,0.95); border: 1.5px solid rgba(0,123,255,0.2); border-radius: 14px; padding: 12px 20px; text-align: center; box-shadow: 0 2px 10px rgba(15,23,42,0.06); }
+    .stat-badge strong { display: block; font-size: 1.4rem; font-weight: 800; color: #007bff; }
+    .stat-badge span { font-size: .75rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+
+    /* SEARCH */
+    .search-block { margin-bottom: 36px; }
+    .search-wrap { position: relative; }
+    .search-wrap input {
+      width: 100%; padding: 16px 56px 16px 20px;
+      border: 2px solid #e2e8f0; border-radius: 16px;
+      font-size: 1.05rem; color: #0f172a; background: rgba(255,255,255,0.97);
+      box-shadow: 0 4px 20px rgba(15,23,42,0.07);
+      transition: border-color .2s, box-shadow .2s; outline: none;
+    }
+    .search-wrap input:focus { border-color: #007bff; box-shadow: 0 4px 20px rgba(0,123,255,0.15); }
+    .search-wrap .search-icon { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); font-size: 1.2rem; pointer-events: none; }
+    .search-hint { font-size: .8rem; color: #94a3b8; margin: 8px 0 0 4px; }
+
+    /* SECTIONS */
+    .section { margin-bottom: 36px; }
+    .section-title { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #94a3b8; margin: 0 0 14px; }
+
+    /* TOP VERBES */
+    .top-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(130px,1fr)); gap: 10px; }
+    .top-verb-card {
+      background: rgba(255,255,255,0.97); border: 1.5px solid #e2e8f0; border-radius: 14px;
+      padding: 14px 12px; text-align: center; text-decoration: none; color: #0f172a;
+      font-weight: 700; font-size: .95rem;
+      box-shadow: 0 2px 8px rgba(15,23,42,0.05);
+      transition: all .15s;
+    }
+    .top-verb-card:hover { background: #007bff; color: #fff; border-color: transparent; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,123,255,0.25); }
+    .top-verb-card .verb-group-tag { display: block; font-size: .68rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+    .top-verb-card:hover .verb-group-tag { color: rgba(255,255,255,0.7); }
+
+    /* GROUPES */
+    .groupes-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+    @media(max-width:640px) { .groupes-grid { grid-template-columns: 1fr; } }
+    .groupe-card {
+      background: rgba(255,255,255,0.97); border-radius: 16px; padding: 20px;
+      border: 1.5px solid #e2e8f0; box-shadow: 0 2px 12px rgba(15,23,42,0.06);
+    }
+    .groupe-card h3 { font-size: 1rem; font-weight: 800; margin: 0 0 4px; color: #0f172a; }
+    .groupe-card .groupe-sub { font-size: .78rem; color: #94a3b8; margin: 0 0 14px; font-weight: 600; }
+    .groupe-card .groupe-count { font-size: 1.8rem; font-weight: 800; color: #007bff; margin: 0 0 14px; display: block; }
+    .groupe-verb-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; max-height: 120px; overflow: hidden; transition: max-height .3s; }
+    .groupe-verb-list.expanded { max-height: 1000px; }
+    .verb-chip { padding: 4px 10px; background: #f1f5f9; border-radius: 8px; font-size: .78rem; font-weight: 600; color: #334155; text-decoration: none; transition: all .12s; }
+    .verb-chip:hover { background: #007bff; color: #fff; }
+    .groupe-more-btn { font-size: .8rem; color: #007bff; font-weight: 700; cursor: pointer; background: none; border: none; padding: 0; }
+
+    /* MODES */
+    .modes-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
+    @media(max-width:480px) { .modes-grid { grid-template-columns: 1fr; } }
+    .mode-card {
+      display: flex; align-items: center; gap: 16px;
+      background: rgba(255,255,255,0.97); border-radius: 16px; padding: 18px 20px;
+      text-decoration: none; color: #0f172a;
+      border: 1.5px solid #e2e8f0; box-shadow: 0 2px 12px rgba(15,23,42,0.06);
+      transition: all .15s;
+    }
+    .mode-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,123,255,0.14); border-color: #007bff; }
+    .mode-icon { font-size: 1.8rem; flex-shrink: 0; }
+    .mode-info strong { display: block; font-size: .95rem; font-weight: 800; margin-bottom: 3px; }
+    .mode-info span { font-size: .8rem; color: #64748b; line-height: 1.4; }
+
+    /* ALPHABET */
+    .alpha-nav { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+    .alpha-btn { padding: 6px 11px; background: rgba(255,255,255,0.8); border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: .82rem; font-weight: 700; color: #334155; cursor: pointer; transition: all .12s; text-decoration: none; }
+    .alpha-btn:hover, .alpha-btn.active { background: #007bff; color: #fff; border-color: transparent; }
+    .alpha-section { margin-bottom: 14px; }
+    .alpha-letter { font-size: .78rem; font-weight: 700; text-transform: uppercase; color: #94a3b8; margin: 0 0 8px; }
+    .alpha-verbs { display: flex; flex-wrap: wrap; gap: 7px; }
+  </style>
+</head>
+<body>
+
+<nav class="topbar">
+  <a class="topbar-brand" href="/">
+    <img src="/static/img/logo.png" alt="Hirondelle">
+    Hirondelle Conjugaison
+  </a>
+  <div class="topbar-links">
+    <a href="/">Accueil</a>
+    <a href="/cible">Quiz ciblé</a>
+    <a href="/quiz?mode=entrainement" class="cta">S'entraîner →</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>Conjugaison française — <span>Guide complet</span></h1>
+    <p>Recherche un verbe, explore par groupe grammatical ou par mode.<br>Quiz interactif intégré sur chaque page. Le tout pour décrocher le bac.</p>
+    <div class="hero-stats">
+      <div class="stat-badge"><strong>{{ total }}</strong><span>Verbes disponibles</span></div>
+      <div class="stat-badge"><strong>9 000+</strong><span>Pages de conjugaison</span></div>
+      <div class="stat-badge"><strong>4</strong><span>Modes grammaticaux</span></div>
+      <div class="stat-badge"><strong>100%</strong><span>Gratuit</span></div>
+    </div>
+  </div>
+
+  <!-- RECHERCHE -->
+  <div class="section">
+    <p class="section-title">🔍 Recherche instantanée</p>
+    <div class="search-block">
+      <div class="search-wrap">
+        <input type="text" id="verb-search" list="verbes-list"
+               placeholder="Tape un verbe… faire, prendre, être…"
+               autocomplete="off" autocorrect="off" spellcheck="false">
+        <span class="search-icon">🔍</span>
+        <datalist id="verbes-list">
+          {% for v in tous_verbes %}<option value="{{ v }}">{% endfor %}
+        </datalist>
+      </div>
+      <p class="search-hint">Appuie sur Entrée pour accéder à la conjugaison complète du verbe.</p>
+    </div>
+  </div>
+
+  <!-- TOP VERBES BAC -->
+  <div class="section">
+    <p class="section-title">⭐ Les incontournables du bac</p>
+    <div class="top-grid">
+      {% for v in top_verbes %}
+      <a href="/conjugaison/{{ v }}" class="top-verb-card">
+        <span class="verb-group-tag">{% if v.endswith('er') %}1er gr.{% elif v.endswith('ir') %}2e / 3e gr.{% else %}3e gr.{% endif %}</span>
+        {{ v }}
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- PAR GROUPE GRAMMATICAL -->
+  <div class="section">
+    <p class="section-title">📚 Par groupe grammatical</p>
+    <div class="groupes-grid">
+      <div class="groupe-card">
+        <h3>1er groupe</h3>
+        <p class="groupe-sub">Verbes en -er</p>
+        <strong class="groupe-count">{{ g1|length }}</strong>
+        <div class="groupe-verb-list" id="g1-list">
+          {% for v in g1 %}<a href="/conjugaison/{{ v }}" class="verb-chip">{{ v }}</a>{% endfor %}
+        </div>
+        <button class="groupe-more-btn" onclick="toggleGroupe('g1-list', this)">Voir tous →</button>
+      </div>
+      <div class="groupe-card">
+        <h3>2e groupe</h3>
+        <p class="groupe-sub">Verbes en -ir / -issant</p>
+        <strong class="groupe-count">{{ g2|length }}</strong>
+        <div class="groupe-verb-list expanded" id="g2-list">
+          {% for v in g2 %}<a href="/conjugaison/{{ v }}" class="verb-chip">{{ v }}</a>{% endfor %}
+        </div>
+      </div>
+      <div class="groupe-card">
+        <h3>3e groupe</h3>
+        <p class="groupe-sub">Verbes irréguliers</p>
+        <strong class="groupe-count">{{ g3|length }}</strong>
+        <div class="groupe-verb-list" id="g3-list">
+          {% for v in g3 %}<a href="/conjugaison/{{ v }}" class="verb-chip">{{ v }}</a>{% endfor %}
+        </div>
+        <button class="groupe-more-btn" onclick="toggleGroupe('g3-list', this)">Voir tous →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAR MODE -->
+  <div class="section">
+    <p class="section-title">🎯 Par mode grammatical</p>
+    <div class="modes-grid">
+      <a href="/conjugaison/faire/indicatif/présent" class="mode-card">
+        <span class="mode-icon">📊</span>
+        <div class="mode-info">
+          <strong>Indicatif</strong>
+          <span>Présent, imparfait, passé simple, passé composé, futur, plus-que-parfait…</span>
+        </div>
+      </a>
+      <a href="/conjugaison/faire/subjonctif/présent" class="mode-card">
+        <span class="mode-icon">🌀</span>
+        <div class="mode-info">
+          <strong>Subjonctif</strong>
+          <span>Présent, passé, imparfait, plus-que-parfait — le mode le plus piégeux du bac</span>
+        </div>
+      </a>
+      <a href="/conjugaison/faire/conditionnel/présent" class="mode-card">
+        <span class="mode-icon">💭</span>
+        <div class="mode-info">
+          <strong>Conditionnel</strong>
+          <span>Présent, passé 1re et 2e formes — hypothèses et politesse</span>
+        </div>
+      </a>
+      <a href="/conjugaison/faire/impératif/présent" class="mode-card">
+        <span class="mode-icon">📢</span>
+        <div class="mode-info">
+          <strong>Impératif</strong>
+          <span>Présent et passé — 3 personnes seulement, des pièges à connaître</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- INDEX ALPHABÉTIQUE -->
+  <div class="section">
+    <p class="section-title">🔤 Index alphabétique complet</p>
+    <div class="alpha-nav" id="alpha-nav">
+      {% set lettres = tous_verbes | map(attribute=0) | list | unique | sort %}
+      {% for l in lettres %}
+      <a class="alpha-btn" href="#alpha-{{ l }}">{{ l | upper }}</a>
+      {% endfor %}
+    </div>
+    {% set ns = namespace(lettre_courante='') %}
+    {% for v in tous_verbes %}
+      {% set l = v[0] %}
+      {% if l != ns.lettre_courante %}
+        {% if ns.lettre_courante != '' %}</div></div>{% endif %}
+        {% set ns.lettre_courante = l %}
+        <div class="alpha-section" id="alpha-{{ l }}">
+        <p class="alpha-letter">{{ l | upper }}</p>
+        <div class="alpha-verbs">
+      {% endif %}
+      <a href="/conjugaison/{{ v }}" class="verb-chip">{{ v }}</a>
+    {% endfor %}
+    {% if ns.lettre_courante != '' %}</div></div>{% endif %}
+  </div>
+
+</div>
+
+<script>
+/* Recherche → redirection */
+document.getElementById('verb-search').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    const val = this.value.trim().toLowerCase();
+    if (val) window.location.href = '/conjugaison/' + encodeURIComponent(val);
+  }
+});
+/* Aussi sur changement (sélection dans datalist) */
+document.getElementById('verb-search').addEventListener('change', function() {
+  const val = this.value.trim().toLowerCase();
+  if (val) window.location.href = '/conjugaison/' + encodeURIComponent(val);
+});
+
+/* Expand groupe */
+function toggleGroupe(id, btn) {
+  const el = document.getElementById(id);
+  el.classList.toggle('expanded');
+  btn.textContent = el.classList.contains('expanded') ? 'Réduire ↑' : 'Voir tous →';
+}
+</script>
+</body>
+</html>

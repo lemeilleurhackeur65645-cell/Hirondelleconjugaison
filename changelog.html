@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Journal de modifications</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<button id="settings-gear" class="settings-gear" aria-expanded="false" aria-controls="settings-popup" aria-label="Paramètres">
+  <svg viewBox="0 0 24 24" width="36" height="36" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" role="img">
+    <path
+      d="M12 2.5
+         L13.2 2.5
+         L13.7 5
+         A7 7 0 0 1 16 6
+         L18 4.5
+         L19.5 6
+         L18 8
+         A7 7 0 0 1 19 10.3
+         L21.5 10.8
+         L21.5 13.2
+         L19 13.7
+         A7 7 0 0 1 18 16
+         L19.5 18
+         L18 19.5
+         L16 18
+         A7 7 0 0 1 13.7 19
+         L13.2 21.5
+         L10.8 21.5
+         L10.3 19
+         A7 7 0 0 1 8 18
+         L6 19.5
+         L4.5 18
+         L6 16
+         A7 7 0 0 1 5 13.7
+         L2.5 13.2
+         L2.5 10.8
+         L5 10.3
+         A7 7 0 0 1 6 8
+         L4.5 6
+         L6 4.5
+         L8 6
+         A7 7 0 0 1 10.3 5
+         L10.8 2.5
+         Z"
+      fill="none"
+      stroke="black"
+      stroke-width="1.5"
+      stroke-linejoin="round"
+      stroke-linecap="round"
+    />
+    <circle
+      cx="12"
+      cy="12"
+      r="3"
+      fill="none"
+      stroke="black"
+      stroke-width="1.5"
+    />
+  </svg>
+</button>
+
+<!-- POPUP (UN SEUL exemplaire, placé dans le body) -->
+<div id="settings-popup" class="settings-popup" role="dialog" aria-hidden="true" aria-labelledby="settings-title">
+  <div class="settings-popup-inner">
+    <h2 id="settings-title">Paramètres</h2>
+
+    <!-- Interface switch -->
+    <div class="setting-block">
+      <label class="setting-label">Interface</label>
+
+      <div class="switch-container interface-switch" role="group" aria-label="Interface mobile ou PC">
+        <span class="switch-label">Mobile</span>
+
+        <label class="switch" aria-hidden="true">
+          <input type="checkbox" id="interface-toggle" aria-checked="true" />
+          <span class="slider" aria-hidden="true"></span>
+        </label>
+
+        <span class="switch-label">PC</span>
+      </div>
+
+      <p class="muted small-note">Active Mobile pour adapter l'interface à ton téléphone.</p>
+    </div>
+
+    <div class="setting-block">
+      <p class="muted">Cliquez de nouveau sur l'engrenage pour fermer.</p>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+        <h1>Journal de modifications</h1>
+
+        <p class="intro">
+            Ce journal répertorie les évolutions du projet. 
+        </p>
+
+        <div class="changelog-section">
+
+            <h3>15 mars 2026</h3>
+            <div class="changelog-entry">Création du système de proposition des questions (V1)</div>
+
+            <h3>16 mars 2026</h3>
+            <div class="changelog-entry">Implantation de la base de données des verbes (V1.1)</div>
+            <div class="changelog-entry">Correction de bugs concernant les temps ayant moins de 6 pronoms personnels possibles (Impératif…) (V1.2)</div>
+
+            <h3>17 mars 2026</h3>
+            <div class="changelog-entry">Création d'un bilan personnalisé (V2)</div>
+
+            <h3>18 mars 2026</h3>
+            <div class="changelog-entry">Création de la page web (V3)</div>
+            <div class="changelog-entry">Création de la partie visuelle du site (V3.1)</div>
+            <div class="changelog-entry">Adaptation du code au site (V3.2)</div>
+
+            <h3>19 mars 2026</h3>
+            <div class="changelog-entry">Création du journal de modifications (V3.3)</div>
+
+            <h3>20 mars 2026</h3>
+            <div class="changelog-entry">Amélioration du visuel global (V3.4)</div>
+            <div class="changelog-entry">Adaptation du site pour utilisateurs mobiles (V3.5)</div>
+            <div class="changelog-entry">Première version du mode évaluation avec implantation d'interrupteur dans le menu (V3.6.1)</div>
+
+            <h3>21 mars 2026</h3>
+            <div class="changelog-entry">Bugs concernant le mode évaluation résolus (V3.6.2)</div>
+            <div class="changelog-entry">Implantation d'une barre de progression dans le mode évaluation (V3.6.3)</div>
+            <div class="changelog-entry">Mise en forme visuelle du mode évalution (V3.6.4)</div>
+            
+            <h3>22 mars 2026</h3>
+            <div class="changelog-entry">Problèmes de serveur entre deux verbes résolus (V3.7)</div>
+            
+            <h3>27 mars 2026</h3>
+            <div class="changelog-entry">Changement de la proposition des pronoms lors des questions (V3.8)</div>
+
+            <h3>10 juin 2026</h3>
+            <div class="changelog-entry">Sortie officelle de la 4e version du site.</div>
+            <div class="changelog-entry">Nouvelle url</div>
+            <div class="changelog-entry">Design d'un logo</div>
+            <div class="changelog-entry">Visuel totalement retravaillé</div>
+            <div class="changelog-entry">Nouvelle direction artistique (Figma realistic blue) pour avoir un site harmonieux</div>
+            <div class="changelog-entry">Possibilité de réviser de manière ciblée (Révision ciblée)</div>
+            <div class="changelog-entry">Implantation d'un bouton en bas à droite de l'écran permettant l'accès au paramètres</div>
+            <div class="changelog-entry">Création d'une version mobile du site, pour les utilisateurs sur smartphone</div>
+            <div class="changelog-entry">Ajout de la voix passive dans les questions</div>
+            <div class="changelog-entry">Ajout de 10 verbes supplémentaires possibles</div>
+            <div class="changelog-entry">Optimisation des performances du site</div>
+
+            <h3>11 juin 2026</h3>
+            <div class="changelog-entry">Ajout de 504 verbes à la base de données du site.</div>
+
+            <h3>12 juin 2026</h3>
+            <div class="changelog-entry">Ajout de 9121 pages au site pour chaque temps de chaque mode de chaque verbe.</div>
+            
+            <h3>14 juin 2026</h3>
+            <div class="changelog-entry">Création d'une page de recherche pour les conjugaison.</div>
+            
+            <h3>16 juin 2026</h3>
+            <div class="changelog-entry">Possibilité de partager son résultat dans le bilan.</div>
+        </div>
+
+        <a href="/" class="back-button">← Retour à l’accueil</a>
+    </div>
+<script src="/static/js/settings.js" defer></script>
+
+</body>
+</html>

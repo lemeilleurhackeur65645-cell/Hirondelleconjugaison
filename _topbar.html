@@ -1,0 +1,45 @@
+{# ── TOPBAR UNIVERSELLE — {% include '_topbar.html' %} ── #}
+<nav class="topbar" role="navigation" aria-label="Navigation principale">
+  <a class="topbar-brand" href="/">
+    <img src="/static/img/logo.png" alt="Hirondelle Conjugaison" width="28" height="28">
+    <span>Hirondelle Conjugaison</span>
+  </a>
+  <div class="topbar-nav">
+    <div class="topbar-dropdown" id="quiz-dd-wrap">
+      <button class="topbar-nav-btn" id="quiz-dd-btn"
+              aria-haspopup="true" aria-expanded="false" aria-controls="quiz-dd-menu">
+        Quiz
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      <div class="topbar-dd-menu" id="quiz-dd-menu" role="menu">
+        <a class="topbar-dd-item" href="/quiz?mode=entrainement" role="menuitem">
+          <span class="topbar-dd-icon">🎯</span>
+          <span class="topbar-dd-text">
+            <strong>Entraînement</strong>
+            <span>Questions infinies · Pas de timer</span>
+          </span>
+        </a>
+        <a class="topbar-dd-item" href="/quiz?mode=evaluation" role="menuitem">
+          <span class="topbar-dd-icon">⏱️</span>
+          <span class="topbar-dd-text">
+            <strong>Évaluation</strong>
+            <span>10 questions · 5 minutes chrono</span>
+          </span>
+        </a>
+        <div class="topbar-dd-sep" role="separator"></div>
+        <a class="topbar-dd-item" href="/cible" role="menuitem">
+          <span class="topbar-dd-icon">🔬</span>
+          <span class="topbar-dd-text">
+            <strong>Quiz ciblé</strong>
+            <span>Choisis le verbe · le mode · le temps</span>
+          </span>
+        </a>
+      </div>
+    </div>
+    <a class="topbar-nav-link" href="/conjugaisons">Conjugaisons</a>
+    <a class="topbar-nav-cta" href="/quiz?mode=entrainement">S'entraîner →</a>
+  </div>
+</nav>
+<script src="/static/js/topbar.js" defer></script>
