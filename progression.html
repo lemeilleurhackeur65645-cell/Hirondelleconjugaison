@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ma progression | Hirondelle Conjugaison</title>
+    <link rel="icon" type="image/png" href="/static/img/logo.png">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .prog-wrap { max-width: 600px; margin: 60px auto; padding: 0 20px; }
+        .prog-card {
+            background: rgba(255,255,255,0.97); border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(15,23,42,0.09); padding: 28px; text-align:center;
+        }
+        .prog-stat { font-size: 2.4rem; font-weight: 800; color:#007bff; }
+        .prog-label { font-size: 0.82rem; color:#64748b; }
+    </style>
+</head>
+<body>
+{% include '_topbar.html' %}
+<div class="prog-wrap">
+    <div class="prog-card">
+        <h1 style="font-size:1.3rem;margin:0 0 20px;">Ta progression</h1>
+        <p class="prog-stat">{{ total }}</p>
+        <p class="prog-label">questions répondues au total</p>
+        <p class="prog-stat" style="margin-top:18px;">{{ taux }}%</p>
+        <p class="prog-label">de réussite cumulée</p>
+        {% if total == 0 %}
+        <p style="margin-top:20px;font-size:0.88rem;color:#94a3b8;">
+            Fais ton premier quiz pour commencer à suivre ta progression !
+        </p>
+        {% endif %}
+    </div>
+</div>
+</body>
+</html>
