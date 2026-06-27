@@ -131,6 +131,7 @@ BADGES = {
     "mille_questions":{"label": "Marathonien",        "icone": "🎖️", "desc": "1000 questions répondues"},
     "sans_faute":     {"label": "Sans faute",         "icone": "✨", "desc": "10 bonnes réponses d'affilée"},
     "polyglotte":     {"label": "Polyglotte verbal",  "icone": "📚", "desc": "20 verbes différents travaillés"},
+    "gazou":   {"label": "Gazou",      "icone": "👶", "desc": "Première bonne réponse"}?
 }
 
 
@@ -180,6 +181,7 @@ def verifier_nouveaux_badges(user, total_questions, bonnes_consecutives, nb_verb
         ("mille_questions", total_questions >= 1000),
         ("sans_faute", bonnes_consecutives >= 10),
         ("polyglotte", nb_verbes_distincts >= 20),
+        ("polyglotte", bonnes_consécutives >= 1),
     ]
     for code, condition in conditions:
         if condition and user.ajouter_badge(code):
