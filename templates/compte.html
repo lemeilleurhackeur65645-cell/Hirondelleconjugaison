@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mon compte | Hirondelle Conjugaison</title>
+    <link rel="icon" type="image/png" href="/static/img/logo.png">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            margin: 0; padding-top: 56px; min-height: 100vh; font-family: 'Inter', Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 50%, #f5f0ff 100%); background-attachment: fixed;
+        }
+        .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 60px; text-align: left; }
+
+        /* ── Bandeau profil ── */
+        .profile-hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #0056d6 130%);
+            border-radius: 24px; padding: 32px 36px; margin-bottom: 22px;
+            display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+            box-shadow: 0 16px 40px rgba(15,23,42,0.25); color: #fff; position: relative; overflow: hidden;
+        }
+        .profile-hero::before {
+            content: ""; position: absolute; top: -60px; right: -60px; width: 220px; height: 220px;
+            background: radial-gradient(circle, rgba(0,123,255,0.35), transparent 70%); border-radius: 50%;
+        }
+        .profile-avatar {
+            width: 72px; height: 72px; border-radius: 20px; flex-shrink: 0;
+            background: linear-gradient(135deg, #007bff, #60a5fa);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.9rem; font-weight: 800; color: #fff; box-shadow: 0 8px 24px rgba(0,123,255,0.4);
+            position: relative; z-index: 1;
+        }
+        .profile-info { position: relative; z-index: 1; flex: 1; min-width: 200px; }
+        .profile-info h1 { font-size: 1.5rem; font-weight: 800; margin: 0 0 4px; color: #fff; }
+        .profile-info p { font-size: 0.85rem; margin: 0; color: rgba(255,255,255,0.65); }
+        .profile-badge {
+            position: relative; z-index: 1;
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18);
+            padding: 7px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; color: #fff;
+        }
+
+        /* ── Grille de stats rapides ── */
+        .quick-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 22px; }
+        @media (max-width: 760px) { .quick-stats { grid-template-columns: repeat(2, 1fr); } }
+        .quick-stat {
+            background: rgba(255,255,255,0.97); border-radius: 18px; padding: 20px;
+            box-shadow: 0 4px 20px rgba(15,23,42,0.07); text-align: center;
+            transition: transform 0.15s;
+        }
+        .quick-stat:hover { transform: translateY(-2px); }
+        .quick-stat .qs-icon { font-size: 1.5rem; margin-bottom: 6px; }
+        .quick-stat strong { display: block; font-size: 1.7rem; font-weight: 800; color: #007bff; }
+        .quick-stat span { font-size: 0.76rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em; }
+
+        /* ── Cartes d'infos ── */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        @media (max-width: 700px) { .info-grid { grid-template-columns: 1fr; } }
+        .info-card {
+            background: rgba(255,255,255,0.97); border-radius: 18px; padding: 22px 24px;
+            box-shadow: 0 4px 20px rgba(15,23,42,0.07);
+        }
+        .info-card h2 {
+            font-size: 0.78rem; font-weight: 700; color: #94a3b8; text-transform: uppercase;
+            letter-spacing: 0.05em; margin: 0 0 16px; display: flex; align-items: center; gap: 6px;
+        }
+        .info-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.88rem; }
+        .info-row:last-child { border-bottom: none; }
+        .info-row span:first-child { color: #64748b; }
+        .info-row span:last-child { font-weight: 600; color: #0f172a; }
+
+        .methode-pill {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 3px 11px; border-radius: 20px; font-size: 0.76rem; font-weight: 700;
+        }
+        .methode-email  { background: #eff6ff; color: #1d4ed8; }
+        .methode-google { background: #fef9e7; color: #b45309; }
+        .methode-github { background: #f3f4f6; color: #1f2937; }
+
+        /* ── Actions ── */
+        .actions-card {
+            background: rgba(255,255,255,0.97); border-radius: 18px; padding: 22px 24px;
+            box-shadow: 0 4px 20px rgba(15,23,42,0.07);
+        }
+        .actions-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+        .action-btn {
+            flex: 1; min-width: 180px; display: flex; align-items: center; gap: 10px;
+            padding: 13px 16px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 0.86rem;
+            transition: all 0.15s;
+        }
+        .action-primary { background: linear-gradient(135deg, #007bff, #0056d6); color: #fff; box-shadow: 0 4px 14px rgba(0,123,255,0.28); }
+        .action-primary:hover { opacity: 0.92; transform: translateY(-1px); }
+        .action-secondary { background: #f1f5f9; color: #334155; }
+        .action-secondary:hover { background: #e2e8f0; }
+        .action-icon { font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+{% include '_topbar.html' %}
+
+<div class="wrap">
+
+    <div class="profile-hero">
+        <div class="profile-avatar">{{ (current_user.nom or current_user.email)[0] | upper }}</div>
+        <div class="profile-info">
+            <h1>{{ current_user.nom or current_user.email.split('@')[0] }}</h1>
+            <p>{{ current_user.email }}</p>
+        </div>
+        <div class="profile-badge">📅 Membre depuis le {{ current_user.date_creation.strftime('%d/%m/%Y') }}</div>
+    </div>
+
+    <div class="quick-stats">
+        <div class="quick-stat">
+            <div class="qs-icon">⭐</div>
+            <strong>{{ current_user.niveau }}</strong>
+            <span>Niveau</span>
+        </div>
+        <div class="quick-stat">
+            <div class="qs-icon">🔥</div>
+            <strong>{{ current_user.streak_jours }}</strong>
+            <span>Jours de suite</span>
+        </div>
+        <div class="quick-stat">
+            <div class="qs-icon">🏅</div>
+            <strong>{{ current_user.liste_badges() | length }}</strong>
+            <span>Badges</span>
+        </div>
+        <div class="quick-stat">
+            <div class="qs-icon">📝</div>
+            <strong>{{ stats.total if stats else 0 }}</strong>
+            <span>Questions faites</span>
+        </div>
+        <div class="quick-stat">
+            <div class="qs-icon">✅</div>
+            <strong>{{ stats.taux if stats else 0 }}%</strong>
+            <span>Taux de réussite</span>
+        </div>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-card">
+            <h2>👤 Informations du compte</h2>
+            <div class="info-row"><span>Email</span><span>{{ current_user.email }}</span></div>
+            <div class="info-row"><span>Prénom</span><span>{{ current_user.nom or "Non renseigné" }}</span></div>
+            <div class="info-row">
+                <span>Connexion via</span>
+                <span>
+                    <span class="methode-pill methode-{{ current_user.methode_connexion }}">
+                        {% if current_user.methode_connexion == 'google' %}🔵 Google
+                        {% elif current_user.methode_connexion == 'github' %}⚫ Github
+                        {% else %}✉️ Email{% endif %}
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h2>📊 Aperçu rapide</h2>
+            <div class="info-row"><span>Bonnes réponses</span><span>{{ stats.correctes if stats else 0 }}</span></div>
+            <div class="info-row"><span>Membre depuis</span><span>{{ current_user.date_creation.strftime('%d/%m/%Y') }}</span></div>
+            <div class="info-row"><span>Statut</span><span>🟢 Actif</span></div>
+        </div>
+    </div>
+
+    <div class="actions-card">
+        <h2 style="font-size:.78rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin:0 0 14px;">⚡ Actions rapides</h2>
+        <div class="actions-grid">
+            <a href="/progression" class="action-btn action-primary"><span class="action-icon">📊</span> Voir ma progression</a>
+            <a href="/badges" class="action-btn action-secondary"><span class="action-icon">🏅</span> Mes badges</a>
+            <a href="/quiz?mode=entrainement" class="action-btn action-secondary"><span class="action-icon">🎯</span> Lancer un quiz</a>
+            <a href="/deconnexion" class="action-btn action-secondary"><span class="action-icon">🚪</span> Déconnexion</a>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

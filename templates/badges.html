@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mes badges | Hirondelle Conjugaison</title>
+    <link rel="icon" type="image/png" href="/static/img/logo.png">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            margin: 0; padding-top: 56px; min-height: 100vh; font-family: 'Inter', Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 50%, #f5f0ff 100%); background-attachment: fixed;
+        }
+        .wrap { max-width: 760px; margin: 0 auto; padding: 32px 20px 60px; text-align: left; }
+        .badges-header { text-align: center; margin-bottom: 28px; }
+        .badges-header h1 { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0 0 6px; }
+        .badges-header p { font-size: 0.88rem; color: #64748b; margin: 0; }
+        .badges-progress { font-size: 1.1rem; font-weight: 800; color: #007bff; margin-top: 8px; }
+
+        .badges-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+        .badge-card {
+            background: rgba(255,255,255,0.97); border-radius: 18px; padding: 22px 16px;
+            text-align: center; box-shadow: 0 4px 20px rgba(15,23,42,0.07);
+            transition: transform 0.15s;
+        }
+        .badge-card.obtenu:hover { transform: translateY(-3px); }
+        .badge-card.locked { opacity: 0.5; filter: grayscale(0.6); }
+        .badge-icon { font-size: 2.4rem; margin-bottom: 10px; }
+        .badge-card.locked .badge-icon { filter: grayscale(1); }
+        .badge-label { font-size: 0.85rem; font-weight: 700; color: #0f172a; margin: 0 0 4px; }
+        .badge-desc { font-size: 0.72rem; color: #94a3b8; margin: 0; line-height: 1.4; }
+        .badge-tag {
+            display: inline-block; margin-top: 8px; font-size: 0.68rem; font-weight: 700;
+            padding: 2px 9px; border-radius: 20px;
+        }
+        .badge-card.obtenu .badge-tag { background: #eff6ff; color: #1d4ed8; }
+        .badge-card.locked .badge-tag { background: #f1f5f9; color: #94a3b8; }
+    </style>
+</head>
+<body>
+{% include '_topbar.html' %}
+<div class="wrap">
+    <div class="badges-header">
+        <h1>🏅 Mes badges</h1>
+        <p>Débloque-les tous en t'entraînant régulièrement.</p>
+        <p class="badges-progress">{{ nb_obtenus }} / {{ nb_total }} badges obtenus</p>
+    </div>
+
+    <div class="badges-grid">
+        {% for b in liste %}
+        <div class="badge-card {{ 'obtenu' if b.obtenu else 'locked' }}">
+            <div class="badge-icon">{{ b.icone }}</div>
+            <p class="badge-label">{{ b.label }}</p>
+            <p class="badge-desc">{{ b.desc }}</p>
+            <span class="badge-tag">{{ "✓ Obtenu" if b.obtenu else "🔒 Verrouillé" }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+</body>
+</html>
