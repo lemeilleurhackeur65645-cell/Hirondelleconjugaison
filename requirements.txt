@@ -1,0 +1,14 @@
+flask
+gunicorn
+Jinja2
+Werkzeug
+itsdangerous
+click
+flask-sqlalchemy
+psycopg2-binary
+flask-login
+flask-bcrypt
+authlib
+requests
+flask-limiter
+flask-wtf
