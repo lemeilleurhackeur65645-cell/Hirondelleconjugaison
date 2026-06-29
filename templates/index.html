@@ -378,23 +378,7 @@ function toggleModesInfo(btn) {
     btn.setAttribute('aria-expanded', open);
 }
 
-(function() {
-    const CODE = '0102', STORAGE = 'annonce_v4_dismissed';
-    const overlay = document.getElementById('annonce-overlay');
-    if (localStorage.getItem(STORAGE) === '1') { overlay.style.display = 'none'; return; }
-    let typed = '';
-    document.addEventListener('keydown', function(e) {
-        if (e.key >= '0' && e.key <= '9') {
-            typed += e.key;
-            if (typed.length > CODE.length) typed = typed.slice(-CODE.length);
-            if (typed === CODE) {
-                overlay.classList.add('annonce-fadeout');
-                setTimeout(function() { overlay.style.display = 'none'; }, 400);
-                localStorage.setItem(STORAGE, '1');
-            }
-        }
-    });
-})();
+
 </script>
 </body>
 </html>
