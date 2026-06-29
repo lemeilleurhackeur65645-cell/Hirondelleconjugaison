@@ -313,7 +313,7 @@ def progression():
 # Yandex, Seznam, Naver) vérifient ce fichier pour confirmer qu'on contrôle
 # bien le domaine avant d'accepter nos notifications d'URLs modifiées.
 # Le nom de fichier ET le contenu doivent être identiques à la clé générée.
-INDEXNOW_KEY = "0fb3c5ce292545e58a3a3303442a303a"
+INDEXNOW_KEY = "a9befc6de5524f5abaf9f939ccf63d78"
 INDEXNOW_ADMIN_TOKEN = os.environ.get("INDEXNOW_ADMIN_TOKEN", "")
 
 
