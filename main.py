@@ -338,7 +338,7 @@ def _toutes_les_urls_conjugaison():
 
 
 @app.route("/admin/indexnow-submit")
-@limiter.limit("2 per hour")
+@limiter.limit("20 per hour")
 def indexnow_submit():
     """
     Notifie IndexNow (Bing + moteurs partenaires) de toutes les URLs du site
