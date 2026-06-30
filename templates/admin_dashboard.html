@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard admin | Hirondelle Conjugaison</title>
+    <link rel="icon" type="image/png" href="/static/img/logo.png">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; padding-top: 56px; min-height: 100vh; font-family: 'Inter', Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 50%, #f5f0ff 100%); background-attachment: fixed;
+        }
+        .wrap { max-width: 1180px; margin: 0 auto; padding: 28px 20px 70px; text-align: left; }
+
+        .dash-header { margin-bottom: 22px; }
+        .dash-header h1 { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0 0 4px; }
+        .dash-header p { font-size: 0.85rem; color: #64748b; margin: 0; }
+
+        /* ── Cartes KPI ── */
+        .kpi-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 24px; }
+        @media (max-width: 980px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 600px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+        .kpi-card {
+            background: rgba(255,255,255,0.97); border-radius: 16px; padding: 16px 14px;
+            box-shadow: 0 4px 18px rgba(15,23,42,0.07); text-align: center;
+        }
+        .kpi-card strong { display: block; font-size: 1.5rem; font-weight: 800; color: #007bff; line-height: 1.1; }
+        .kpi-card span { font-size: 0.7rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em; }
+        .kpi-card.warn strong { color: #d97706; }
+        .kpi-card.danger strong { color: #dc2626; }
+
+        /* ── Sections ── */
+        .section-title {
+            font-size: 0.78rem; font-weight: 700; color: #94a3b8; text-transform: uppercase;
+            letter-spacing: 0.05em; margin: 28px 0 12px;
+        }
+        .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 860px) { .charts-grid { grid-template-columns: 1fr; } }
+        .chart-card {
+            background: rgba(255,255,255,0.97); border-radius: 18px; padding: 20px 22px;
+            box-shadow: 0 4px 20px rgba(15,23,42,0.07);
+        }
+        .chart-card h2 { font-size: 0.9rem; font-weight: 700; color: #0f172a; margin: 0 0 14px; }
+        .chart-card canvas { max-height: 240px; }
+        .chart-empty { font-size: 0.82rem; color: #94a3b8; text-align: center; padding: 40px 0; }
+
+        /* ── Listes top verbes ── */
+        .top-list { display: flex; flex-direction: column; gap: 8px; }
+        .top-row { display: flex; align-items: center; gap: 10px; font-size: 0.84rem; }
+        .top-rank { width: 20px; color: #cbd5e1; font-weight: 700; font-size: 0.78rem; flex-shrink: 0; }
+        .top-name { width: 90px; font-weight: 600; color: #0f172a; flex-shrink: 0; }
+        .top-bar-track { flex: 1; height: 8px; background: #f1f5f9; border-radius: 6px; overflow: hidden; }
+        .top-bar-fill { height: 100%; border-radius: 6px; }
+        .top-bar-fill.joue { background: linear-gradient(90deg, #007bff, #60a5fa); }
+        .top-bar-fill.rate { background: linear-gradient(90deg, #dc2626, #f87171); }
+        .top-value { width: 36px; text-align: right; color: #64748b; font-size: 0.78rem; flex-shrink: 0; }
+
+        /* ── Table utilisateurs ── */
+        .users-table-wrap {
+            background: rgba(255,255,255,0.97); border-radius: 18px; padding: 8px;
+            box-shadow: 0 4px 20px rgba(15,23,42,0.07); overflow-x: auto;
+        }
+        table.users-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 760px; }
+        table.users-table th {
+            text-align: left; padding: 10px 14px; color: #94a3b8; font-weight: 700;
+            text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.03em;
+            border-bottom: 1.5px solid #f1f5f9;
+        }
+        table.users-table td { padding: 10px 14px; border-bottom: 1px solid #f8fafc; color: #0f172a; }
+        table.users-table tr:last-child td { border-bottom: none; }
+        table.users-table tr:hover td { background: #f8fafc; }
+        .badge-methode {
+            display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 700;
+        }
+        .badge-methode.email { background: #eff6ff; color: #1d4ed8; }
+        .badge-methode.google { background: #fef9e7; color: #b45309; }
+        .badge-methode.github { background: #f3f4f6; color: #1f2937; }
+        .dot-actif { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+        .dot-actif.vert { background: #22c55e; }
+        .dot-actif.orange { background: #f59e0b; }
+        .dot-actif.rouge { background: #ef4444; }
+    </style>
+</head>
+<body>
+{% include '_topbar.html' %}
+
+<div class="wrap">
+
+    <div class="dash-header">
+        <h1>📊 Dashboard admin</h1>
+        <p>Vue interne sur l'usage réel du site — données arrêtées au {{ now.strftime('%d/%m/%Y à %H:%M') }} UTC.</p>
+    </div>
+
+    <!-- ── KPI principaux ── -->
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <strong>{{ nb_users_total }}</strong>
+            <span>Comptes créés</span>
+        </div>
+        <div class="kpi-card">
+            <strong>{{ nb_verifies }}</strong>
+            <span>Emails vérifiés</span>
+        </div>
+        <div class="kpi-card {{ 'warn' if taux_retention_7j < 30 else '' }}">
+            <strong>{{ taux_retention_7j }}%</strong>
+            <span>Actifs 7 jours</span>
+        </div>
+        <div class="kpi-card {{ 'warn' if taux_retention_30j < 50 else '' }}">
+            <strong>{{ taux_retention_30j }}%</strong>
+            <span>Actifs 30 jours</span>
+        </div>
+        <div class="kpi-card {{ 'danger' if jamais_revenu > nb_users_total / 2 else '' }}">
+            <strong>{{ jamais_revenu }}</strong>
+            <span>Jamais joué</span>
+        </div>
+        <div class="kpi-card">
+            <strong>{{ niveau_moyen }}</strong>
+            <span>Niveau moyen</span>
+        </div>
+    </div>
+
+    <!-- ── Graphiques ── -->
+    <p class="section-title">Croissance &amp; rétention</p>
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h2>Inscriptions — 30 derniers jours</h2>
+            {% if inscriptions_30j %}
+            <canvas id="chartInscriptions"></canvas>
+            {% else %}
+            <div class="chart-empty">Pas encore assez de données pour ce graphique.</div>
+            {% endif %}
+        </div>
+        <div class="chart-card">
+            <h2>Distribution des streaks actuels</h2>
+            {% if nb_users_total > 0 %}
+            <canvas id="chartStreaks"></canvas>
+            {% else %}
+            <div class="chart-empty">Pas encore d'utilisateur inscrit.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <p class="section-title">Engagement par contenu</p>
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h2>Taux de réussite par mode grammatical</h2>
+            {% if par_mode_global %}
+            <canvas id="chartModes"></canvas>
+            {% else %}
+            <div class="chart-empty">Aucune question répondue par un utilisateur connecté pour l'instant.</div>
+            {% endif %}
+        </div>
+        <div class="chart-card">
+            <h2>Méthode de connexion</h2>
+            {% if par_methode %}
+            <canvas id="chartMethodes"></canvas>
+            {% else %}
+            <div class="chart-empty">Pas encore d'utilisateur inscrit.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="charts-grid" style="margin-top:16px;">
+        <div class="chart-card">
+            <h2>Top 10 verbes les plus joués</h2>
+            {% if verbes_plus_joues %}
+            <div class="top-list">
+                {% set max_joue = verbes_plus_joues[0][1] %}
+                {% for verbe, nb in verbes_plus_joues %}
+                <div class="top-row">
+                    <span class="top-rank">{{ loop.index }}</span>
+                    <span class="top-name">{{ verbe }}</span>
+                    <div class="top-bar-track"><div class="top-bar-fill joue" style="width:{{ (nb / max_joue * 100) | round(0) }}%;"></div></div>
+                    <span class="top-value">{{ nb }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="chart-empty">Pas encore de données de jeu.</div>
+            {% endif %}
+        </div>
+        <div class="chart-card">
+            <h2>Top 10 verbes les plus ratés</h2>
+            {% if verbes_plus_rates %}
+            <div class="top-list">
+                {% set max_rate = verbes_plus_rates[0][1] %}
+                {% for verbe, nb in verbes_plus_rates %}
+                <div class="top-row">
+                    <span class="top-rank">{{ loop.index }}</span>
+                    <span class="top-name">{{ verbe }}</span>
+                    <div class="top-bar-track"><div class="top-bar-fill rate" style="width:{{ (nb / max_rate * 100) | round(0) }}%;"></div></div>
+                    <span class="top-value">{{ nb }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="chart-empty">Aucune erreur enregistrée pour l'instant — bon signe !</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ── Table utilisateurs ── -->
+    <p class="section-title">Tous les utilisateurs ({{ nb_users_total }})</p>
+    <div class="users-table-wrap">
+        {% if users_tries %}
+        <table class="users-table">
+            <thead>
+                <tr>
+                    <th>Statut</th>
+                    <th>Email</th>
+                    <th>Connexion</th>
+                    <th>Niveau</th>
+                    <th>XP</th>
+                    <th>Streak</th>
+                    <th>Record</th>
+                    <th>Badges</th>
+                    <th>Dernière activité</th>
+                    <th>Inscrit le</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users_tries %}
+                {% set jours_inactif = ((now.date() - u.derniere_session).days if u.derniere_session else None) %}
+                <tr>
+                    <td>
+                        {% if jours_inactif is none %}
+                            <span class="dot-actif rouge"></span>Jamais
+                        {% elif jours_inactif <= 3 %}
+                            <span class="dot-actif vert"></span>Actif
+                        {% elif jours_inactif <= 14 %}
+                            <span class="dot-actif orange"></span>Tiède
+                        {% else %}
+                            <span class="dot-actif rouge"></span>Inactif
+                        {% endif %}
+                    </td>
+                    <td>{{ u.email }}{% if not u.email_verifie %} <span style="color:#dc2626;font-size:0.7rem;">(non vérifié)</span>{% endif %}</td>
+                    <td><span class="badge-methode {{ u.methode_connexion }}">{{ u.methode_connexion }}</span></td>
+                    <td>{{ u.niveau }}</td>
+                    <td>{{ u.xp_total }}</td>
+                    <td>{{ u.streak_jours }}</td>
+                    <td>{{ u.streak_record }}</td>
+                    <td>{{ u.liste_badges() | length }}</td>
+                    <td>{{ u.derniere_session.strftime('%d/%m/%Y') if u.derniere_session else "—" }}</td>
+                    <td>{{ u.date_creation.strftime('%d/%m/%Y') if u.date_creation else "—" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="chart-empty">Aucun utilisateur inscrit pour l'instant.</div>
+        {% endif %}
+    </div>
+
+</div>
+
+<script>
+const inscriptionsData = {{ inscriptions_30j | tojson }};
+const streaksData = {{ distribution_streak | tojson }};
+const modesData = {{ par_mode_global | tojson }};
+const methodesData = {{ par_methode | tojson }};
+
+if (Object.keys(inscriptionsData).length > 0) {
+    new Chart(document.getElementById('chartInscriptions'), {
+        type: 'line',
+        data: {
+            labels: Object.keys(inscriptionsData),
+            datasets: [{
+                label: 'Inscriptions',
+                data: Object.values(inscriptionsData),
+                borderColor: '#007bff',
+                backgroundColor: 'rgba(0,123,255,0.1)',
+                fill: true,
+                tension: 0.3,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+    });
+}
+
+if (Object.keys(streaksData).length > 0) {
+    new Chart(document.getElementById('chartStreaks'), {
+        type: 'bar',
+        data: {
+            labels: ['0 jour', '1-3 jours', '4-7 jours', '8+ jours'],
+            datasets: [{
+                label: 'Utilisateurs',
+                data: [streaksData['0'], streaksData['1-3'], streaksData['4-7'], streaksData['8+']],
+                backgroundColor: ['#cbd5e1', '#93c5fd', '#60a5fa', '#007bff'],
+                borderRadius: 6,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+    });
+}
+
+if (Object.keys(modesData).length > 0) {
+    const modes = Object.keys(modesData);
+    new Chart(document.getElementById('chartModes'), {
+        type: 'bar',
+        data: {
+            labels: modes,
+            datasets: [{
+                label: 'Taux de réussite (%)',
+                data: modes.map(m => modesData[m].taux),
+                backgroundColor: '#007bff',
+                borderRadius: 6,
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { x: { beginAtZero: true, max: 100 } }
+        }
+    });
+}
+
+if (Object.keys(methodesData).length > 0) {
+    const labelsMap = { email: 'Email', google: 'Google', github: 'Github' };
+    new Chart(document.getElementById('chartMethodes'), {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(methodesData).map(k => labelsMap[k] || k),
+            datasets: [{
+                data: Object.values(methodesData),
+                backgroundColor: ['#007bff', '#f59e0b', '#334155'],
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+}
+</script>
+</body>
+</html>
