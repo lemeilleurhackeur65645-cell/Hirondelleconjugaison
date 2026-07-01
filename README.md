@@ -50,23 +50,6 @@ Hirondelle Conjugaison est une application web d'entraînement à la conjugaison
 
 Le stockage est délibérément compact pour rester dans le plan gratuit PostgreSQL (1 Go) : les statistiques globales sont calculées depuis les agrégats (O(n_combinaisons_vues)) et non depuis l'historique brut (O(n_questions_jouées)).
 
----
-
-## Variables d'environnement requises
-
-```bash
-SECRET_KEY=<chaîne aléatoire, ex: python3 -c "import secrets; print(secrets.token_hex(32))">
-DATABASE_URL=<fourni automatiquement par Render PostgreSQL>
-GOOGLE_CLIENT_ID=<créer une app OAuth sur console.cloud.google.com>
-GOOGLE_CLIENT_SECRET=<même app>
-GITHUB_CLIENT_ID=<créer une OAuth App sur github.com/settings/developers>
-GITHUB_CLIENT_SECRET=<même app>
-BREVO_API_KEY=<clé API depuis app.brevo.com/settings/keys/api>
-INDEXNOW_ADMIN_TOKEN=<token arbitraire pour protéger la route /admin/indexnow-submit>
-ADMIN_EMAIL=<email du compte administrateur pour accéder à /admin/dashboard>
-# Optionnel :
-EMAIL_EXPEDITEUR=<adresse email d'un domaine vérifié dans Brevo>
-```
 
 ---
 
