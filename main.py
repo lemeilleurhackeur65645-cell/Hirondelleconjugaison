@@ -10,6 +10,7 @@ from pathlib import Path
 # CHARGEMENT DES DONNÉES
 # ============================================================
 
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 
