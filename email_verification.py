@@ -51,16 +51,17 @@ def generer_code():
 
 
 def envoyer_email(destinataire, titre, message, code=None, cta_url="", cta_label=""):
-    """
-    Envoie un email via l'API REST d'EmailJS. EmailJS relaie l'envoi via le
-    compte Gmail connecté (OAuth) sur ses propres serveurs — aucune connexion
-    SMTP n'est faite depuis Render, uniquement cette requête HTTPS.
+    # Si aucun CTA n'est fourni (cas des emails de code), on pointe vers
+    # l'accueil avec un label générique — évite le bouton vide/fantôme
+    # qui s'affichait sinon dans le template EmailJS.
+    if not cta_url or not cta_label:
+        cta_url = "https://hirondelleconjugaison.onrender.com"
+        cta_label = "Ouvrir Hirondelle Conjugaison"
 
-    Sans les 4 variables d'environnement, affiche le contenu dans les logs
-    (mode dev) plutôt que d'échouer silencieusement.
+    # Rappel des spams sur TOUS les emails contenant un code
+    if code:
+        message += " Pense à vérifier tes spams si tu ne le vois pas dans quelques minutes."
 
-    Retourne (succes: bool, erreur: str|None).
-    """
     config_manquante = not all([EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, EMAILJS_PUBLIC_KEY, EMAILJS_PRIVATE_KEY])
     if config_manquante:
         print(f"[EMAIL SIMULÉ] À: {destinataire} | Sujet: {titre}", flush=True)
@@ -93,7 +94,6 @@ def envoyer_email(destinataire, titre, message, code=None, cta_url="", cta_label
     except Exception as e:
         return False, str(e)
 
-
 # ──────────────────────────────────────────────────────────────
 # VÉRIFICATION D'INSCRIPTION
 # ──────────────────────────────────────────────────────────────
@@ -110,7 +110,7 @@ def creer_code_inscription(db, email, nom, password_hash):
     if recent:
         age = (datetime.now(timezone.utc) - recent.date_creation.replace(tzinfo=timezone.utc)).total_seconds()
         if age < DELAI_RENVOI_SECONDES:
-            return False, "Un code a déjà été envoyé il y a moins d'une minute. Vérifie ta boîte mail (et les spams)."
+            return False, "Un code a déjà été envoyé il y a moins d'une minute. Vérifie ta boîte mail surtout les spams."
 
     CodeVerification.query.filter_by(email=email, type="inscription", utilise=False).update({"utilise": True})
 
@@ -133,7 +133,7 @@ def creer_code_inscription(db, email, nom, password_hash):
         print(f"[ATTENTION] Échec envoi email inscription à {email} : {erreur}", flush=True)
         return False, "L'envoi de l'email a échoué. Réessaie dans quelques instants."
 
-    return True, "Un code de vérification a été envoyé à ton adresse email."
+    return True, "Un code de vérification a été envoyé à ton adresse email. Pense à vérifier tes spams si tu ne le vois pas."
 
 
 def valider_code_inscription(db, email, code_saisi):
@@ -187,7 +187,7 @@ def valider_code_inscription(db, email, code_saisi):
 def creer_code_reset_password(db, email):
     from models import CodeVerification, User
 
-    MSG_NEUTRE = "Si un compte existe avec cet email, un code de réinitialisation vient d'être envoyé."
+    MSG_NEUTRE = "Si un compte existe avec cet email, un code de réinitialisation vient d'être envoyé. Pense à vérifier tes spams si tu ne le vois pas."
 
     user = User.query.filter_by(email=email).first()
     if not user or user.methode_connexion != "email":
@@ -278,5 +278,24 @@ def envoyer_email_relance(user, base_url="https://hirondelleconjugaison.onrender
         message=message,
         cta_url=f"{base_url}/quiz?mode=entrainement",
         cta_label="Reprendre l'entraînement →",
+    )
+    return succes
+
+
+def envoyer_email_bienvenue(user, base_url="https://hirondelleconjugaison.onrender.com"):
+    """Envoyé une seule fois, juste après la création réussie d'un compte."""
+    prenom = user.nom or "toi"
+    message = (
+        f"Bienvenue {prenom} ! Ton compte Hirondelle Conjugaison est prêt. "
+        "Tu peux dès maintenant t'entraîner sur 543 verbes, gagner de l'XP, "
+        "débloquer des badges et suivre ta progression en temps réel. "
+        "Chaque jour de pratique compte pour ton streak — alors pourquoi pas commencer maintenant ?"
+    )
+    succes, _ = envoyer_email(
+        destinataire=user.email,
+        titre="Bienvenue sur Hirondelle Conjugaison !",
+        message=message,
+        cta_url=f"{base_url}/quiz?mode=entrainement",
+        cta_label="Lancer mon premier quiz →",
     )
     return succes
