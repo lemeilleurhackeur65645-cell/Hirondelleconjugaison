@@ -340,3 +340,22 @@ def callback_github():
 
     login_user(user, remember=True)
     return redirect(url_for("index"))
+
+@auth_bp.route("/supprimer-compte", methods=["POST"])
+@login_required
+def supprimer_compte():
+    from models import AgregatVerbe, ReponseRecente
+    
+    user_id = current_user.id
+    
+    # Supprimer les données liées avant l'utilisateur (contraintes de clé étrangère)
+    AgregatVerbe.query.filter_by(user_id=user_id).delete()
+    ReponseRecente.query.filter_by(user_id=user_id).delete()
+    
+    user = current_user
+    logout_user()
+    db.session.delete(user)
+    db.session.commit()
+    
+    flash("Ton compte a été supprimé définitivement.")
+    return redirect(url_for("index"))
