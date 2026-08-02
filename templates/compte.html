@@ -171,6 +171,14 @@
             <a href="/badges" class="action-btn action-secondary"><span class="action-icon">🏅</span> Mes badges</a>
             <a href="/quiz?mode=entrainement" class="action-btn action-secondary"><span class="action-icon">🎯</span> Lancer un quiz</a>
             <a href="/deconnexion" class="action-btn action-secondary"><span class="action-icon">🚪</span> Déconnexion</a>
+            <form method="POST" action="/supprimer-compte" 
+                 onsubmit="return confirm('Supprimer définitivement ton compte ? Cette action est irréversible.');"
+                 style="margin-top: 20px;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="action-btn" style="background:#fef2f2;color:#dc2626;border:1.5px solid #fecaca;">
+                    Supprimer mon compte
+                </button>
+            </form>
         </div>
     </div>
 
