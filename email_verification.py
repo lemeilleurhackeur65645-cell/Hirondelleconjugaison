@@ -270,7 +270,7 @@ def envoyer_email_relance(user, base_url="https://hirondelleconjugaison.onrender
         titre = f"🔥 Ton streak de {user.streak_jours} jour(s) risque de tomber !"
     else:
         message = "Tu n'as pas conjugué depuis 3 jours. Reprends là où tu t'es arrêté(e) — 2 minutes suffisent."
-        titre = "🦅 Reviens t'entraîner — 2 minutes, c'est tout !"
+        titre = "Reviens t'entraîner — 2 minutes, c'est tout !"
 
     succes, _ = envoyer_email(
         destinataire=user.email,
