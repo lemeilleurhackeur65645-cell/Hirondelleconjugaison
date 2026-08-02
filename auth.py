@@ -344,7 +344,7 @@ def callback_github():
 @auth_bp.route("/supprimer-compte", methods=["POST"])
 @login_required
 def supprimer_compte():
-    from models import AgregatVerbe, ReponseRecente
+    from models import User, AgregatVerbe, ReponseRecente
     
     user_id = current_user.id
     
@@ -352,9 +352,12 @@ def supprimer_compte():
     AgregatVerbe.query.filter_by(user_id=user_id).delete()
     ReponseRecente.query.filter_by(user_id=user_id).delete()
     
-    user = current_user
+    # Récupérer le vrai objet User depuis la base (pas current_user, qui
+    # devient un AnonymousUserMixin dès que logout_user() est appelé)
+    user_a_supprimer = User.query.get(user_id)
+    
     logout_user()
-    db.session.delete(user)
+    db.session.delete(user_a_supprimer)
     db.session.commit()
     
     flash("Ton compte a été supprimé définitivement.")
