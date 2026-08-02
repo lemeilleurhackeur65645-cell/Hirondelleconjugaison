@@ -157,6 +157,8 @@ def verifier_inscription():
         if succes:
             session.pop("email_en_verification", None)
             login_user(user, remember=True)
+            from email_verification import envoyer_email_bienvenue
+            envoyer_email_bienvenue(user)
             flash("Compte créé et vérifié — bienvenue !")
             return redirect(url_for("index"))
 
@@ -295,6 +297,8 @@ def callback_google():
         user = User(email=email, nom=info.get("name"), methode_connexion="google", email_verifie=True)
         db.session.add(user)
         db.session.commit()
+        from email_verification import envoyer_email_bienvenue
+        envoyer_email_bienvenue(user)
 
     login_user(user, remember=True)
     return redirect(url_for("index"))
@@ -337,6 +341,8 @@ def callback_github():
         user = User(email=email, nom=profile.get("login"), methode_connexion="github", email_verifie=True)
         db.session.add(user)
         db.session.commit()
+        from email_verification import envoyer_email_bienvenue
+        envoyer_email_bienvenue(user)
 
     login_user(user, remember=True)
     return redirect(url_for("index"))
