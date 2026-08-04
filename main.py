@@ -40,6 +40,69 @@ VERBES_PASSIVABLES = [
     "rendre", "peindre", "vaincre", "prendre"
 ]
 
+REACTIONS_CORRECT = [
+    "Parfait. Continue comme ça.",
+    "Voilà, exactement ça.",
+    "Bien vu, ce verbe n'est pas évident.",
+    "Impeccable.",
+    "Tu commences à maîtriser celui-là.",
+    "Précis. J'aime ça.",
+    "C'est ça. Suivant.",
+    "Bonne pioche.",
+    "Ça, c'est du solide.",
+    "Direct dans le mille.",
+    "Tu progresses, ça se voit.",
+    "Rien à redire.",
+    "Propre.",
+    "Ce verbe ne te fait plus peur.",
+    "Sans hésitation, bravo.",
+    "Tu l'as eu du premier coup.",
+    "Parfait, on enchaîne.",
+    "Ça devient une habitude, les bonnes réponses.",
+    "Toujours aussi précis.",
+    "Ce temps-là, tu le tiens.",
+    "Bien joué, celui-ci était piégeux.",
+    "Exact. Je n'ai rien à ajouter.",
+    "Ça sent l'entraînement régulier.",
+    "Tu deviens redoutable sur ce mode.",
+    "Bonne mémoire.",
+    "C'est tout bon.",
+    "Ce verbe, tu l'as dompté.",
+    "Réponse propre, comme d'habitude.",
+    "Excellent réflexe.",
+    "Tu ne rates plus grand-chose.",
+]
+
+REACTIONS_INCORRECT = [
+    "Presque. Regarde la bonne réponse.",
+    "Celui-là est piégeur, retiens-le.",
+    "Pas tout à fait, mais on progresse.",
+    "Ça arrive, même aux meilleurs.",
+    "Un détail t'a échappé, regarde bien.",
+    "Retiens cette forme, elle revient souvent.",
+    "Pas grave, c'est pour ça qu'on s'entraîne.",
+    "Cette fois non, mais tu vas l'avoir.",
+    "Petit oubli, ça se corrige vite.",
+    "Ce verbe traîne souvent des pièges.",
+    "Note-le, il va revenir.",
+    "Pas encore, mais tu y es presque.",
+    "Une lettre de travers, rien de grave.",
+    "Ce temps demande un peu plus de pratique.",
+    "Ça mérite une deuxième tentative bientôt.",
+    "Manqué, mais l'idée était bonne.",
+    "Ce n'est pas la bonne forme, regarde l'exemple.",
+    "Ça se travaille, comme tout le reste.",
+    "Ce verbe est du genre à surprendre.",
+    "Pas de souci, tu vas le retenir.",
+]
+
+def reaction_hirondelle(correct, session):
+    liste = REACTIONS_CORRECT if correct else REACTIONS_INCORRECT
+    derniere = session.get("derniere_reaction")
+    candidats = [r for r in liste if r != derniere] or liste
+    choix = random.choice(candidats)
+    session["derniere_reaction"] = choix
+    return choix
 # ============================================================
 # FLASK
 # ============================================================
@@ -1200,6 +1263,7 @@ def quiz():
         bonne = session["bonne"]
         session["total"] += 1
         est_correct = (rep == bonne.lower())
+        reaction = reaction_hirondelle(est_correct, session)
 
         if not est_correct:
             session["erreurs"].append({
@@ -1375,6 +1439,7 @@ def quiz():
         nouveaux_badges=badges_info,
         level_up=level_up,
         user_niveau=current_user.niveau if current_user.is_authenticated else None,
+        reaction=reaction,
     )
 
 # ============================================================
