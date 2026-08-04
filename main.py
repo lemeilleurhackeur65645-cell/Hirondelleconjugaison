@@ -779,15 +779,15 @@ def index():
         xp_progress_pct = round(max(0, min(100, progres / ecart * 100)), 1) if ecart else 0
         streak_joue_aujourd_hui = (current_user.derniere_session == date.today())
 
-    def verbe_du_jour():
-        verbes = sorted(ACTIF.keys())
-        return verbes[date().toordinal() % len(verbes)]
-
     return render_template(
         "index.html", stats=stats,
         xp_progress_pct=xp_progress_pct, xp_prochain_niveau=xp_prochain_niveau,
         streak_joue_aujourd_hui=streak_joue_aujourd_hui,
+        verbe_jour=verbe_du_jour(),
     )
+def verbe_du_jour():
+    verbes = sorted(ACTIF.keys())
+    return verbes[date.today().toordinal() % len(verbes)]
 
 @app.route("/revision")
 def revision():
