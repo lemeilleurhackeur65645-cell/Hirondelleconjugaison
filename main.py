@@ -98,6 +98,11 @@ REACTIONS_INCORRECT = [
 ]
 
 def reaction_hirondelle(correct, session):
+    session["compteur_reaction"] = session.get("compteur_reaction", 0) + 1
+    if session["compteur_reaction"] < 5:
+        return None
+    session["compteur_reaction"] = 0
+
     liste = REACTIONS_CORRECT if correct else REACTIONS_INCORRECT
     derniere = session.get("derniere_reaction")
     candidats = [r for r in liste if r != derniere] or liste
