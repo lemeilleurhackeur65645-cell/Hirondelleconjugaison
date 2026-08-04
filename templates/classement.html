@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Classement | Hirondelle Conjugaison</title>
+    <link rel="icon" type="image/png" href="/static/img/logo.png">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body { padding-top: 56px; font-family: 'Inter', Arial, sans-serif; background: linear-gradient(135deg, #f0f4ff, #f5f0ff); }
+        .wrap { max-width: 640px; margin: 32px auto 60px; padding: 0 20px; }
+        .wrap h1 { font-size: 1.4rem; font-weight: 800; color: #0f172a; }
+        .row { display: flex; align-items: center; gap: 14px; background: #fff; border-radius: 14px; padding: 12px 18px; margin-bottom: 8px; box-shadow: 0 3px 12px rgba(15,23,42,0.06); }
+        .rang { width: 28px; font-weight: 800; color: #94a3b8; font-size: 0.9rem; }
+        .row:nth-child(1) .rang { color: #f59e0b; }
+        .row:nth-child(2) .rang { color: #94a3b8; }
+        .row:nth-child(3) .rang { color: #b45309; }
+        .pseudo { flex: 1; font-weight: 700; color: #0f172a; font-size: 0.9rem; }
+        .meta { font-size: 0.76rem; color: #64748b; }
+    </style>
+</head>
+<body>
+{% include '_topbar.html' %}
+<div class="wrap">
+    <h1>🏆 Classement</h1>
+    <p style="color:#64748b;font-size:0.85rem;">Les joueurs les plus assidus de la semaine.</p>
+    {% for j in classement %}
+    <div class="row">
+        <span class="rang">#{{ loop.index }}</span>
+        <span class="pseudo">{{ j.pseudo }}</span>
+        <span class="meta">Niveau {{ j.niveau }} · 🔥 {{ j.streak }}j · {{ j.xp }} XP</span>
+    </div>
+    {% endfor %}
+</div>
+</body>
+</html>
