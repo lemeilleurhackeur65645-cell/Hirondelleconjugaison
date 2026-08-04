@@ -409,40 +409,75 @@ function toggleModesInfo(btn) {
 
 </script>
 
-<div id="hirondelle-envol" style="position:fixed;top:50%;left:-100px;width:60px;height:60px;z-index:9999;pointer-events:none;display:none;">
-    <img src="/static/img/logo.png" alt="" style="width:100%;height:100%;border-radius:16px;">
+<div id="hirondelle-envol" style="position:fixed;top:50%;left:-100px;z-index:9999;pointer-events:none;display:none;">
+    <div style="position:relative;">
+        <img src="/static/img/logo.png" alt="" id="hirondelle-img"
+             style="width:64px;height:64px;border-radius:18px;box-shadow:0 8px 28px rgba(0,123,255,0.4);">
+        <div id="hirondelle-bulle" style="position:absolute;bottom:70px;left:50%;transform:translateX(-50%);
+             background:#fff;border:1.5px solid #e2e8f0;border-radius:14px;padding:8px 14px;
+             white-space:nowrap;font-size:0.82rem;color:#0f172a;box-shadow:0 4px 16px rgba(15,23,42,0.15);
+             opacity:0;transition:opacity 0.4s;">
+            Coucou ! 👋
+        </div>
+    </div>
 </div>
+
+<style>
+@keyframes hirondelle-vol {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-14px) rotate(-4deg); }
+    50% { transform: translateY(2px) rotate(2deg); }
+    75% { transform: translateY(-8px) rotate(-2deg); }
+}
+</style>
 
 <script>
 (function() {
     const CODE = "hirondelle";
     let saisie = "";
+    const MESSAGES = [
+        "Salut ! 👋", "Tu m'as trouvée !", "À plus tard !", "Continue de t'entraîner !"
+    ];
 
     document.addEventListener('keydown', function(e) {
-        if (e.key.length !== 1) return; // ignore touches spéciales (Shift, Enter...)
+        if (e.key.length !== 1) return;
         saisie += e.key.toLowerCase();
         saisie = saisie.slice(-CODE.length);
 
         if (saisie === CODE) {
             saisie = "";
             const oiseau = document.getElementById('hirondelle-envol');
+            const img = document.getElementById('hirondelle-img');
+            const bulle = document.getElementById('hirondelle-bulle');
             if (!oiseau) return;
+
+            bulle.textContent = MESSAGES[Math.floor(Math.random() * MESSAGES.length)];
+
+            const yDepart = 20 + Math.random() * 50;
+            const yArrivee = 10 + Math.random() * 30;
 
             oiseau.style.display = 'block';
             oiseau.style.left = '-100px';
-            oiseau.style.top = (20 + Math.random() * 50) + '%';
+            oiseau.style.top = yDepart + '%';
             oiseau.style.transition = 'none';
+            img.style.animation = 'hirondelle-vol 0.5s ease-in-out infinite';
 
             requestAnimationFrame(() => {
-                oiseau.style.transition = 'left 2.5s ease-in-out, top 2.5s ease-in-out';
+                oiseau.style.transition = 'left 3s ease-in-out, top 3s ease-in-out';
                 oiseau.style.left = '110vw';
-                oiseau.style.top = (10 + Math.random() * 30) + '%';
+                oiseau.style.top = yArrivee + '%';
+                setTimeout(() => { bulle.style.opacity = '1'; }, 300);
+                setTimeout(() => { bulle.style.opacity = '0'; }, 2000);
             });
 
-            setTimeout(() => { oiseau.style.display = 'none'; }, 2600);
+            setTimeout(() => {
+                oiseau.style.display = 'none';
+                img.style.animation = '';
+            }, 3100);
         }
     });
 })();
 </script>
+    
 </body>
 </html>
