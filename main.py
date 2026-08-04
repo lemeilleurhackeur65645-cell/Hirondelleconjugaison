@@ -7,6 +7,7 @@ import uuid
 from pathlib import Path
 from datetime import date
 
+
 # ============================================================
 # CHARGEMENT DES DONNÉES
 # ============================================================
