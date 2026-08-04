@@ -103,6 +103,24 @@ def reaction_hirondelle(correct, session):
     choix = random.choice(candidats)
     session["derniere_reaction"] = choix
     return choix
+
+TITRES_NIVEAU = {
+    1: "Poussin",
+    3: "Apprenti conjugueur",
+    5: "Grammairien en herbe",
+    8: "Maître du subjonctif",
+    12: "Virtuose des verbes",
+    18: "Sage de la conjugaison",
+    25: "Légende Hirondelle",
+}
+
+def titre_pour_niveau(niveau):
+    paliers = sorted(TITRES_NIVEAU.keys())
+    titre = TITRES_NIVEAU[1]
+    for p in paliers:
+        if niveau >= p:
+            titre = TITRES_NIVEAU[p]
+    return titre
 # ============================================================
 # FLASK
 # ============================================================
