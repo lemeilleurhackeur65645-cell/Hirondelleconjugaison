@@ -12,3 +12,4 @@ authlib
 requests
 flask-limiter
 flask-wtf
+reportlab
