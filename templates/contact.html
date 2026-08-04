@@ -1,0 +1,41 @@
+{% extends "_base_simple.html" %}
+{% block content %}
+<div class="container" style="max-width:700px;margin:0 auto;padding:32px 20px;">
+    <h1>Signaler un bug ou une suggestion</h1>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}{% for msg in messages %}<div class="flash">{{ msg }}</div>{% endfor %}{% endif %}
+    {% endwith %}
+
+    <form method="POST" style="margin-bottom:40px;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Type</label>
+        <select name="type">
+            <option value="bug">☎️ Bug</option>
+            <option value="suggestion">💡 Suggestion</option>
+        </select>
+        <label>Sujet</label>
+        <input type="text" name="sujet" required maxlength="200">
+        <label>Message</label>
+        <textarea name="message" rows="4" required></textarea>
+        <button type="submit">Envoyer</button>
+    </form>
+
+    <h2>Mes messages</h2>
+    {% for ticket in tickets %}
+    <div class="ticket-card" style="border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin-bottom:16px;">
+        <p><strong>{{ ticket.sujet }}</strong> — <span>{{ ticket.statut }}</span></p>
+        {% for msg in ticket.messages %}
+        <div style="margin:8px 0;padding:8px 12px;border-radius:8px;background:{{ '#eff6ff' if msg.auteur == 'admin' else '#f8fafc' }};">
+            <strong>{{ 'Réponse' if msg.auteur == 'admin' else 'Toi' }} :</strong> {{ msg.contenu }}
+        </div>
+        {% endfor %}
+        <form method="POST" action="/contact/{{ ticket.id }}/repondre">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="text" name="message" placeholder="Répondre..." required>
+            <button type="submit">Envoyer</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
