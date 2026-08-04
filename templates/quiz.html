@@ -137,6 +137,13 @@
     {% if feedback %}
         <p class="feedback">{{ feedback }}</p>
     {% endif %}
+    
+    {% if reaction %}
+    <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid #e2e8f0;border-radius:14px;padding:12px 16px;margin:10px 0;">
+        <span style="font-size:1.6rem;">🐦</span>
+        <p style="margin:0;font-size:0.88rem;color:#0f172a;font-style:italic;">{{ reaction }}</p>
+    </div>
+    {% endif %}
 
     {% if level_up %}
         <div class="gami-toast gami-toast-level">
