@@ -178,3 +178,27 @@ class CodeVerification(db.Model):
 
     def __repr__(self):
         return f"<Code {self.type} {self.email} {'utilisé' if self.utilise else 'actif'}>"
+
+class Ticket(db.Model):
+    __tablename__ = "tickets"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    type = db.Column(db.String(20), nullable=False)  # "bug" ou "suggestion"
+    sujet = db.Column(db.String(200), nullable=False)
+    statut = db.Column(db.String(20), nullable=False, default="ouvert")  # ouvert / répondu / fermé
+    date_creation = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    messages = db.relationship("MessageTicket", backref="ticket", lazy="dynamic",
+                                order_by="MessageTicket.date_creation",
+                                cascade="all, delete-orphan")
+
+
+class MessageTicket(db.Model):
+    __tablename__ = "messages_tickets"
+
+    id = db.Column(db.Integer, primary_key=True)
+    ticket_id = db.Column(db.Integer, db.ForeignKey("tickets.id"), nullable=False)
+    auteur = db.Column(db.String(10), nullable=False)  # "user" ou "admin"
+    contenu = db.Column(db.Text, nullable=False)
+    date_creation = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
