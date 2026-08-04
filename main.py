@@ -1465,7 +1465,7 @@ def quiz():
         else:
             feedback = "✔️ Correct" if rep == bonne.lower() else f"❌ Faux. Réponse attendue : {bonne}"
             reaction = reaction_hirondelle(est_correct, session)
-            return render_template(reaction=reaction)
+            return render_template("quiz.html", reaction=reaction)
 
     # Nouvelle question
     if mode == "revision":
