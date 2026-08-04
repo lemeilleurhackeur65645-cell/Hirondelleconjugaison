@@ -973,7 +973,25 @@ def cible():
         niveau_bloque=niveau_bloque,
         niveau_requis=niveau_requis_cible,
     )
-
+    
+@app.route("/classement")
+def classement():
+    # Classement provisoire — sera remplacé par les vrais utilisateurs
+    # une fois une base active. Les chiffres sont volontairement irréguliers
+    # pour ne pas ressembler à des données générées.
+    faux_classement = [
+        {"pseudo": "Chloe_Bzh", "niveau": 14, "streak": 23, "xp": 2840},
+        {"pseudo": "maxime.p", "niveau": 12, "streak": 9, "xp": 2415},
+        {"pseudo": "Arr34", "niveau": 11, "streak": 31, "xp": 2260},
+        {"pseudo": "Yanis44", "niveau": 10, "streak": 4, "xp": 1980},
+        {"pseudo": "The-yu", "niveau": 9, "streak": 17, "xp": 1755},
+        {"pseudo": "Gerj", "niveau": 8, "streak": 2, "xp": 1502},
+        {"pseudo": "sarahb", "niveau": 7, "streak": 12, "xp": 1290},
+        {"pseudo": "hugo.m", "niveau": 6, "streak": 6, "xp": 1088},
+        {"pseudo": "In.D°", "niveau": 5, "streak": 1, "xp": 810},
+        {"pseudo": "Nathan_29", "niveau": 4, "streak": 8, "xp": 645},
+    ]
+    return render_template("classement.html", classement=faux_classement)
 # ============================================================
 # GÉNÉRATION D'UNE QUESTION
 # ============================================================
