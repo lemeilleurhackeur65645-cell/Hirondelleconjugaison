@@ -787,7 +787,6 @@ def index():
         "index.html", stats=stats,
         xp_progress_pct=xp_progress_pct, xp_prochain_niveau=xp_prochain_niveau,
         streak_joue_aujourd_hui=streak_joue_aujourd_hui,
-        verbe_jour=verbe_du_jour(),
     )
 
 @app.route("/revision")
