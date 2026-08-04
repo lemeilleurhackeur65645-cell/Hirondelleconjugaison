@@ -179,36 +179,7 @@
 })();
 </script>
     
-<div id="hirondelle-envol" style="position:fixed;top:50%;left:-100px;font-size:3rem;z-index:9999;pointer-events:none;display:none;">🐦</div>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    let clics = 0, dernierClic = 0;
-    const logo = document.getElementById('site-logo');
-    if (!logo) { console.log('Easter egg: logo introuvable'); return; }
-    logo.style.cursor = 'pointer';
-    logo.addEventListener('click', function(e) {
-        const maintenant = Date.now();
-        if (maintenant - dernierClic > 1500) clics = 0;
-        dernierClic = maintenant;
-        clics++;
-        if (clics >= 7) {
-            clics = 0;
-            const oiseau = document.getElementById('hirondelle-envol');
-            if (!oiseau) return;
-            oiseau.style.display = 'block';
-            oiseau.style.left = '-100px';
-            oiseau.style.top = '50%';
-            oiseau.offsetHeight; // force le navigateur à appliquer la position de départ avant la transition
-            requestAnimationFrame(() => {
-                oiseau.style.transition = 'left 2.5s ease-in-out, top 2.5s ease-in-out';
-                oiseau.style.left = '110vw';
-                oiseau.style.top = '15%';
-            });
-            setTimeout(() => { oiseau.style.display = 'none'; }, 2600);
-        }
-    });
-});
-</script>
+
     
 <body>
 
@@ -436,6 +407,42 @@ function toggleModesInfo(btn) {
 }
 
 
+</script>
+
+<div id="hirondelle-envol" style="position:fixed;top:50%;left:-100px;width:60px;height:60px;z-index:9999;pointer-events:none;display:none;">
+    <img src="/static/img/logo.png" alt="" style="width:100%;height:100%;border-radius:16px;">
+</div>
+
+<script>
+(function() {
+    const CODE = "hirondelle";
+    let saisie = "";
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key.length !== 1) return; // ignore touches spéciales (Shift, Enter...)
+        saisie += e.key.toLowerCase();
+        saisie = saisie.slice(-CODE.length);
+
+        if (saisie === CODE) {
+            saisie = "";
+            const oiseau = document.getElementById('hirondelle-envol');
+            if (!oiseau) return;
+
+            oiseau.style.display = 'block';
+            oiseau.style.left = '-100px';
+            oiseau.style.top = (20 + Math.random() * 50) + '%';
+            oiseau.style.transition = 'none';
+
+            requestAnimationFrame(() => {
+                oiseau.style.transition = 'left 2.5s ease-in-out, top 2.5s ease-in-out';
+                oiseau.style.left = '110vw';
+                oiseau.style.top = (10 + Math.random() * 30) + '%';
+            });
+
+            setTimeout(() => { oiseau.style.display = 'none'; }, 2600);
+        }
+    });
+})();
 </script>
 </body>
 </html>
