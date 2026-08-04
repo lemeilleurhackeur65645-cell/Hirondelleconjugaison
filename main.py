@@ -1559,7 +1559,7 @@ def quiz():
         nouveaux_badges=badges_info,
         level_up=level_up,
         user_niveau=current_user.niveau if current_user.is_authenticated else None,
-        reaction=reaction_hirondelle(correct, session),
+        reaction=reaction_hirondelle(est_correct, session),
     )
 
 # ============================================================
