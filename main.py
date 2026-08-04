@@ -386,6 +386,22 @@ def admin_repondre_ticket(ticket_id):
         db.session.commit()
 
     return redirect(url_for("admin_tickets"))
+
+@app.route("/admin/tickets/<int:ticket_id>/supprimer", methods=["POST"])
+@login_required
+def admin_supprimer_ticket(ticket_id):
+    refus = _admin_requis()
+    if refus:
+        return refus
+
+    from models import Ticket
+
+    ticket = Ticket.query.get_or_404(ticket_id)
+    db.session.delete(ticket)  # cascade="all, delete-orphan" supprime aussi les messages liés
+    db.session.commit()
+
+    flash("Ticket supprimé.")
+    return redirect(url_for("admin_tickets"))
 # ============================================================
 # DASHBOARD ADMIN — vue interne sur les statistiques globales du site
 # ============================================================
