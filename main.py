@@ -1478,17 +1478,19 @@ def quiz():
                 db.session.rollback()
 
         if mode == "evaluation":
+            feedback = None
+            reaction = None
             session["questions_restantes"] -= 1
             if session["questions_restantes"] <= 0:
                 return redirect("/fin")
+                
         elif mode == "revision":
             if not session.get("erreurs_revision"):
                 return redirect("/fin")
         else:
             feedback = "✔️ Correct" if rep == bonne.lower() else f"❌ Faux. Réponse attendue : {bonne}"
             reaction = reaction_hirondelle(est_correct, session)
-            return render_template("quiz.html", reaction=reaction)
-
+            
     # Nouvelle question
     if mode == "revision":
         if not session.get("erreurs_revision"):
@@ -1582,8 +1584,8 @@ def quiz():
         nouveaux_badges=badges_info,
         level_up=level_up,
         user_niveau=current_user.niveau if current_user.is_authenticated else None,
+        reaction=reaction,
     )
-
 # ============================================================
 # ROUTE DU BILAN
 # ============================================================
