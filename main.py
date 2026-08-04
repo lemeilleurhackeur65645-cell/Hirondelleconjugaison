@@ -989,11 +989,9 @@ def cible():
         niveau_requis=niveau_requis_cible,
     )
     
+
 @app.route("/classement")
 def classement():
-    # Classement provisoire — sera remplacé par les vrais utilisateurs
-    # une fois une base active. Les chiffres sont volontairement irréguliers
-    # pour ne pas ressembler à des données générées.
     faux_classement = [
         {"pseudo": "Chloe_Bzh", "niveau": 14, "streak": 23, "xp": 2840},
         {"pseudo": "maxime.p", "niveau": 12, "streak": 9, "xp": 2415},
@@ -1006,7 +1004,26 @@ def classement():
         {"pseudo": "In.D°", "niveau": 5, "streak": 1, "xp": 810},
         {"pseudo": "Nathan_29", "niveau": 4, "streak": 8, "xp": 645},
     ]
-    return render_template("classement.html", classement=faux_classement)
+
+    moi = None
+    if current_user.is_authenticated:
+        moi = {
+            "pseudo": current_user.nom or current_user.email.split("@")[0],
+            "niveau": current_user.niveau,
+            "streak": current_user.streak_jours,
+            "xp": current_user.xp_total,
+            "moi": True,
+        }
+        # Insérer le joueur à sa vraie place par XP, seulement s'il atteint le top 10
+        classement_complet = faux_classement + [moi]
+        classement_complet.sort(key=lambda j: j["xp"], reverse=True)
+        rang_reel = classement_complet.index(moi) + 1
+        if rang_reel <= 10:
+            faux_classement = classement_complet[:10]
+        else:
+            moi = None  # pas affiché s'il est trop loin
+
+    return render_template("classement.html", classement=faux_classement, rang_moi=moi)
 
 
 @app.route("/export-pdf")
