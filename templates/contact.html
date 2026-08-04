@@ -1,41 +1,139 @@
-{% extends "_base_simple.html" %}
-{% block content %}
-<div class="container" style="max-width:700px;margin:0 auto;padding:32px 20px;">
-    <h1>Signaler un bug ou une suggestion</h1>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Contact | Hirondelle Conjugaison</title>
+    <meta name="description" content="Signale un bug ou propose une suggestion pour Hirondelle Conjugaison.">
+    <link rel="icon" type="image/png" href="/static/img/logo.png">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; padding-top: 56px; min-height: 100vh; font-family: 'Inter', Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 50%, #f5f0ff 100%); background-attachment: fixed;
+        }
+        .wrap { max-width: 700px; margin: 0 auto; padding: 32px 20px 60px; text-align: left; }
 
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}{% for msg in messages %}<div class="flash">{{ msg }}</div>{% endfor %}{% endif %}
-    {% endwith %}
+        .contact-card {
+            background: rgba(255,255,255,0.97); border-radius: 18px; padding: 26px;
+            box-shadow: 0 4px 20px rgba(15,23,42,0.07); margin-bottom: 28px;
+        }
+        .contact-card h1 { font-size: 1.4rem; font-weight: 800; color: #0f172a; margin: 0 0 6px; }
+        .contact-card p.sub { font-size: 0.85rem; color: #64748b; margin: 0 0 20px; }
 
-    <form method="POST" style="margin-bottom:40px;">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <label>Type</label>
-        <select name="type">
-            <option value="bug">☎️ Bug</option>
-            <option value="suggestion">💡 Suggestion</option>
-        </select>
-        <label>Sujet</label>
-        <input type="text" name="sujet" required maxlength="200">
-        <label>Message</label>
-        <textarea name="message" rows="4" required></textarea>
-        <button type="submit">Envoyer</button>
-    </form>
+        .flash-msg {
+            background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8;
+            padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; margin-bottom: 16px;
+        }
 
-    <h2>Mes messages</h2>
-    {% for ticket in tickets %}
-    <div class="ticket-card" style="border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin-bottom:16px;">
-        <p><strong>{{ ticket.sujet }}</strong> — <span>{{ ticket.statut }}</span></p>
-        {% for msg in ticket.messages %}
-        <div style="margin:8px 0;padding:8px 12px;border-radius:8px;background:{{ '#eff6ff' if msg.auteur == 'admin' else '#f8fafc' }};">
-            <strong>{{ 'Réponse' if msg.auteur == 'admin' else 'Toi' }} :</strong> {{ msg.contenu }}
-        </div>
-        {% endfor %}
-        <form method="POST" action="/contact/{{ ticket.id }}/repondre">
+        label { display: block; font-size: 0.8rem; font-weight: 600; color: #334155; margin: 14px 0 5px; }
+        select, input[type="text"], textarea {
+            width: 100%; padding: 10px 13px; border: 1.5px solid #e2e8f0; border-radius: 10px;
+            font-size: 0.88rem; font-family: inherit; box-sizing: border-box;
+        }
+        select:focus, input:focus, textarea:focus { outline: none; border-color: #007bff; }
+        textarea { resize: vertical; }
+
+        .submit-btn {
+            width: 100%; margin-top: 18px; padding: 12px; background: linear-gradient(135deg, #007bff, #0056d6);
+            color: #fff; border: none; border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer;
+            box-shadow: 0 4px 14px rgba(0,123,255,0.28);
+        }
+        .submit-btn:hover { opacity: 0.92; }
+
+        .section-title { font-size: 1.1rem; font-weight: 800; color: #0f172a; margin: 32px 0 14px; }
+
+        .ticket-card {
+            background: rgba(255,255,255,0.97); border-radius: 16px; padding: 18px 20px;
+            box-shadow: 0 4px 16px rgba(15,23,42,0.06); margin-bottom: 16px;
+        }
+        .ticket-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .ticket-header strong { font-size: 0.92rem; color: #0f172a; }
+        .ticket-statut {
+            font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; text-transform: uppercase;
+        }
+        .statut-ouvert { background: #fef9e7; color: #b45309; }
+        .statut-répondu { background: #eff6ff; color: #1d4ed8; }
+        .statut-fermé { background: #f1f5f9; color: #64748b; }
+
+        .msg-bubble { padding: 10px 14px; border-radius: 10px; margin: 6px 0; font-size: 0.85rem; line-height: 1.5; }
+        .msg-user { background: #f8fafc; color: #334155; }
+        .msg-admin { background: #eff6ff; color: #0f172a; }
+        .msg-bubble strong { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 3px; opacity: 0.7; }
+
+        .reply-form { display: flex; gap: 8px; margin-top: 12px; }
+        .reply-form input { flex: 1; }
+        .reply-form button {
+            padding: 9px 18px; background: #0f172a; color: #fff; border: none; border-radius: 8px;
+            font-weight: 700; font-size: 0.82rem; cursor: pointer; white-space: nowrap;
+        }
+
+        .empty-state { text-align: center; padding: 30px; color: #94a3b8; font-size: 0.88rem; }
+    </style>
+</head>
+<body>
+{% include '_topbar.html' %}
+
+<div class="wrap">
+
+    <div class="contact-card">
+        <h1>📬 Signaler un bug ou une suggestion</h1>
+        <p class="sub">Décris ton problème ou ton idée — je réponds directement ici.</p>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for msg in messages %}<div class="flash-msg">{{ msg }}</div>{% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <input type="text" name="message" placeholder="Répondre..." required>
-            <button type="submit">Envoyer</button>
+
+            <label for="type">Type</label>
+            <select name="type" id="type">
+                <option value="bug">☎️ Bug</option>
+                <option value="suggestion">💡 Suggestion</option>
+            </select>
+
+            <label for="sujet">Sujet</label>
+            <input type="text" name="sujet" id="sujet" required maxlength="200" placeholder="Résume en quelques mots">
+
+            <label for="message">Message</label>
+            <textarea name="message" id="message" rows="4" required placeholder="Décris précisément ce que tu as constaté ou ta suggestion"></textarea>
+
+            <button type="submit" class="submit-btn">Envoyer</button>
         </form>
     </div>
-    {% endfor %}
+
+    <p class="section-title">Mes messages</p>
+
+    {% if tickets %}
+        {% for ticket in tickets %}
+        <div class="ticket-card">
+            <div class="ticket-header">
+                <strong>{{ '☎️' if ticket.type == 'bug' else '💡' }} {{ ticket.sujet }}</strong>
+                <span class="ticket-statut statut-{{ ticket.statut }}">{{ ticket.statut }}</span>
+            </div>
+
+            {% for msg in ticket.messages %}
+            <div class="msg-bubble {{ 'msg-admin' if msg.auteur == 'admin' else 'msg-user' }}">
+                <strong>{{ 'Réponse' if msg.auteur == 'admin' else 'Toi' }}</strong>
+                {{ msg.contenu }}
+            </div>
+            {% endfor %}
+
+            <form method="POST" action="/contact/{{ ticket.id }}/repondre" class="reply-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="text" name="message" placeholder="Répondre à ce fil..." required>
+                <button type="submit">Envoyer</button>
+            </form>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">Aucun message envoyé pour l'instant.</div>
+    {% endif %}
+
 </div>
-{% endblock %}
+</body>
+</html>
