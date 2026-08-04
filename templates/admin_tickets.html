@@ -48,14 +48,24 @@
 {% include '_topbar.html' %}
 
 <div class="wrap">
-    <h1>🎫 Tickets ({{ tickets|length }})</h1>
+    <h1>☎️ Tickets ({{ tickets|length }})</h1>
 
     {% if tickets %}
         {% for ticket in tickets %}
         <div class="ticket-card">
             <div class="ticket-header">
                 <strong>{{ '☎️' if ticket.type == 'bug' else '💡' }} {{ ticket.sujet }}</strong>
-                <span class="ticket-statut statut-{{ ticket.statut }}">{{ ticket.statut }}</span>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="ticket-statut statut-{{ ticket.statut }}">{{ ticket.statut }}</span>
+                    <form method="POST" action="/admin/tickets/{{ ticket.id }}/supprimer"
+                          onsubmit="return confirm('Supprimer définitivement ce ticket et tous ses messages ?');"
+                          style="display:inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:0.85rem;padding:2px 6px;" title="Supprimer">
+                            🗑️
+                        </button>
+                    </form>
+                </div>
             </div>
             <div class="ticket-meta">
                 De {{ ticket.user.email }} — {{ ticket.date_creation.strftime('%d/%m/%Y à %H:%M') }}
