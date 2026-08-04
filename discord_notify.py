@@ -19,7 +19,7 @@ def notifier_nouveau_ticket(ticket, user_email, premier_message):
         f"**De :** {user_email}\n"
         f"**Sujet :** {ticket.sujet}\n"
         f"**Message :** {premier_message[:500]}\n"
-        f"🔗 https://hirondelleconjugaison.onrender.com/admin/tickets"
+        f"🔗 https://hirondelleconjugaison.onrender.com/admin/tickets  @everyone"
     )
     try:
         requests.post(DISCORD_WEBHOOK_URL, json={"content": contenu}, timeout=10)
