@@ -299,6 +299,17 @@
     <span><strong style="color:#0f172a;">{{ stats_comm.utilisateurs_actifs }}</strong> personnes actives</span>
 </div>
 {% else %}
+<div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin:20px 0;font-size:0.82rem;color:#64748b;">
+    <span><strong style="color:#0f172a;">{{ stats_comm.questions_semaine }}</strong> questions cette semaine</span>
+    <span><strong style="color:#0f172a;">{{ stats_comm.utilisateurs_actifs }}</strong> personnes actives</span>
+</div>
+<div style="max-width:600px;margin:20px auto;text-align:center;">
+    <a href="/conjugaison/{{ verbe_jour }}" style="display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,0.9);border:1.5px solid #e2e8f0;border-radius:16px;padding:12px 22px;text-decoration:none;">
+        <span style="font-size:1.3rem;">📅</span>
+        <span style="font-size:0.85rem;color:#64748b;">Verbe du jour</span>
+        <strong style="color:#0056d6;font-size:1rem;">{{ verbe_jour }}</strong>
+    </a>
+</div>
 <div class="hero">
     <img src="/static/img/logo.png" alt="Hirondelle Conjugaison" class="hero-logo" id="site-logo">
     <h1>Hirondelle Conjugaison</h1>
