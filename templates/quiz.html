@@ -139,10 +139,22 @@
     {% endif %}
     
     {% if reaction %}
-    <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid #e2e8f0;border-radius:14px;padding:12px 16px;margin:10px 0;">
-        <span style="font-size:1.6rem;">🐦</span>
-        <p style="margin:0;font-size:0.88rem;color:#0f172a;font-style:italic;">{{ reaction }}</p>
+    <div id="hirondelle-mascotte" style="position:fixed;bottom:20px;left:20px;z-index:999;display:flex;align-items:flex-end;gap:10px;animation:hirondelle-entree 0.4s ease-out;">
+        <img src="/static/img/logo.png" alt="Hirondelle" style="width:56px;height:56px;border-radius:16px;box-shadow:0 6px 18px rgba(0,123,255,0.3);animation:hirondelle-flotte 2s ease-in-out infinite;">
+        <div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:14px;padding:10px 14px;max-width:220px;box-shadow:0 4px 16px rgba(15,23,42,0.1);position:relative;">
+            <p style="margin:0;font-size:0.82rem;color:#0f172a;">{{ reaction }}</p>
+        </div>
     </div>
+    <style>
+    @keyframes hirondelle-entree { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes hirondelle-flotte { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    </style>
+    <script>
+    setTimeout(() => {
+        const m = document.getElementById('hirondelle-mascotte');
+        if (m) { m.style.transition = 'opacity 0.5s'; m.style.opacity = '0'; setTimeout(() => m.remove(), 500); }
+    }, 5000);
+    </script>
     {% endif %}
 
     {% if level_up %}
