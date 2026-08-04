@@ -333,7 +333,7 @@ def badges():
 @login_required
 def compte():
     stats = calculer_stats_user(current_user)
-    return render_template("compte.html", stats=stats)
+    return render_template("compte.html", stats=stats, titre_pour_niveau=titre_pour_niveau)
 
 
 @app.route("/progression")
