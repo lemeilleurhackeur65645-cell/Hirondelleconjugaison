@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tickets admin | Hirondelle Conjugaison</title>
+    <link rel="icon" type="image/png" href="/static/img/logo.png">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; padding-top: 56px; min-height: 100vh; font-family: 'Inter', Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 50%, #f5f0ff 100%); background-attachment: fixed;
+        }
+        .wrap { max-width: 800px; margin: 0 auto; padding: 32px 20px 60px; text-align: left; }
+        .wrap h1 { font-size: 1.4rem; font-weight: 800; color: #0f172a; margin: 0 0 20px; }
+
+        .ticket-card {
+            background: rgba(255,255,255,0.97); border-radius: 16px; padding: 18px 20px;
+            box-shadow: 0 4px 16px rgba(15,23,42,0.06); margin-bottom: 16px;
+        }
+        .ticket-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; flex-wrap: wrap; gap: 6px; }
+        .ticket-header strong { font-size: 0.92rem; color: #0f172a; }
+        .ticket-meta { font-size: 0.74rem; color: #94a3b8; margin-bottom: 10px; }
+        .ticket-statut {
+            font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; text-transform: uppercase;
+        }
+        .statut-ouvert { background: #fef9e7; color: #b45309; }
+        .statut-répondu { background: #eff6ff; color: #1d4ed8; }
+        .statut-fermé { background: #f1f5f9; color: #64748b; }
+
+        .msg-bubble { padding: 10px 14px; border-radius: 10px; margin: 6px 0; font-size: 0.85rem; line-height: 1.5; }
+        .msg-user { background: #f8fafc; color: #334155; }
+        .msg-admin { background: #eff6ff; color: #0f172a; }
+        .msg-bubble strong { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 3px; opacity: 0.7; }
+
+        .reply-form { display: flex; gap: 8px; margin-top: 12px; }
+        .reply-form input { flex: 1; padding: 9px 13px; border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 0.85rem; }
+        .reply-form button {
+            padding: 9px 18px; background: #007bff; color: #fff; border: none; border-radius: 8px;
+            font-weight: 700; font-size: 0.82rem; cursor: pointer; white-space: nowrap;
+        }
+
+        .empty-state { text-align: center; padding: 40px; color: #94a3b8; font-size: 0.88rem; }
+    </style>
+</head>
+<body>
+{% include '_topbar.html' %}
+
+<div class="wrap">
+    <h1>🎫 Tickets ({{ tickets|length }})</h1>
+
+    {% if tickets %}
+        {% for ticket in tickets %}
+        <div class="ticket-card">
+            <div class="ticket-header">
+                <strong>{{ '☎️' if ticket.type == 'bug' else '💡' }} {{ ticket.sujet }}</strong>
+                <span class="ticket-statut statut-{{ ticket.statut }}">{{ ticket.statut }}</span>
+            </div>
+            <div class="ticket-meta">
+                De {{ ticket.user.email }} — {{ ticket.date_creation.strftime('%d/%m/%Y à %H:%M') }}
+            </div>
+
+            {% for msg in ticket.messages %}
+            <div class="msg-bubble {{ 'msg-admin' if msg.auteur == 'admin' else 'msg-user' }}">
+                <strong>{{ 'Toi (admin)' if msg.auteur == 'admin' else ticket.user.email }}</strong>
+                {{ msg.contenu }}
+            </div>
+            {% endfor %}
+
+            <form method="POST" action="/admin/tickets/{{ ticket.id }}/repondre" class="reply-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="text" name="message" placeholder="Répondre..." required>
+                <button type="submit">Envoyer</button>
+            </form>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">Aucun ticket pour l'instant.</div>
+    {% endif %}
+</div>
+</body>
+</html>
