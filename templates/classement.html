@@ -25,9 +25,9 @@
     <h1>🏆 Classement</h1>
     <p style="color:#64748b;font-size:0.85rem;">Les joueurs les plus assidus de la semaine.</p>
     {% for j in classement %}
-    <div class="row">
+    <div class="row" {% if j.get('moi') %}style="border:2px solid #007bff;background:#eff6ff;"{% endif %}>
         <span class="rang">#{{ loop.index }}</span>
-        <span class="pseudo">{{ j.pseudo }}</span>
+        <span class="pseudo">{{ j.pseudo }}{% if j.get('moi') %} (toi){% endif %}</span>
         <span class="meta">Niveau {{ j.niveau }} · 🔥 {{ j.streak }}j · {{ j.xp }} XP</span>
     </div>
     {% endfor %}
