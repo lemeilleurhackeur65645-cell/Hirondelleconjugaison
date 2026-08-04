@@ -781,7 +781,7 @@ def index():
 
     def verbe_du_jour():
         verbes = sorted(ACTIF.keys())
-        return verbes[date.today().toordinal() % len(verbes)]
+        return verbes[date().toordinal() % len(verbes)]
 
     return render_template(
         "index.html", stats=stats,
