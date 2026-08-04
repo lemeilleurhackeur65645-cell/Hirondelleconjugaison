@@ -299,7 +299,93 @@ def progression():
         user=current_user,
     )
 
+@app.route("/contact", methods=["GET", "POST"])
+@login_required
+def contact():
+    from models import Ticket, MessageTicket
+    from discord_notify import notifier_nouveau_ticket
 
+    if request.method == "POST":
+        type_ticket = request.form.get("type", "bug")
+        sujet = request.form.get("sujet", "").strip()
+        message = request.form.get("message", "").strip()
+
+        if not sujet or not message:
+            flash("Merci de remplir le sujet et le message.")
+            return redirect(url_for("contact"))
+
+        ticket = Ticket(user_id=current_user.id, type=type_ticket, sujet=sujet)
+        db.session.add(ticket)
+        db.session.flush()  # pour obtenir ticket.id avant le commit
+
+        premier_msg = MessageTicket(ticket_id=ticket.id, auteur="user", contenu=message)
+        db.session.add(premier_msg)
+        db.session.commit()
+
+        notifier_nouveau_ticket(ticket, current_user.email, message)
+
+        flash("Ton message a été envoyé. Tu recevras une réponse ici même.")
+        return redirect(url_for("contact"))
+
+    mes_tickets = (
+        Ticket.query.filter_by(user_id=current_user.id)
+        .order_by(Ticket.date_creation.desc())
+        .all()
+    )
+    return render_template("contact.html", tickets=mes_tickets)
+
+
+@app.route("/contact/<int:ticket_id>/repondre", methods=["POST"])
+@login_required
+def repondre_ticket(ticket_id):
+    from models import Ticket, MessageTicket
+
+    ticket = Ticket.query.get_or_404(ticket_id)
+    if ticket.user_id != current_user.id:
+        return render_template("404.html"), 404
+
+    contenu = request.form.get("message", "").strip()
+    if contenu:
+        msg = MessageTicket(ticket_id=ticket.id, auteur="user", contenu=contenu)
+        db.session.add(msg)
+        ticket.statut = "ouvert"
+        db.session.commit()
+
+    return redirect(url_for("contact"))
+
+
+# ── Côté admin ──
+
+@app.route("/admin/tickets")
+@login_required
+def admin_tickets():
+    refus = _admin_requis()
+    if refus:
+        return refus
+
+    from models import Ticket
+    tickets = Ticket.query.order_by(Ticket.date_creation.desc()).all()
+    return render_template("admin_tickets.html", tickets=tickets)
+
+
+@app.route("/admin/tickets/<int:ticket_id>/repondre", methods=["POST"])
+@login_required
+def admin_repondre_ticket(ticket_id):
+    refus = _admin_requis()
+    if refus:
+        return refus
+
+    from models import Ticket, MessageTicket
+
+    ticket = Ticket.query.get_or_404(ticket_id)
+    contenu = request.form.get("message", "").strip()
+    if contenu:
+        msg = MessageTicket(ticket_id=ticket.id, auteur="admin", contenu=contenu)
+        db.session.add(msg)
+        ticket.statut = "répondu"
+        db.session.commit()
+
+    return redirect(url_for("admin_tickets"))
 # ============================================================
 # DASHBOARD ADMIN — vue interne sur les statistiques globales du site
 # ============================================================
