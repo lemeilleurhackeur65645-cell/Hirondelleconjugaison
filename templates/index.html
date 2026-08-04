@@ -439,17 +439,21 @@ function toggleModesInfo(btn) {
         "Salut ! 👋", "Tu m'as trouvée !", "À plus tard !", "Continue de t'entraîner !"
     ];
 
+    // Écoute en phase de capture (true) : intercepte l'événement AVANT tout
+    // autre script qui pourrait appeler stopPropagation() dessus.
     document.addEventListener('keydown', function(e) {
         if (e.key.length !== 1) return;
         saisie += e.key.toLowerCase();
         saisie = saisie.slice(-CODE.length);
+        console.log('[easter egg] saisie actuelle:', saisie);
 
         if (saisie === CODE) {
+            console.log('[easter egg] déclenché !');
             saisie = "";
             const oiseau = document.getElementById('hirondelle-envol');
             const img = document.getElementById('hirondelle-img');
             const bulle = document.getElementById('hirondelle-bulle');
-            if (!oiseau) return;
+            if (!oiseau) { console.log('[easter egg] élément #hirondelle-envol introuvable'); return; }
 
             bulle.textContent = MESSAGES[Math.floor(Math.random() * MESSAGES.length)];
 
@@ -475,7 +479,7 @@ function toggleModesInfo(btn) {
                 img.style.animation = '';
             }, 3100);
         }
-    });
+    }, true); // <-- capture activée ici
 })();
 </script>
     
