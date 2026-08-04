@@ -5,6 +5,7 @@ import json
 import os
 import uuid
 from pathlib import Path
+from datetime import date
 
 # ============================================================
 # CHARGEMENT DES DONNÉES
@@ -696,6 +697,10 @@ def index():
         progres = current_user.xp_total - xp_niveau_actuel
         xp_progress_pct = round(max(0, min(100, progres / ecart * 100)), 1) if ecart else 0
         streak_joue_aujourd_hui = (current_user.derniere_session == date.today())
+
+    def verbe_du_jour():
+        verbes = sorted(ACTIF.keys())
+        return verbes[date.today().toordinal() % len(verbes)]
 
     return render_template(
         "index.html", stats=stats,
