@@ -294,7 +294,10 @@
         <span class="resume-icon">⚙️</span> Mon compte
     </a>
 </div>
-
+<div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin:20px 0;font-size:0.82rem;color:#64748b;">
+    <span><strong style="color:#0f172a;">{{ stats_comm.questions_semaine }}</strong> questions cette semaine</span>
+    <span><strong style="color:#0f172a;">{{ stats_comm.utilisateurs_actifs }}</strong> personnes actives</span>
+</div>
 {% else %}
 <div class="hero">
     <img src="/static/img/logo.png" alt="Hirondelle Conjugaison" class="hero-logo" id="site-logo">
