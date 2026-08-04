@@ -184,6 +184,7 @@ class Ticket(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user = db.relationship("User", backref="tickets")
     type = db.Column(db.String(20), nullable=False)  # "bug" ou "suggestion"
     sujet = db.Column(db.String(200), nullable=False)
     statut = db.Column(db.String(20), nullable=False, default="ouvert")  # ouvert / répondu / fermé
