@@ -1382,7 +1382,7 @@ def quiz():
         bonne = session["bonne"]
         session["total"] += 1
         est_correct = (rep == bonne.lower())
-        reaction = reaction_hirondelle(est_correct, session)
+    
 
         if not est_correct:
             session["erreurs"].append({
@@ -1465,6 +1465,7 @@ def quiz():
         else:
             feedback = "✔️ Correct" if rep == bonne.lower() else f"❌ Faux. Réponse attendue : {bonne}"
             reaction = reaction_hirondelle(est_correct, session)
+            return render_template(reaction=reaction)
 
     # Nouvelle question
     if mode == "revision":
@@ -1559,7 +1560,6 @@ def quiz():
         nouveaux_badges=badges_info,
         level_up=level_up,
         user_niveau=current_user.niveau if current_user.is_authenticated else None,
-        reaction=reaction_hirondelle(est_correct, session),
     )
 
 # ============================================================
