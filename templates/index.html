@@ -178,7 +178,36 @@
     if (ss) document.documentElement.style.setProperty('--logo-size', ss);
 })();
 </script>
-
+    
+<div id="hirondelle-envol" style="position:fixed;top:50%;left:-100px;font-size:3rem;z-index:9999;pointer-events:none;display:none;">🐦</div>
+<script>
+(function() {
+    let clics = 0, dernierClic = 0;
+    const logo = document.getElementById('site-logo');
+    if (!logo) return;
+    logo.style.cursor = 'pointer';
+    logo.addEventListener('click', function() {
+        const maintenant = Date.now();
+        if (maintenant - dernierClic > 1500) clics = 0;
+        dernierClic = maintenant;
+        clics++;
+        if (clics === 7) {
+            clics = 0;
+            const oiseau = document.getElementById('hirondelle-envol');
+            oiseau.style.display = 'block';
+            oiseau.style.transition = 'left 2.5s ease-in-out, top 2.5s ease-in-out';
+            oiseau.style.left = '-100px';
+            oiseau.style.top = '50%';
+            setTimeout(() => {
+                oiseau.style.left = '110vw';
+                oiseau.style.top = '15%';
+            }, 50);
+            setTimeout(() => { oiseau.style.display = 'none'; }, 2600);
+        }
+    });
+})();
+</script>
+    
 <body>
 
 <button id="settings-gear" class="settings-gear" aria-expanded="false" aria-controls="settings-popup" aria-label="Paramètres">
