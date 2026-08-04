@@ -785,10 +785,20 @@ def index():
         xp_progress_pct=xp_progress_pct, xp_prochain_niveau=xp_prochain_niveau,
         streak_joue_aujourd_hui=streak_joue_aujourd_hui,
         verbe_jour=verbe_du_jour(),
+        stats_comm=stats_communaute_fictives(),
     )
 def verbe_du_jour():
     verbes = sorted(ACTIF.keys())
     return verbes[date.today().toordinal() % len(verbes)]
+
+def stats_communaute_fictives():
+    # Nombres qui évoluent chaque jour selon la date, pour paraître vivants
+    seed = date.today().toordinal()
+    return {
+        "questions_semaine": 8_340 + (seed * 37) % 900,
+        "verbes_maitrises": 1_205 + (seed * 13) % 300,
+        "utilisateurs_actifs": 340 + (seed * 3) % 60,
+    }
 
 @app.route("/revision")
 def revision():
@@ -992,6 +1002,79 @@ def classement():
         {"pseudo": "Nathan_29", "niveau": 4, "streak": 8, "xp": 645},
     ]
     return render_template("classement.html", classement=faux_classement)
+
+
+@app.route("/export-pdf")
+@login_required
+def export_pdf():
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.units import cm
+    from reportlab.lib.colors import HexColor
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from io import BytesIO
+
+    stats = calculer_stats_user(current_user)
+    agregats = sorted(stats["agregats"], key=lambda a: (a.nb_total - a.nb_correct), reverse=True)[:15]
+
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=1.5*cm, bottomMargin=1.5*cm)
+    styles = getSampleStyleSheet()
+
+    titre_style = ParagraphStyle("Titre", parent=styles["Title"], textColor=HexColor("#0f172a"), fontSize=22)
+    sous_titre = ParagraphStyle("Sous", parent=styles["Normal"], textColor=HexColor("#64748b"), fontSize=10)
+
+    elements = [
+        Paragraph("🦅 Hirondelle Conjugaison", titre_style),
+        Paragraph(f"Fiche de révision personnalisée — {current_user.nom or current_user.email}", sous_titre),
+        Spacer(1, 20),
+        Paragraph(f"<b>Niveau {current_user.niveau}</b> · {stats['total']} questions · {stats['taux']}% de réussite", styles["Normal"]),
+        Spacer(1, 16),
+        Paragraph("Verbes à réviser en priorité", styles["Heading2"]),
+    ]
+
+    data = [["Verbe", "Mode", "Temps", "Réussite"]]
+    for a in agregats:
+        data.append([a.verbe, a.mode, a.temps, f"{a.taux}%"])
+
+    table = Table(data, colWidths=[4*cm, 4*cm, 5*cm, 3*cm])
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0,0), (-1,0), HexColor("#0f172a")),
+        ("TEXTCOLOR", (0,0), (-1,0), HexColor("#ffffff")),
+        ("FONTSIZE", (0,0), (-1,-1), 9),
+        ("ROWBACKGROUNDS", (0,1), (-1,-1), [HexColor("#f8fafc"), HexColor("#ffffff")]),
+        ("GRID", (0,0), (-1,-1), 0.5, HexColor("#e2e8f0")),
+        ("TOPPADDING", (0,0), (-1,-1), 8),
+        ("BOTTOMPADDING", (0,0), (-1,-1), 8),
+    ]))
+    elements.append(table)
+
+    doc.build(elements)
+    buffer.seek(0)
+
+    from flask import send_file
+    return send_file(buffer, mimetype="application/pdf", as_attachment=True, download_name="fiche-revision-hirondelle.pdf")
+
+@app.route("/admin/nettoyer-bdd")
+@limiter.limit("2 per hour")
+def nettoyer_bdd():
+    from flask import jsonify
+    from models import CodeVerification, Ticket
+    from datetime import datetime, timezone, timedelta
+
+    if request.args.get("token") != INDEXNOW_ADMIN_TOKEN:
+        return jsonify({"erreur": "Token invalide."}), 403
+
+    limite = datetime.now(timezone.utc) - timedelta(days=2)
+    codes_supprimes = CodeVerification.query.filter(CodeVerification.date_creation < limite).delete()
+
+    limite_tickets = datetime.now(timezone.utc) - timedelta(days=90)
+    tickets_supprimes = Ticket.query.filter(
+        Ticket.statut == "fermé", Ticket.date_creation < limite_tickets
+    ).delete()
+
+    db.session.commit()
+    return jsonify({"codes_supprimés": codes_supprimes, "tickets_supprimés": tickets_supprimes})
 # ============================================================
 # GÉNÉRATION D'UNE QUESTION
 # ============================================================
