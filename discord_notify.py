@@ -13,7 +13,7 @@ def notifier_nouveau_ticket(ticket, user_email, premier_message):
         return
 
     import requests
-    icone = "🐛" if ticket.type == "bug" else "💡"
+    icone = "☎️" if ticket.type == "bug" else "💡"
     contenu = (
         f"{icone} **Nouveau {ticket.type}** — #{ticket.id}\n"
         f"**De :** {user_email}\n"
