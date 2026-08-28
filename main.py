@@ -1393,6 +1393,7 @@ def quiz():
             return redirect("/fin")
 
     feedback = None
+    reaction = None
 
     # Réception réponse
     if request.method == "POST":
