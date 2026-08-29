@@ -121,7 +121,6 @@ XP_BONUS_DIFFICILE = 5
 def xp_requis_pour_niveau(niveau):
     return int(50 * (niveau ** 1.5))
 
-
 BADGES = {
     "premiers_pas":   {"label": "Premiers pas",      "icone": "🌱", "desc": "Premier quiz terminé"},
     "serie_3":        {"label": "Sur la lancée",      "icone": "🔥", "desc": "3 jours de suite"},
@@ -131,8 +130,15 @@ BADGES = {
     "mille_questions":{"label": "Marathonien",        "icone": "🎖️", "desc": "1000 questions répondues"},
     "sans_faute":     {"label": "Sans faute",         "icone": "✨", "desc": "10 bonnes réponses d'affilée"},
     "polyglotte":     {"label": "Polyglotte verbal",  "icone": "📚", "desc": "20 verbes différents travaillés"},
+    "serie_100":      {"label": "Légende vivante",    "icone": "👑", "desc": "100 jours de suite"},
+    "polyglotte_pro": {"label": "Bescherelle vivant", "icone": "🌍", "desc": "50 verbes différents travaillés"},
+    "toutes_voix":    {"label": "Double casquette",   "icone": "🎭", "desc": "A joué à la fois en voix active et passive"},
+    "tous_modes":     {"label": "Touche-à-tout",      "icone": "🎯", "desc": "A joué dans les 4 modes principaux"},
+    "cinq_mille_xp":  {"label": "Vétéran",            "icone": "🥇", "desc": "5000 XP cumulés"},
+    "sans_faute_20":  {"label": "Machine à réponses", "icone": "💎", "desc": "20 bonnes réponses d'affilée"},
+    "note_parfaite":  {"label": "Sans accroc",        "icone": "🎓", "desc": "10/10 en mode évaluation"},
+    "noctambule":     {"label": "Noctambule",         "icone": "🌙", "desc": "A joué après minuit"},
 }
-
 
 def appliquer_gain_xp(user, correct, etait_difficile=False):
     """Met à jour xp_total et niveau de l'utilisateur. Retourne True si level up."""
