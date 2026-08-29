@@ -1097,6 +1097,24 @@ def nettoyer_bdd():
 
     db.session.commit()
     return jsonify({"codes_supprimés": codes_supprimes, "tickets_supprimés": tickets_supprimes})
+
+@app.route("/keepalive")
+@limiter.exempt
+def keepalive():
+    """
+    Route appelée par UptimeRobot pour forcer une vraie requête SQL vers
+    Supabase, qui compte comme "activité" et repousse le délai avant mise
+    en pause automatique du projet (7 jours d'inactivité en plan gratuit).
+    Un simple ping HTTP sur "/" ne suffit pas si la route ne touche pas
+    la base — cette route, elle, le fait explicitement.
+    """
+    from flask import jsonify
+    try:
+        from models import User
+        nb = User.query.count()
+        return jsonify({"status": "ok", "utilisateurs": nb}), 200
+    except Exception as e:
+        return jsonify({"status": "erreur", "detail": str(e)}), 500
 # ============================================================
 # GÉNÉRATION D'UNE QUESTION
 # ============================================================
