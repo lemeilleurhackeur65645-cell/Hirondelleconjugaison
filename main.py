@@ -1478,13 +1478,25 @@ def quiz():
                     session["consecutives"] = 0
 
                 stats_rapides = calculer_stats_user(current_user)
+                voix_jouees = {a.mode for a in stats_rapides["agregats"]} and {
+                    "passive" if session.get("voix_question") == "passive" else "active"
+                }
+                session.setdefault("voix_deja_jouees", [])
+                if session.get("voix_question") not in session["voix_deja_jouees"]:
+                    session["voix_deja_jouees"].append(session.get("voix_question", "active"))
+
+                session.setdefault("modes_deja_joues", [])
+                if session["mode_verbe"] not in session["modes_deja_joues"]:
+                    session["modes_deja_joues"].append(session["mode_verbe"])
+
                 nouveaux = verifier_nouveaux_badges(
                     current_user,
                     total_questions=stats_rapides["total"],
                     bonnes_consecutives=session["consecutives"],
                     nb_verbes_distincts=stats_rapides["nb_verbes_distincts"],
+                    voix_utilisees=set(session["voix_deja_jouees"]),
+                    modes_utilises=set(session["modes_deja_joues"]),
                 )
-
                 db.session.commit()
 
                 session["nouveaux_badges"] = nouveaux
