@@ -173,20 +173,41 @@ def mettre_a_jour_streak(user):
     return True
 
 
-def verifier_nouveaux_badges(user, total_questions, bonnes_consecutives, nb_verbes_distincts):
-    """Retourne la liste des codes de badges nouvellement débloqués."""
+def verifier_nouveaux_badges(user, total_questions, bonnes_consecutives, nb_verbes_distincts,
+                               voix_utilisees=None, modes_utilises=None, note_evaluation=None):
+    """
+    voix_utilisees : set contenant "active" et/ou "passive" (verbes déjà joués)
+    modes_utilises : set des modes déjà joués (indicatif, subjonctif, conditionnel, impératif)
+    note_evaluation : score sur 10 si on vient de terminer une évaluation, sinon None
+    """
     nouveaux = []
+    from datetime import datetime
 
     conditions = [
         ("premiers_pas", total_questions >= 1),
         ("serie_3", user.streak_jours >= 3),
         ("serie_7", user.streak_jours >= 7),
         ("serie_30", user.streak_jours >= 30),
+        ("serie_100", user.streak_jours >= 100),
         ("cent_questions", total_questions >= 100),
         ("mille_questions", total_questions >= 1000),
         ("sans_faute", bonnes_consecutives >= 10),
+        ("sans_faute_20", bonnes_consecutives >= 20),
         ("polyglotte", nb_verbes_distincts >= 20),
+        ("polyglotte_pro", nb_verbes_distincts >= 50),
+        ("cinq_mille_xp", user.xp_total >= 5000),
+        ("noctambule", datetime.now().hour >= 0 and datetime.now().hour < 5),
     ]
+
+    if voix_utilisees and "active" in voix_utilisees and "passive" in voix_utilisees:
+        conditions.append(("toutes_voix", True))
+
+    if modes_utilises and {"indicatif", "subjonctif", "conditionnel", "impératif"}.issubset(modes_utilises):
+        conditions.append(("tous_modes", True))
+
+    if note_evaluation is not None and note_evaluation == 10:
+        conditions.append(("note_parfaite", True))
+
     for code, condition in conditions:
         if condition and user.ajouter_badge(code):
             nouveaux.append(code)
