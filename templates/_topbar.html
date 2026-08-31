@@ -66,7 +66,7 @@
             <span class="topbar-dd-icon">⚙️</span>
             <span class="topbar-dd-text"><strong>Mon compte</strong></span>
           </a>
-          {% if current_user.email == "lemeilleurhackeur65645@gmail.com" %}
+          {% if is_admin %}
           <a class="topbar-dd-item" href="/admin/dashboard" role="menuitem">
             <span class="topbar-dd-icon">📊</span>
             <span class="topbar-dd-text"><strong>Dashboard admin</strong></span>
