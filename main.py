@@ -1779,7 +1779,7 @@ def page_conjugaison(verbe, mode, temps):
     autres_temps = [
         {"temps": t, "url": f"/conjugaison/{verbe}/{mode}/{t}"}
         for t in modes_verbe[mode].keys()
-        if t != temps
+        if t != temps and modes_verbe[mode][t]
     ]
     # Construire les autres modes (pour la navigation)
     autres_modes = [
