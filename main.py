@@ -496,9 +496,12 @@ def admin_supprimer_ticket(ticket_id):
 # Restreint à un email précis plutôt qu'à un rôle "admin" en base : plus
 # simple pour un seul propriétaire de site, sans avoir à gérer un champ
 # is_admin supplémentaire sur User pour l'instant.
-ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "lemeilleurhackeur65645@gmail.com")
+ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "")
 
-
+@app.context_processor
+def inject_is_admin():
+    is_admin = current_user.is_authenticated and current_user.email == ADMIN_EMAIL
+    return dict(is_admin=is_admin)
 def _admin_requis():
     """Retourne une réponse de refus si l'utilisateur n'est pas l'admin, sinon None."""
     if not current_user.is_authenticated or current_user.email != ADMIN_EMAIL:
