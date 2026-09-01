@@ -96,7 +96,29 @@
         </div>
         <p class="muted small-note">Active Mobile pour adapter l'interface à ton téléphone.</p>
     </div>
+        <div class="setting-block">
+        <label class="setting-label">Sons du quiz</label>
+        <div class="switch-container" role="group">
+            <span class="switch-label">Désactivés</span>
+            <label class="switch">
+                <input type="checkbox" id="sons-toggle">
+                <span class="slider"></span>
+            </label>
+            <span class="switch-label">Activés</span>
+        </div>
+        <p class="muted small-note">Un petit son après chaque bonne/mauvaise réponse, niveau ou badge.</p>
+    </div>
 
+    <script>
+    (function() {
+        const toggle = document.getElementById('sons-toggle');
+        if (!toggle) return;
+        toggle.checked = localStorage.getItem('hirondelle_sons') !== 'off';
+        toggle.addEventListener('change', function() {
+            localStorage.setItem('hirondelle_sons', toggle.checked ? 'on' : 'off');
+        });
+    })();
+    </script>
     <div style="margin-top: 30px;">
         <a href="/" class="back-button">← Retour à l'accueil</a>
     </div>
