@@ -14,17 +14,6 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     body { margin: 0; background: linear-gradient(135deg,#f0f4ff 0%,#e8f0fe 50%,#f5f0ff 100%); background-attachment: fixed; font-family: Arial, sans-serif; color: #0f172a; min-height: 100vh; }
-
-    /* TOPBAR */
-    .topbar { position: sticky; top: 0; z-index: 100; height: 56px; background: rgba(255,255,255,0.92); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(0,123,255,0.1); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; box-shadow: 0 2px 12px rgba(15,23,42,0.06); }
-    .topbar-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 0.95rem; color: #0f172a; }
-    .topbar-brand img { width: 28px; height: 28px; border-radius: 7px; }
-    .topbar-links { display: flex; gap: 6px; align-items: center; }
-    .topbar-links a { padding: 7px 14px; border-radius: 10px; font-size: 0.86rem; font-weight: 600; color: #334155; text-decoration: none; transition: background .15s; }
-    .topbar-links a:hover { background: #f1f5f9; }
-    .topbar-links .cta { background: linear-gradient(135deg,#007bff,#0056d6); color: #fff !important; box-shadow: 0 4px 12px rgba(0,123,255,0.25); }
-    .topbar-links .cta:hover { opacity: .9; }
-
     /* PAGE */
     .page-wrap { max-width: 900px; margin: 0 auto; padding: 36px 20px 80px; }
 
@@ -109,22 +98,9 @@
     .alpha-verbs { display: flex; flex-wrap: wrap; gap: 7px; }
   </style>
 </head>
+  
 <body>
-
-<nav class="topbar">
-  <a class="topbar-brand" href="/">
-    <img src="/static/img/logo.png" alt="Hirondelle">
-    Hirondelle Conjugaison
-  </a>
-  <div class="topbar-links">
-    <a href="/">Accueil</a>
-    <a href="/cible">Quiz ciblé</a>
-    <a href="/quiz?mode=entrainement" class="cta">S'entraîner →</a>
-  </div>
-</nav>
-
-<div class="page-wrap">
-
+{% include '_topbar.html' %}
   <!-- HERO -->
   <div class="hero">
     <h1>Conjugaison française — <span>Guide complet</span></h1>
