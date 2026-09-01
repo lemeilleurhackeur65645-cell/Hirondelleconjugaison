@@ -4,7 +4,17 @@
     <img src="/static/img/logo.png" alt="Hirondelle Conjugaison" width="28" height="28">
     <span>Hirondelle Conjugaison</span>
   </a>
-  <div class="topbar-nav">
+
+  <button id="topbar-burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="topbar-mobile-menu"
+          style="display:none;background:none;border:none;cursor:pointer;padding:6px;">
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <line x1="3" y1="12" x2="21" y2="12"/>
+      <line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  </button>
+
+  <div class="topbar-nav" id="topbar-desktop-nav">
     <a class="topbar-nav-link" href="/classement">🏆 Classement</a>
     <div class="topbar-dropdown" id="quiz-dd-wrap">
       <button class="topbar-nav-btn" id="quiz-dd-btn"
@@ -17,25 +27,16 @@
       <div class="topbar-dd-menu" id="quiz-dd-menu" role="menu">
         <a class="topbar-dd-item" href="/quiz?mode=entrainement" role="menuitem">
           <span class="topbar-dd-icon">🎯</span>
-          <span class="topbar-dd-text">
-            <strong>Entraînement</strong>
-            <span>Questions infinies · Pas de timer</span>
-          </span>
+          <span class="topbar-dd-text"><strong>Entraînement</strong><span>Questions infinies · Pas de timer</span></span>
         </a>
         <a class="topbar-dd-item" href="/quiz?mode=evaluation" role="menuitem">
           <span class="topbar-dd-icon">⏱️</span>
-          <span class="topbar-dd-text">
-            <strong>Évaluation</strong>
-            <span>10 questions · 5 minutes chrono</span>
-          </span>
+          <span class="topbar-dd-text"><strong>Évaluation</strong><span>10 questions · 5 minutes chrono</span></span>
         </a>
         <div class="topbar-dd-sep" role="separator"></div>
         <a class="topbar-dd-item" href="/cible" role="menuitem">
           <span class="topbar-dd-icon">🔬</span>
-          <span class="topbar-dd-text">
-            <strong>Quiz ciblé</strong>
-            <span>Choisis le verbe · le mode · le temps</span>
-          </span>
+          <span class="topbar-dd-text"><strong>Quiz ciblé</strong><span>Choisis le verbe · le mode · le temps</span></span>
         </a>
       </div>
     </div>
@@ -50,33 +51,15 @@
           </svg>
         </button>
         <div class="topbar-dd-menu" id="user-dd-menu" role="menu">
-          <a class="topbar-dd-item" href="/progression" role="menuitem">
-            <span class="topbar-dd-icon">📊</span>
-            <span class="topbar-dd-text"><strong>Ma progression</strong></span>
-          </a>
-          <a class="topbar-dd-item" href="/badges" role="menuitem">
-            <span class="topbar-dd-icon">🏅</span>
-            <span class="topbar-dd-text"><strong>Mes badges</strong></span>
-          </a>
-          <a class="topbar-dd-item" href="/contact" role="menuitem">
-            <span class="topbar-dd-icon">📬</span>
-            <span class="topbar-dd-text"><strong>Contact</strong></span>
-          </a>
-          <a class="topbar-dd-item" href="/compte" role="menuitem">
-            <span class="topbar-dd-icon">⚙️</span>
-            <span class="topbar-dd-text"><strong>Mon compte</strong></span>
-          </a>
+          <a class="topbar-dd-item" href="/progression" role="menuitem"><span class="topbar-dd-icon">📊</span><span class="topbar-dd-text"><strong>Ma progression</strong></span></a>
+          <a class="topbar-dd-item" href="/badges" role="menuitem"><span class="topbar-dd-icon">🏅</span><span class="topbar-dd-text"><strong>Mes badges</strong></span></a>
+          <a class="topbar-dd-item" href="/contact" role="menuitem"><span class="topbar-dd-icon">📬</span><span class="topbar-dd-text"><strong>Contact</strong></span></a>
+          <a class="topbar-dd-item" href="/compte" role="menuitem"><span class="topbar-dd-icon">⚙️</span><span class="topbar-dd-text"><strong>Mon compte</strong></span></a>
           {% if is_admin %}
-          <a class="topbar-dd-item" href="/admin/dashboard" role="menuitem">
-            <span class="topbar-dd-icon">📊</span>
-            <span class="topbar-dd-text"><strong>Dashboard admin</strong></span>
-          </a>
+          <a class="topbar-dd-item" href="/admin/dashboard" role="menuitem"><span class="topbar-dd-icon">📊</span><span class="topbar-dd-text"><strong>Dashboard admin</strong></span></a>
           {% endif %}
           <div class="topbar-dd-sep" role="separator"></div>
-          <a class="topbar-dd-item" href="/deconnexion" role="menuitem">
-            <span class="topbar-dd-icon">🚪</span>
-            <span class="topbar-dd-text"><strong>Déconnexion</strong></span>
-          </a>
+          <a class="topbar-dd-item" href="/deconnexion" role="menuitem"><span class="topbar-dd-icon">🚪</span><span class="topbar-dd-text"><strong>Déconnexion</strong></span></a>
         </div>
       </div>
     {% else %}
@@ -85,20 +68,69 @@
     <a class="topbar-nav-cta" href="/quiz?mode=entrainement">S'entraîner →</a>
   </div>
 </nav>
+
+<!-- Menu mobile plein écran, indépendant du CSS existant qui masque .topbar-nav -->
+<div id="topbar-mobile-menu" style="display:none;position:fixed;inset:0;background:#fff;z-index:2000;padding:20px;overflow-y:auto;">
+  <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+    <button id="topbar-mobile-close" aria-label="Fermer" style="background:none;border:none;font-size:1.6rem;cursor:pointer;padding:6px;">✕</button>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:4px;font-size:1rem;">
+    <a href="/classement" style="padding:12px 8px;color:#0f172a;text-decoration:none;border-bottom:1px solid #f1f5f9;">🏆 Classement</a>
+    <a href="/quiz?mode=entrainement" style="padding:12px 8px;color:#0f172a;text-decoration:none;border-bottom:1px solid #f1f5f9;">🎯 Entraînement</a>
+    <a href="/quiz?mode=evaluation" style="padding:12px 8px;color:#0f172a;text-decoration:none;border-bottom:1px solid #f1f5f9;">⏱️ Évaluation</a>
+    <a href="/cible" style="padding:12px 8px;color:#0f172a;text-decoration:none;border-bottom:1px solid #f1f5f9;">🔬 Quiz ciblé</a>
+    <a href="/conjugaisons" style="padding:12px 8px;color:#0f172a;text-decoration:none;border-bottom:1px solid #f1f5f9;">📖 Conjugaisons</a>
+    {% if current_user.is_authenticated %}
+      <a href="/progression" style="padding:12px 8px;color:#0f172a;text-decoration:none;border-bottom:1px solid #f1f5f9;">📊 Ma progression</a>
+      <a href="/badges" style="padding:12px 8px;color:#0f172a;text-decoration:none;border-bottom:1px solid #f1f5f9;">🏅 Mes badges</a>
+      <a href="/contact" style="padding:12px 8px;color:#0f172a;text-decoration:none;border-bottom:1px solid #f1f5f9;">📬 Contact</a>
+      <a href="/compte" style="padding:12px 8px;color:#0f172a;text-decoration:none;border-bottom:1px solid #f1f5f9;">⚙️ Mon compte</a>
+      {% if is_admin %}
+      <a href="/admin/dashboard" style="padding:12px 8px;color:#0f172a;text-decoration:none;border-bottom:1px solid #f1f5f9;">📊 Dashboard admin</a>
+      {% endif %}
+      <a href="/deconnexion" style="padding:12px 8px;color:#dc2626;text-decoration:none;">🚪 Déconnexion</a>
+    {% else %}
+      <a href="/connexion" style="padding:12px 8px;color:#0f172a;text-decoration:none;">Se connecter</a>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+@media (max-width: 760px) {
+  #topbar-burger { display: block !important; }
+  #topbar-desktop-nav { display: none !important; }
+}
+</style>
+
 <script src="/static/js/topbar.js" defer></script>
 <script>
 (function () {
     const btn = document.getElementById('user-dd-btn');
     const menu = document.getElementById('user-dd-menu');
-    if (!btn || !menu) return;
-    btn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        const open = menu.classList.toggle('open');
-        btn.classList.toggle('open', open);
-    });
-    document.addEventListener('click', function () {
-        menu.classList.remove('open');
-        btn.classList.remove('open');
-    });
+    if (btn && menu) {
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const open = menu.classList.toggle('open');
+            btn.classList.toggle('open', open);
+        });
+        document.addEventListener('click', function () {
+            menu.classList.remove('open');
+            btn.classList.remove('open');
+        });
+    }
+
+    const burger = document.getElementById('topbar-burger');
+    const mobileMenu = document.getElementById('topbar-mobile-menu');
+    const closeBtn = document.getElementById('topbar-mobile-close');
+    if (burger && mobileMenu && closeBtn) {
+        burger.addEventListener('click', function () {
+            mobileMenu.style.display = 'block';
+            burger.setAttribute('aria-expanded', 'true');
+        });
+        closeBtn.addEventListener('click', function () {
+            mobileMenu.style.display = 'none';
+            burger.setAttribute('aria-expanded', 'false');
+        });
+    }
 })();
 </script>
