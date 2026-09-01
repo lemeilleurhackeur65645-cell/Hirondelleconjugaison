@@ -229,6 +229,81 @@
 </script>
 {% endif %}
 <script src="/static/js/settings.js" defer></script>
+
+<script>
+/* ══════════════════════════════════════════════
+   SONS DU QUIZ — générés en Web Audio API, aucun
+   fichier à charger. Toggle on/off via localStorage.
+   ══════════════════════════════════════════════ */
+(function() {
+    let ctx = null;
+    function getCtx() {
+        if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+        return ctx;
+    }
+
+    function sonsActives() {
+        return localStorage.getItem('hirondelle_sons') !== 'off';
+    }
+
+    function jouerNote(freq, debut, duree, volume, type) {
+        const c = getCtx();
+        const osc = c.createOscillator();
+        const gain = c.createGain();
+        osc.type = type || 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0, c.currentTime + debut);
+        gain.gain.linearRampToValueAtTime(volume, c.currentTime + debut + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + debut + duree);
+        osc.connect(gain);
+        gain.connect(c.destination);
+        osc.start(c.currentTime + debut);
+        osc.stop(c.currentTime + debut + duree);
+    }
+
+    window.sonBonneReponse = function() {
+        if (!sonsActives()) return;
+        jouerNote(523.25, 0, 0.12, 0.15, 'sine');   // Do
+        jouerNote(659.25, 0.08, 0.18, 0.15, 'sine'); // Mi
+    };
+
+    window.sonMauvaiseReponse = function() {
+        if (!sonsActives()) return;
+        jouerNote(220, 0, 0.22, 0.12, 'triangle');
+    };
+
+    window.sonLevelUp = function() {
+        if (!sonsActives()) return;
+        jouerNote(523.25, 0, 0.1, 0.14, 'sine');
+        jouerNote(659.25, 0.1, 0.1, 0.14, 'sine');
+        jouerNote(783.99, 0.2, 0.25, 0.16, 'sine');
+    };
+
+    window.sonBadge = function() {
+        if (!sonsActives()) return;
+        jouerNote(659.25, 0, 0.1, 0.13, 'sine');
+        jouerNote(783.99, 0.1, 0.1, 0.13, 'sine');
+        jouerNote(987.77, 0.2, 0.1, 0.13, 'sine');
+        jouerNote(1318.51, 0.3, 0.3, 0.15, 'sine');
+    };
+})();
+
+document.addEventListener('DOMContentLoaded', function() {
+    {% if feedback %}
+        {% if "Correct" in feedback %}
+            if (window.sonBonneReponse) sonBonneReponse();
+        {% else %}
+            if (window.sonMauvaiseReponse) sonMauvaiseReponse();
+        {% endif %}
+    {% endif %}
+    {% if level_up %}
+        setTimeout(function() { if (window.sonLevelUp) sonLevelUp(); }, 200);
+    {% endif %}
+    {% if nouveaux_badges %}
+        setTimeout(function() { if (window.sonBadge) sonBadge(); }, 200);
+    {% endif %}
+});
+</script>
 </body>
 </html>
 
