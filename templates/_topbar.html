@@ -68,34 +68,113 @@
     <a class="topbar-nav-cta" href="/quiz?mode=entrainement">S'entraîner →</a>
   </div>
 </nav>
-
 <!-- Menu mobile plein écran, indépendant du CSS existant qui masque .topbar-nav -->
-<div id="topbar-mobile-menu" style="display:none;position:fixed;inset:0;background:#fff;z-index:2000;padding:20px;overflow-y:auto;">
-  <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
-    <button id="topbar-mobile-close" aria-label="Fermer" style="background:none;border:none;font-size:1.6rem;cursor:pointer;padding:6px;">✕</button>
+<div id="topbar-mobile-menu" style="display:none;position:fixed;inset:0;background:linear-gradient(135deg,#f0f4ff,#f5f0ff);z-index:2000;overflow-y:auto;">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #e2e8f0;background:#fff;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="/static/img/logo.png" alt="" width="28" height="28" style="border-radius:8px;">
+      <strong style="font-size:0.95rem;color:#0f172a;">Menu</strong>
+    </div>
+    <button id="topbar-mobile-close" aria-label="Fermer"
+            style="background:#f1f5f9;border:none;width:36px;height:36px;border-radius:10px;font-size:1.2rem;cursor:pointer;color:#334155;display:flex;align-items:center;justify-content:center;">
+      ✕
+    </button>
   </div>
-  <div style="display:flex;flex-direction:column;gap:4px;font-size:1rem;">
-    <a href="/classement" style="padding:12px 8px;color:#0f172a;text-decoration:none;border-bottom:1px solid #f1f5f9;">🏆 Classement</a>
-    <a href="/quiz?mode=entrainement" style="padding:12px 8px;color:#0f172a;text-decoration:none;border-bottom:1px solid #f1f5f9;">🎯 Entraînement</a>
-    <a href="/quiz?mode=evaluation" style="padding:12px 8px;color:#0f172a;text-decoration:none;border-bottom:1px solid #f1f5f9;">⏱️ Évaluation</a>
-    <a href="/cible" style="padding:12px 8px;color:#0f172a;text-decoration:none;border-bottom:1px solid #f1f5f9;">🔬 Quiz ciblé</a>
-    <a href="/conjugaisons" style="padding:12px 8px;color:#0f172a;text-decoration:none;border-bottom:1px solid #f1f5f9;">📖 Conjugaisons</a>
+
+  <div style="padding:16px;display:flex;flex-direction:column;gap:8px;max-width:480px;margin:0 auto;">
+
+    <a href="/classement" class="mobile-menu-item">
+      <span class="mobile-menu-icon" style="background:#fef9e7;">🏆</span>
+      <span class="mobile-menu-label">Classement</span>
+      <span class="mobile-menu-arrow">›</span>
+    </a>
+
+    <p class="mobile-menu-section">Quiz</p>
+    <a href="/quiz?mode=entrainement" class="mobile-menu-item">
+      <span class="mobile-menu-icon" style="background:#eff6ff;">🎯</span>
+      <span class="mobile-menu-label">Entraînement</span>
+      <span class="mobile-menu-arrow">›</span>
+    </a>
+    <a href="/quiz?mode=evaluation" class="mobile-menu-item">
+      <span class="mobile-menu-icon" style="background:#eff6ff;">⏱️</span>
+      <span class="mobile-menu-label">Évaluation</span>
+      <span class="mobile-menu-arrow">›</span>
+    </a>
+    <a href="/cible" class="mobile-menu-item">
+      <span class="mobile-menu-icon" style="background:#eff6ff;">🔬</span>
+      <span class="mobile-menu-label">Quiz ciblé</span>
+      <span class="mobile-menu-arrow">›</span>
+    </a>
+
+    <p class="mobile-menu-section">Ressources</p>
+    <a href="/conjugaisons" class="mobile-menu-item">
+      <span class="mobile-menu-icon" style="background:#f0fdf4;">📖</span>
+      <span class="mobile-menu-label">Conjugaisons</span>
+      <span class="mobile-menu-arrow">›</span>
+    </a>
+
     {% if current_user.is_authenticated %}
-      <a href="/progression" style="padding:12px 8px;color:#0f172a;text-decoration:none;border-bottom:1px solid #f1f5f9;">📊 Ma progression</a>
-      <a href="/badges" style="padding:12px 8px;color:#0f172a;text-decoration:none;border-bottom:1px solid #f1f5f9;">🏅 Mes badges</a>
-      <a href="/contact" style="padding:12px 8px;color:#0f172a;text-decoration:none;border-bottom:1px solid #f1f5f9;">📬 Contact</a>
-      <a href="/compte" style="padding:12px 8px;color:#0f172a;text-decoration:none;border-bottom:1px solid #f1f5f9;">⚙️ Mon compte</a>
-      {% if is_admin %}
-      <a href="/admin/dashboard" style="padding:12px 8px;color:#0f172a;text-decoration:none;border-bottom:1px solid #f1f5f9;">📊 Dashboard admin</a>
-      {% endif %}
-      <a href="/deconnexion" style="padding:12px 8px;color:#dc2626;text-decoration:none;">🚪 Déconnexion</a>
-    {% else %}
-      <a href="/connexion" style="padding:12px 8px;color:#0f172a;text-decoration:none;">Se connecter</a>
+    <p class="mobile-menu-section">Mon compte</p>
+    <a href="/progression" class="mobile-menu-item">
+      <span class="mobile-menu-icon" style="background:#eff6ff;">📊</span>
+      <span class="mobile-menu-label">Ma progression</span>
+      <span class="mobile-menu-arrow">›</span>
+    </a>
+    <a href="/badges" class="mobile-menu-item">
+      <span class="mobile-menu-icon" style="background:#fef9e7;">🏅</span>
+      <span class="mobile-menu-label">Mes badges</span>
+      <span class="mobile-menu-arrow">›</span>
+    </a>
+    <a href="/contact" class="mobile-menu-item">
+      <span class="mobile-menu-icon" style="background:#f0fdf4;">📬</span>
+      <span class="mobile-menu-label">Contact</span>
+      <span class="mobile-menu-arrow">›</span>
+    </a>
+    <a href="/compte" class="mobile-menu-item">
+      <span class="mobile-menu-icon" style="background:#f1f5f9;">⚙️</span>
+      <span class="mobile-menu-label">Mon compte</span>
+      <span class="mobile-menu-arrow">›</span>
+    </a>
+    {% if is_admin %}
+    <a href="/admin/dashboard" class="mobile-menu-item">
+      <span class="mobile-menu-icon" style="background:#f1f5f9;">📊</span>
+      <span class="mobile-menu-label">Dashboard admin</span>
+      <span class="mobile-menu-arrow">›</span>
+    </a>
     {% endif %}
+    <a href="/deconnexion" class="mobile-menu-item" style="margin-top:8px;">
+      <span class="mobile-menu-icon" style="background:#fef2f2;">🚪</span>
+      <span class="mobile-menu-label" style="color:#dc2626;">Déconnexion</span>
+      <span class="mobile-menu-arrow" style="color:#dc2626;">›</span>
+    </a>
+    {% else %}
+    <a href="/connexion" style="display:block;text-align:center;margin-top:12px;padding:14px;background:linear-gradient(135deg,#007bff,#0056d6);color:#fff;text-decoration:none;border-radius:12px;font-weight:700;font-size:0.92rem;box-shadow:0 4px 14px rgba(0,123,255,0.28);">
+      Se connecter
+    </a>
+    {% endif %}
+
   </div>
 </div>
 
 <style>
+.mobile-menu-item {
+    display: flex; align-items: center; gap: 12px;
+    background: #fff; border-radius: 14px; padding: 12px 14px;
+    text-decoration: none; box-shadow: 0 2px 10px rgba(15,23,42,0.05);
+    transition: transform 0.12s;
+}
+.mobile-menu-item:active { transform: scale(0.98); }
+.mobile-menu-icon {
+    width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 1.05rem;
+}
+.mobile-menu-label { flex: 1; font-size: 0.9rem; font-weight: 600; color: #0f172a; }
+.mobile-menu-arrow { color: #cbd5e1; font-size: 1.2rem; }
+.mobile-menu-section {
+    font-size: 0.72rem; font-weight: 700; color: #94a3b8; text-transform: uppercase;
+    letter-spacing: 0.05em; margin: 12px 4px 2px; padding: 0;
+}
+
 @media (max-width: 760px) {
   #topbar-burger { display: block !important; }
   #topbar-desktop-nav { display: none !important; }
