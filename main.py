@@ -1881,6 +1881,8 @@ def page_verbe(verbe):
                        or (len(racine) > 4 and racine in v))])[:6]
 
     # Verbes fréquents du même mode principal
+    if not modes_verbe:
+        return render_template("404.html"), 404
     mode_principal = list(modes_verbe.keys())[0]
     verbes_meme_mode = [v for v in ["être", "avoir", "faire", "aller", "vouloir",
                                      "pouvoir", "prendre", "venir", "voir", "savoir"]
