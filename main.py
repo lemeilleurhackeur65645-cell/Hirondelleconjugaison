@@ -158,7 +158,7 @@ from urllib.parse import urlparse
 # Adresse publique du site et adresse de contact : variables d'environnement
 # SITE_URL et CONTACT_EMAIL sur Render. Changer de domaine = changer SITE_URL
 # (plus aucune adresse n'est écrite en dur dans le code ni dans les pages légales).
-SITE_URL = os.environ.get("SITE_URL", SITE_URL).rstrip("/")
+SITE_URL = os.environ.get("SITE_URL", "https://hirondelleconjugaison.onrender.com").rstrip("/")
 CONTACT_EMAIL = os.environ.get("CONTACT_EMAIL", "")
 app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=30)
 
