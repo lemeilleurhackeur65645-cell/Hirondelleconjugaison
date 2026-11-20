@@ -1,0 +1,39 @@
+{% extends "_legal_base.html" %}
+{% block titre %}Conditions d'utilisation{% endblock %}
+{% block description %}Conditions d'utilisation du site gratuit Hirondelle Conjugaison : compte, usage loyal, responsabilité et contact.{% endblock %}
+{% block contenu %}
+<h1>Conditions d'utilisation</h1>
+<p class="maj">Dernière mise à jour : novembre 2026</p>
+
+<h2>1. Le service</h2>
+<p>Hirondelle Conjugaison propose gratuitement des tableaux de conjugaison et des quiz. Le service est fourni à titre non professionnel, sans publicité et sans abonnement. Il peut évoluer, être interrompu ou être supprimé, sans garantie de disponibilité.</p>
+
+<h2>2. Compte</h2>
+<ul>
+<li>Le quiz est utilisable sans compte. Le compte sert à sauvegarder ta progression.</li>
+<li>Pour créer un compte, tu dois avoir 15 ans ou plus, ou disposer de l'accord de ton représentant légal.</li>
+<li>Les informations fournies doivent être exactes. Tu es responsable de la confidentialité de ton mot de passe.</li>
+<li>Tu peux supprimer ton compte à tout moment dans « Mon compte ».</li>
+</ul>
+
+<h2>3. Usage loyal</h2>
+<p>Il est interdit de perturber le service (attaques, tentatives d'accès non autorisé), de collecter massivement son contenu de façon automatisée, ou d'envoyer via la page Contact des contenus illicites, injurieux ou publicitaires. L'éditeur peut suspendre ou supprimer un compte en cas d'abus.</p>
+
+<h2>4. Propriété intellectuelle</h2>
+<p>Voir les <a href="/mentions-legales">mentions légales</a>. Tu peux utiliser le site pour t'entraîner et le recommander librement.</p>
+
+<h2>5. Exactitude des contenus</h2>
+<p>Les tableaux de conjugaison sont fournis à titre pédagogique. Malgré le soin apporté, une erreur est possible : signale-la via la page Contact. Le service n'offre aucune garantie de résultat scolaire ou d'examen.</p>
+
+<h2>6. Responsabilité</h2>
+<p>Dans les limites permises par la loi, l'éditeur ne peut être tenu responsable des interruptions du service, des pertes de données non sauvegardées ou des dommages indirects liés à l'usage du site. Cette clause ne limite pas les droits qui ne peuvent pas être écartés par la loi.</p>
+
+<h2>7. Données personnelles</h2>
+<p>Voir la <a href="/confidentialite">politique de confidentialité</a>.</p>
+
+<h2>8. Évolution du site et des conditions</h2>
+<p>Ces conditions peuvent être mises à jour. La date de dernière mise à jour figure en haut de la page. En cas de cession du site, les engagements pris envers les utilisateurs devront être repris par l'acquéreur.</p>
+
+<h2>9. Contact et droit applicable</h2>
+<p>Contact : {% if contact_email %}<a href="mailto:{{ contact_email }}">{{ contact_email }}</a>{% else %}via la <a href="/contact">page de contact</a> du site (un compte est nécessaire){% endif %}. Les présentes conditions sont soumises au droit français.</p>
+{% endblock %}

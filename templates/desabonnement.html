@@ -1,0 +1,16 @@
+{% extends "_legal_base.html" %}
+{% block titre %}Rappels par email{% endblock %}
+{% block description %}Gestion des rappels par email de Hirondelle Conjugaison.{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block contenu %}
+<h1>Rappels par email</h1>
+{% if etat == "confirmer" %}
+<p>Veux-tu ne plus recevoir les rappels d'entraînement par email ?</p>
+<form method="POST"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<button type="submit" style="background:#007bff;color:#fff;border:none;border-radius:10px;padding:11px 22px;font-weight:700;cursor:pointer;">Me désabonner</button></form>
+{% elif etat == "fait" %}
+<p><strong>C'est fait.</strong> Tu ne recevras plus de rappels. Tu peux les réactiver à tout moment dans <a href="/compte">Mon compte</a>.</p>
+{% else %}
+<p>Ce lien n'est pas valide. Tu peux gérer tes rappels dans <a href="/compte">Mon compte</a>.</p>
+{% endif %}
+{% endblock %}

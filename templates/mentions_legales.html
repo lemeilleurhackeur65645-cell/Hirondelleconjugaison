@@ -1,0 +1,27 @@
+{% extends "_legal_base.html" %}
+{% block titre %}Mentions légales{% endblock %}
+{% block description %}Mentions légales de Hirondelle Conjugaison : éditeur, hébergeurs, propriété intellectuelle et contact.{% endblock %}
+{% block contenu %}
+<h1>Mentions légales</h1>
+<p class="maj">Dernière mise à jour : novembre 2026</p>
+
+<h2>Éditeur du site</h2>
+<p>Hirondelle Conjugaison est un site gratuit et sans publicité, édité à titre non professionnel par une personne physique. Conformément à l'article 6, III, 2 de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique (LCEN), l'éditeur a choisi de rester anonyme. Son identité a été communiquée aux hébergeurs mentionnés ci-dessous.</p>
+<p>Contact : {% if contact_email %}<a href="mailto:{{ contact_email }}">{{ contact_email }}</a>{% else %}via la <a href="/contact">page de contact</a> du site (un compte est nécessaire){% endif %}.</p>
+
+<h2>Hébergeurs</h2>
+<p><strong>Application web :</strong> Render Services, Inc., 525 Brannan Street, Suite 300, San Francisco, CA 94107, États-Unis. Téléphone : +1 415-319-8186. Les serveurs utilisés sont situés à Francfort (Allemagne).</p>
+<p><strong>Base de données :</strong> Supabase Pte. Ltd., 65 Chulia Street, #38-02/03, OCBC Centre, Singapour 049513. Contact : privacy@supabase.io. Les données sont stockées à Paris (France).</p>
+
+<h2>Propriété intellectuelle</h2>
+<p>La conception du site, son code et ses textes sont la propriété de son éditeur. Les tableaux de conjugaison s'appuient sur les données du projet libre « conjugaison » d'Alexey Beshenov (<a href="https://github.com/alexey-beshenov/conjugaison" rel="noopener">github.com/alexey-beshenov/conjugaison</a>), dont les conditions de licence s'appliquent à ces données. La reproduction des éléments propres au site nécessite l'accord de l'éditeur.</p>
+
+<h2>Signaler un contenu</h2>
+<p>Pour signaler un contenu ou un comportement illicite, écris à l'adresse de contact ci-dessus en précisant la page concernée.</p>
+
+<h2>Données personnelles</h2>
+<p>Le traitement des données personnelles est détaillé dans la <a href="/confidentialite">politique de confidentialité</a>. Les conditions de service figurent dans les <a href="/conditions">conditions d'utilisation</a>.</p>
+
+<h2>Droit applicable</h2>
+<p>Le site est soumis au droit français.</p>
+{% endblock %}

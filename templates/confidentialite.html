@@ -1,0 +1,63 @@
+{% extends "_legal_base.html" %}
+{% block titre %}Confidentialité et cookies{% endblock %}
+{% block description %}Données collectées par Hirondelleconjugaison, finalités, durées de conservation, prestataires, cookies et droits des utilisateurs.{% endblock %}
+{% block contenu %}
+<h1>Politique de confidentialité et cookies</h1>
+<p class="maj">Dernière mise à jour : novembre 2026</p>
+
+<div class="box"><strong>En bref :</strong> aucune publicité, aucun outil d'audience, aucune revente de données. Tu peux utiliser le quiz sans compte. Si tu en crées un, nous gardons le minimum utile et tu peux tout exporter ou supprimer dans « Mon compte ».</div>
+
+<h2>1. Responsable du traitement</h2>
+<p>L'éditeur du site, personne physique agissant à titre non professionnel et dont l'identité est détaillée dans les <a href="/mentions-legales">mentions légales</a>. Contact pour toute demande : {% if contact_email %}<a href="mailto:{{ contact_email }}">{{ contact_email }}</a>{% else %}via la <a href="/contact">page de contact</a> du site (un compte est nécessaire){% endif %}.</p>
+
+<h2>2. Données traitées, finalités et durées</h2>
+<table>
+<tr><th>Finalité</th><th>Données</th><th>Base légale</th><th>Durée</th></tr>
+<tr><td>Créer et gérer ton compte</td><td>Adresse email, prénom (facultatif), mot de passe (stocké uniquement sous forme chiffrée), méthode de connexion. Avec Google ou GitHub : l'email et le nom public transmis par ce service.</td><td>Exécution du service demandé</td><td>Tant que le compte existe ; suppression automatique après 3 ans d'inactivité</td></tr>
+<tr><td>Vérifier ton email et réinitialiser ton mot de passe</td><td>Code à 6 chiffres (valable 15 minutes) ; en attendant la validation, ton prénom et ton mot de passe chiffré</td><td>Exécution du service demandé</td><td>Codes supprimés au plus tard 2 jours après leur création</td></tr>
+<tr><td>Suivre ta progression</td><td>Niveau, XP, série de jours, badges, résultats par verbe et par temps, 150 dernières réponses</td><td>Exécution du service demandé</td><td>Tant que le compte existe</td></tr>
+<tr><td>Répondre à tes messages (page Contact)</td><td>Sujet et messages du fil, rattachés à ton compte</td><td>Exécution du service demandé et intérêt légitime (répondre)</td><td>12 mois après la création du fil ; fils clos supprimés après 90 jours</td></tr>
+<tr><td>Rappel par email après 3 jours d'inactivité</td><td>Email, prénom, longueur de ta série</td><td>Intérêt légitime (t'aider à poursuivre le service que tu utilises)</td><td>Tant que le compte existe. Tu peux refuser à tout moment : lien dans chaque email ou réglage dans « Mon compte »</td></tr>
+<tr><td>Apparaître dans le classement</td><td>Prénom, niveau, série, XP</td><td>Ton consentement (désactivé par défaut)</td><td>Jusqu'au retrait de ton consentement dans « Mon compte »</td></tr>
+<tr><td>Sécurité et fonctionnement</td><td>Adresse IP (limitation des abus, journaux techniques de l'hébergeur)</td><td>Intérêt légitime (sécurité)</td><td>Selon l'hébergeur, durée limitée</td></tr>
+</table>
+<p>Nous n'utilisons aucun traceur publicitaire ni outil d'analyse d'audience.</p>
+
+<h2>3. Prestataires qui reçoivent des données</h2>
+<ul>
+<li><strong>Render</strong> (hébergement du site, Francfort).</li>
+<li><strong>Supabase</strong> (base de données, Paris). La société est établie à Singapour.</li>
+<li><strong>EmailJS</strong> (envoi des emails de code, de bienvenue et de rappel) : il reçoit l'adresse du destinataire et le contenu du message. Ses serveurs sont situés aux États-Unis.</li>
+<li><strong>Google ou GitHub</strong> (seulement si tu choisis de te connecter avec eux).</li>
+<li><strong>Discord</strong> (notification interne à l'éditeur quand un message de contact est envoyé) : seuls le numéro et le type du message sont transmis, ni ton email ni ton texte.</li>
+<li><strong>UptimeRobot</strong> (surveillance de disponibilité) : il interroge des pages publiques et ne reçoit aucune donnée d'utilisateur.</li>
+</ul>
+<h2>4. Transferts hors de l'Union européenne</h2>
+<p>Certains prestataires sont établis ou hébergent des données hors de l'Union européenne (États-Unis pour Render, EmailJS, Discord, Google et GitHub ; Singapour pour Supabase). Les garanties de transfert sont celles décrites dans la politique de confidentialité et les accords de traitement de chacun d'eux, que tu peux consulter sur leurs sites. L'éditeur choisit de limiter ces transferts : la base de données est à Paris et le site à Francfort.</p>
+
+<h2>5. Cookies et stockage local</h2>
+<p>Seuls des traceurs <strong>strictement nécessaires</strong> ou des <strong>préférences que tu règles toi-même</strong> sont utilisés. Ils ne demandent pas de consentement et il n'y a donc pas de bandeau.</p>
+<table>
+<tr><th>Nom</th><th>Rôle</th><th>Durée</th></tr>
+<tr><td>session (cookie)</td><td>Maintien de ta session, sécurité des formulaires, état du quiz en cours</td><td>Durée de la session</td></tr>
+<tr><td>remember_token (cookie)</td><td>Te garder connecté, uniquement si tu coches « Rester connecté »</td><td>30 jours</td></tr>
+<tr><td>hirondelle_sons, hirondelle_palier, site_interface_mode (stockage local du navigateur)</td><td>Se souvenir de tes réglages : sons, difficulté, affichage mobile ou ordinateur</td><td>Jusqu'à ce que tu les effaces</td></tr>
+</table>
+<p>Les polices et les icônes sont hébergées sur le site lui-même : leur affichage n'envoie aucune requête à un tiers.</p>
+
+<h2>6. Tes droits</h2>
+<p>Tu peux demander l'accès à tes données, leur rectification, leur effacement, la limitation ou l'opposition à leur traitement, leur portabilité, et retirer ton consentement à tout moment. Dans « Mon compte », tu peux <a href="/compte/export">télécharger tes données</a> (format JSON), régler tes préférences et supprimer ton compte, ce qui efface aussi tes messages. Pour toute autre demande, écris à {% if contact_email %}<a href="mailto:{{ contact_email }}">{{ contact_email }}</a>{% else %}via la <a href="/contact">page de contact</a> du site (un compte est nécessaire){% endif %}. Nous répondons dans un délai d'un mois.</p>
+<p>Si tu estimes que tes droits ne sont pas respectés, tu peux saisir la CNIL : <a href="https://www.cnil.fr" rel="noopener">cnil.fr</a>, 3 place de Fontenoy, TSA 80715, 75334 Paris Cedex 07.</p>
+
+<h2>7. Mineurs</h2>
+<p>En France, un mineur peut créer seul un compte à partir de 15 ans. En dessous, l'accord d'un titulaire de l'autorité parentale est nécessaire. L'inscription demande de confirmer cet âge ou cet accord. Le quiz reste utilisable sans compte à tout âge.</p>
+
+<h2>8. Sécurité</h2>
+<p>Les échanges sont chiffrés (HTTPS), les mots de passe sont chiffrés de façon irréversible, les formulaires sont protégés contre les requêtes frauduleuses et les tentatives répétées sont limitées.</p>
+
+<h2>9. Cession du site</h2>
+<p>Si le site était transféré à un tiers, tes données ne pourraient lui être transmises qu'à condition qu'il reprenne les engagements de cette politique. Tu en serais informé au préalable et pourrais supprimer ton compte.</p>
+
+<h2>10. Modifications</h2>
+<p>Cette politique peut évoluer. La date de dernière mise à jour figure en haut de la page.</p>
+{% endblock %}
