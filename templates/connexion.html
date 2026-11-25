@@ -17,7 +17,7 @@
         * { box-sizing: border-box; }
 
         body {
-            margin: 0; min-height: 100vh;
+            margin: 0; padding-top: 0; min-height: 100vh;
             font-family: 'Inter', Arial, sans-serif;
             background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 50%, #f5f0ff 100%);
             background-attachment: fixed;
@@ -209,6 +209,7 @@
 
 <div class="auth-stage">
     <div class="container" id="container">
+        {% set auth_flash_messages = get_flashed_messages() %}
 
         <!-- Inscription -->
         <div class="form-container sign-up">
@@ -232,6 +233,7 @@
                 <input type="text" name="nom" placeholder="Prénom (optionnel)" aria-label="Prénom (optionnel)" autocomplete="given-name">
                 <input type="email" name="email" placeholder="Email" aria-label="Adresse email" autocomplete="email" required>
                 <input type="password" name="password" placeholder="Mot de passe (8 caractères min.)" aria-label="Mot de passe (8 caractères minimum)" autocomplete="new-password" required minlength="8">
+                {% for msg in auth_flash_messages %}<div class="flash-msg">{{ msg }}</div>{% endfor %}
                 <button type="submit" class="submit-btn">S'inscrire</button>
                 <p class="mobile-switch">Déjà inscrit(e) ? <button type="button" class="auth-switch" data-auth-show="login">Se connecter</button></p>
             </form>
@@ -256,11 +258,7 @@
                 <input type="password" name="password" placeholder="Mot de passe" aria-label="Mot de passe" autocomplete="current-password" required>
                 <a href="/mot-de-passe-oublie" class="forget-link">Mot de passe oublié ?</a>
 
-                {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                        {% for msg in messages %}<div class="flash-msg">{{ msg }}</div>{% endfor %}
-                    {% endif %}
-                {% endwith %}
+                {% for msg in auth_flash_messages %}<div class="flash-msg">{{ msg }}</div>{% endfor %}
 
                 <button type="submit" class="submit-btn">Se connecter</button>
                 <p class="mobile-switch">Pas encore de compte ? <button type="button" class="auth-switch" data-auth-show="signup">S'inscrire</button></p>
