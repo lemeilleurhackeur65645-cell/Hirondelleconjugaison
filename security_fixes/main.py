@@ -740,8 +740,8 @@ def indexnow_submit():
                 timeout=15,
             )
             resultats.append({"lot": i // LOT + 1, "nb_urls": len(lot_urls), "status": resp.status_code})
-        except Exception as e:
-            resultats.append({"lot": i // LOT + 1, "nb_urls": len(lot_urls), "erreur": str(e)})
+        except Exception:
+            resultats.append({"lot": i // LOT + 1, "nb_urls": len(lot_urls), "erreur": "Échec de la soumission."})
 
     return jsonify({"total_urls": len(toutes_urls), "resultats": resultats})
 
@@ -1117,8 +1117,8 @@ def keepalive():
         from models import User
         nb = User.query.count()
         return jsonify({"status": "ok", "utilisateurs": nb}), 200
-    except Exception as e:
-        return jsonify({"status": "erreur", "detail": str(e)}), 500
+    except Exception:
+        return jsonify({"status": "erreur", "detail": "Base de données indisponible."}), 500
 # ============================================================
 # GÉNÉRATION D'UNE QUESTION
 # ============================================================
