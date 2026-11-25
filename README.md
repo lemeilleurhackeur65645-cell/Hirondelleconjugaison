@@ -2,7 +2,7 @@
 
 **Le quiz de conjugaison française le plus complet, gratuit, et sans pub.**
 
-> 543 verbes · 9 121 pages · Répétition espacée · Gamification complète · Comptes utilisateurs sécurisés
+> 543 verbes · 9 102 tableaux de conjugaison · Répétition espacée · Gamification complète · Comptes utilisateurs
 
 🌐 **Site en ligne :** https://hirondelleconjugaison.onrender.com
 
@@ -29,7 +29,7 @@ Hirondelle Conjugaison est une application web d'entraînement à la conjugaison
 - **Les apprenants de FLE** (Français Langue Étrangère) qui veulent pratiquer la conjugaison de façon interactive
 - **Les enseignants** qui cherchent un outil gratuit et sans inscription obligatoire à recommander à leurs élèves
 
-Le site génère dynamiquement **9 121 pages de conjugaison** (une page par combinaison verbe × mode × temps), toutes optimisées pour le référencement naturel et toutes équipées d'un quiz intégré.
+Le site génère dynamiquement **9 102 pages de conjugaison avec tableau** (une par combinaison verbe × mode × temps disposant de formes), équipées d'un quiz intégré.
 
 ---
 
@@ -73,9 +73,9 @@ Après chaque session, un bilan détaillé affiche :
 
 Immédiatement après le bilan, l'utilisateur peut lancer une session de révision ciblée sur ses erreurs uniquement, afin de pouvoir certifier qu'il ne refasse pas les mêmes erreurs.
 
-### 9 121 pages de conjugaison
+### 9 102 pages de conjugaison avec tableau
 
-Chaque combinaison verbe × mode × temps a sa propre page dédiée, accessible via `/conjugaison/{verbe}/{mode}/{temps}`. Ces pages contiennent :
+Chaque combinaison verbe × mode × temps disposant de formes a sa propre page dédiée, accessible via `/conjugaison/{verbe}/{mode}/{temps}`. Ces pages contiennent :
 - Le tableau de conjugaison complet (6 personnes, ou 3 pour l'impératif)
 - Un quiz intégré directement sur la page
 - Un exemple de phrase en contexte pour les combinaisons les plus consultées (50 exemples couvrant les verbes et modes les plus cherchés)
@@ -108,7 +108,7 @@ Envoi d'un code à 6 chiffres par email, même mécanique que la vérification d
 
 ### Vue d'ensemble
 
-Le site est une application web Python/Flask hébergée sur Render (plan gratuit, avec réveil automatique configuré via UptimeRobot). La base de données est PostgreSQL (plan gratuit Render, 1 Go). L'envoi d'emails passe par Brevo (300 emails/jour gratuits).
+Le dépôt contient une application web Python/Flask configurée pour Gunicorn. Elle peut utiliser PostgreSQL via `DATABASE_URL` ou SQLite en développement. L'envoi d'emails est intégré à EmailJS. L'état réel de l'hébergement, les quotas et les valeurs des variables d'environnement doivent être vérifiés dans la console du fournisseur : ils ne sont pas vérifiables depuis ce dépôt.
 
 ### Pourquoi cette architecture est compacte et maintenable
 
@@ -128,7 +128,7 @@ Cette architecture permet de rester confortablement dans le quota de 1 Go du pla
 
 **`auth.py`** — Un Blueprint Flask séparé qui gère tout ce qui touche à l'authentification : inscription en deux étapes, connexion email/Google/Github, déconnexion, vérification de code, mot de passe oublié, réinitialisation de mot de passe. Inclut le rate limiting spécifique aux routes sensibles.
 
-**`email_verification.py`** — Module autonome responsable de la génération et de la vérification des codes, de l'envoi des emails via Brevo, et de l'envoi des emails de relance rétention.
+**`email_verification.py`** — Module autonome responsable de la génération et de la vérification des codes, de l'envoi des emails via EmailJS, et de l'envoi des emails de relance rétention.
 
 **`repetition.py`** — L'algorithme de répétition espacée (calcul des poids depuis les agrégats, tirage pondéré), la logique de gamification (gain XP, mise à jour du streak, vérification des badges), et la fonction d'enregistrement compact des réponses.
 
@@ -147,8 +147,8 @@ La sécurité a été traitée en profondeur, avec 7 mécanismes complémentaire
 **1. Mots de passe hachés avec bcrypt**
 Les mots de passe ne sont jamais stockés en clair, même temporairement. Ils sont hachés dès la saisie du formulaire d'inscription, avant même d'être écrits dans la table des codes de vérification en attente.
 
-**2. Clé secrète via variable d'environnement**
-La clé qui signe les sessions utilisateurs est définie uniquement via variable d'environnement sur Render — jamais dans le code source, afin d'écarter toute tentative de se la procurer. Si la variable venait à manquer, une alerte explicite apparaîtrait alors dans les logs au démarrage.
+**2. Clé secrète obligatoire via variable d'environnement**
+La clé qui signe les sessions utilisateurs est lue depuis `SECRET_KEY`. L'application refuse de démarrer si cette variable est absente ou vide ; aucune clé de secours n'est utilisée. Configure une clé aléatoire longue dans les paramètres secrets de l'hébergeur et renouvelle-la si une valeur de secours a déjà été utilisée.
 
 **3. Cookies de session sécurisés**
 Trois attributs activés sur tous les cookies : `Secure` (transmis uniquement en HTTPS), `HttpOnly` (inaccessible au JavaScript, protège contre le vol de session par XSS), `SameSite=Lax` (protection complémentaire contre le CSRF sur les navigations cross-site).
@@ -171,9 +171,9 @@ Le formulaire d'inscription contient un champ caché par CSS avec un nom génér
 
 ### Pages générées
 
-**9 121 pages de conjugaison** au format `/conjugaison/{verbe}/{mode}/{temps}`, toutes incluses dans le sitemap XML dynamique disponible sur `/sitemap.xml`. Les impératifs vides (verbes défectifs comme *falloir*, *pleuvoir*) sont automatiquement exclus du sitemap pour éviter les pages sans contenu.
+**9 102 pages de conjugaison** au format `/conjugaison/{verbe}/{mode}/{temps}`, toutes incluses dans le sitemap XML dynamique disponible sur `/sitemap.xml`. Les impératifs vides (verbes défectifs comme *falloir*, *pleuvoir*) sont automatiquement exclus du sitemap pour éviter les pages sans contenu.
 
-**543 pages "verbe central"** au format `/conjugaison/{verbe}`, qui présentent un résumé de tous les modes disponibles pour ce verbe avec des liens vers chaque tableau détaillé.
+**543 pages "verbe central"** au format `/conjugaison/{verbe}`, qui présentent un résumé de tous les modes disponibles pour ce verbe avec des liens vers chaque tableau détaillé. Elles s'ajoutent aux 9 102 pages de tableaux.
 
 **1 page index des conjugaisons** (`/conjugaisons`) avec barre de recherche en autocomplétion sur les 543 verbes, filtres par groupe grammatical, et index alphabétique.
 

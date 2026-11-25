@@ -133,13 +133,11 @@ def titre_pour_niveau(niveau):
 
 app = Flask(__name__)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
+app.secret_key = os.environ.get("SECRET_KEY")
+if not app.secret_key:
+    raise RuntimeError("SECRET_KEY doit être définie dans les variables d'environnement.")
 
-app.secret_key = os.environ.get("SECRET_KEY", "secret123")
-if app.secret_key == "secret123":
-    print("[ALERTE SÉCURITÉ] SECRET_KEY n'est pas définie en variable d'environnement — "
-          "le fallback en dur dans le code est utilisé. N'importe qui lisant le code source "
-          "peut forger une session valide. Configure SECRET_KEY sur Render immédiatement.", flush=True)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///local_dev.db")
 
 # Sécurité des cookies de session :
 # - Secure   : le cookie n'est envoyé que sur HTTPS (Render fournit HTTPS par défaut)
@@ -793,20 +791,10 @@ def index():
         xp_progress_pct=xp_progress_pct, xp_prochain_niveau=xp_prochain_niveau,
         streak_joue_aujourd_hui=streak_joue_aujourd_hui,
         verbe_jour=verbe_du_jour(),
-        stats_comm=stats_communaute_fictives(),
     )
 def verbe_du_jour():
     verbes = sorted(ACTIF.keys())
     return verbes[date.today().toordinal() % len(verbes)]
-
-def stats_communaute_fictives():
-    # Nombres qui évoluent chaque jour selon la date, pour paraître vivants
-    seed = date.today().toordinal()
-    return {
-        "questions_semaine": 8_340 + (seed * 37) % 900,
-        "verbes_maitrises": 1_205 + (seed * 13) % 300,
-        "utilisateurs_actifs": 340 + (seed * 3) % 60,
-    }
 
 @app.route("/revision")
 def revision():
@@ -1080,15 +1068,17 @@ def export_pdf():
     from flask import send_file
     return send_file(buffer, mimetype="application/pdf", as_attachment=True, download_name="fiche-revision-hirondelle.pdf")
 
-@app.route("/admin/nettoyer-bdd")
+@app.route("/admin/nettoyer-bdd", methods=["POST"])
 @limiter.limit("2 per hour")
+@login_required
 def nettoyer_bdd():
     from flask import jsonify
     from models import CodeVerification, Ticket
     from datetime import datetime, timezone, timedelta
 
-    if request.args.get("token") != INDEXNOW_ADMIN_TOKEN:
-        return jsonify({"erreur": "Token invalide."}), 403
+    refus = _admin_requis()
+    if refus:
+        return refus
 
     limite = datetime.now(timezone.utc) - timedelta(days=2)
     codes_supprimes = CodeVerification.query.filter(CodeVerification.date_creation < limite).delete()
@@ -1309,6 +1299,28 @@ def generer_question(modes=None, temps=None, personnes=None, verbes=None, base=N
     except (KeyError, IndexError, TypeError):
         return generer_question(modes, temps, personnes, verbes, base, voix_question, _depth + 1, poids_verbes)
 
+
+def conseil_conjugaison(mode, temps, voix="active"):
+    """Return a short formation hint for the tense currently being practised."""
+    mode, temps = mode.lower(), temps.lower()
+    if voix == "passive":
+        return "À la voix passive, « être » s’accorde avec le sujet et le participe passé s’accorde aussi avec lui."
+    if "imparfait" in temps:
+        return "À l’imparfait, on prend généralement le radical de « nous » au présent sans -ons, puis on ajoute -ais, -ais, -ait, -ions, -iez, -aient. « Être » est une exception."
+    if "futur" in temps and "conditionnel" not in mode:
+        return "Au futur simple, on utilise généralement l’infinitif comme radical et les terminaisons -ai, -as, -a, -ons, -ez, -ont. Certains verbes ont un radical irrégulier."
+    if "conditionnel" in mode or "conditionnel" in temps:
+        return "Le conditionnel présent associe le radical du futur aux terminaisons de l’imparfait : -ais, -ais, -ait, -ions, -iez, -aient."
+    if "subjonctif" in mode and "présent" in temps:
+        return "Le subjonctif présent s’emploie souvent après « que » ; ses terminaisons sont -e, -es, -e, -ions, -iez, -ent. Le radical peut varier selon la personne."
+    if "passé composé" in temps:
+        return "Le passé composé se forme avec « avoir » ou « être » au présent et le participe passé ; avec « être », il s’accorde généralement avec le sujet."
+    if "impératif" in mode:
+        return "L’impératif s’adresse directement à quelqu’un : il se conjugue sans sujet exprimé, généralement à tu, nous et vous."
+    if mode == "indicatif" and "présent" in temps:
+        return "Au présent de l’indicatif, identifie d’abord le groupe du verbe et la personne : les terminaisons varient selon les deux."
+    return "Repère le mode, le temps et la personne : le radical et la terminaison peuvent changer selon le verbe."
+
 # ============================================================
 # MODE RÉVISION CIBLÉE
 # ============================================================
@@ -1463,6 +1475,7 @@ def quiz():
             return redirect("/fin")
 
     feedback = None
+    conseil = None
     reaction = None
 
     # Réception réponse
@@ -1475,6 +1488,13 @@ def quiz():
         bonne = session["bonne"]
         session["total"] += 1
         est_correct = (rep == bonne.lower())
+        if mode != "evaluation":
+            feedback = "✔️ Correct" if est_correct else f"❌ Faux. Réponse attendue : {bonne}"
+            conseil = conseil_conjugaison(
+                session.get("mode_verbe", ""),
+                session.get("temps", ""),
+                session.get("voix_question", "active"),
+            )
     
 
         if not est_correct:
@@ -1561,7 +1581,6 @@ def quiz():
                 db.session.rollback()
 
         if mode == "evaluation":
-            feedback = None
             reaction = None
             session["questions_restantes"] -= 1
             if session["questions_restantes"] <= 0:
@@ -1571,7 +1590,6 @@ def quiz():
             if not session.get("erreurs_revision"):
                 return redirect("/fin")
         else:
-            feedback = "✔️ Correct" if rep == bonne.lower() else f"❌ Faux. Réponse attendue : {bonne}"
             reaction = reaction_hirondelle(est_correct, session)
             
     # Nouvelle question
@@ -1672,6 +1690,7 @@ def quiz():
         level_up=level_up,
         user_niveau=current_user.niveau if current_user.is_authenticated else None,
         reaction=reaction,
+        conseil=conseil,
         palier=infos_palier(),
         paliers_noms=[p["nom"] for p in PALIERS],
     )

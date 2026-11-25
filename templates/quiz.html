@@ -193,7 +193,8 @@
     </form>
 
     {% if feedback %}
-        <p class="feedback">{{ feedback }}</p>
+        <p class="feedback" aria-live="polite">{{ feedback }}</p>
+        {% if conseil %}<p class="learning-tip"><strong>À retenir :</strong> {{ conseil }}</p>{% endif %}
     {% endif %}
     
     {% if reaction %}
@@ -204,6 +205,11 @@
         </div>
     </div>
     <style>
+        .learning-tip {
+            margin: 8px 0 16px; padding: 12px 14px; border-left: 3px solid #007bff;
+            border-radius: 8px; background: #eff6ff; color: #334155; text-align: left;
+            font-size: 0.88rem; line-height: 1.55;
+        }
     @keyframes hirondelle-entree { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     @keyframes hirondelle-flotte { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
     </style>
@@ -364,4 +370,3 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
-
