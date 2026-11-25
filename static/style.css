@@ -825,3 +825,26 @@ body.mobile-mode .settings-popup {
     .topbar-brand span { display: none; }
     .topbar-nav-link { display: none; }
 }
+
+@keyframes page-enter {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.page { animation: page-enter 0.4s ease both; }
+
+.btn:active, .start-btn:active, .back-button:active, .stop-button:active,
+.menu-link:active, .topbar-nav-cta:active {
+    transform: translateY(1px) scale(0.98);
+}
+
+:focus-visible { outline: 3px solid rgba(0,119,230,0.55); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
