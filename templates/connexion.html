@@ -7,8 +7,6 @@
     <title>Connexion | Hirondelle Conjugaison</title>
     <meta name="description" content="Connecte-toi à Hirondelle Conjugaison pour sauvegarder ta progression et débloquer les statistiques détaillées.">
     <link rel="icon" type="image/png" href="/static/img/logo.png">
-    <link rel="stylesheet" href="/static/vendor/fontawesome/css/fontawesome.min.css">
-    <link rel="stylesheet" href="/static/vendor/fontawesome/css/brands.min.css">
     <link rel="stylesheet" href="/static/style.css">
     <style>
         /* ════════════════════════════════════════════════════
@@ -19,14 +17,14 @@
         * { box-sizing: border-box; }
 
         body {
-            margin: 0; padding-top: 56px; min-height: 100vh;
+            margin: 0; padding-top: 0; min-height: 100vh;
             font-family: 'Inter', Arial, sans-serif;
             background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 50%, #f5f0ff 100%);
             background-attachment: fixed;
         }
 
         .auth-stage {
-            width: 100%; min-height: calc(100vh - 56px - 84px); flex-direction: column;
+            width: 100%; min-height: calc(100vh - 56px);
             padding: 24px 20px 50px; display: flex;
             align-items: center; justify-content: center;
         }
@@ -60,7 +58,8 @@
             margin-top: 12px; cursor: pointer;
             box-shadow: 0 4px 14px rgba(0,123,255,0.28);
         }
-        .container button.submit-btn:hover { opacity: 0.92; }
+        .container button.submit-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+        .container button.submit-btn:active { transform: translateY(0) scale(0.98); }
 
         .container button.hidden {
             background-color: rgba(255,255,255,0.12);
@@ -83,17 +82,19 @@
         .container form {
             background-color: #fff;
             display: flex; align-items: center; justify-content: center;
-            flex-direction: column; padding: 0 40px; height: 100%; width: 100%;
+            flex-direction: column; gap: 2px; padding: 28px 40px; height: 100%; width: 100%;
         }
 
-        .container h2 { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0; }
+        .container h1, .container h2 { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0; }
 
         .container input {
             background-color: #f1f5f9; border: 1.5px solid transparent;
-            margin: 7px 0; padding: 11px 15px; font-size: 13px;
-            border-radius: 8px; width: 100%; outline: none; font-family: inherit;
+            margin: 5px 0; padding: 12px 14px; font-size: 14px;
+            border-radius: 9px; width: 100%; min-height: 44px; outline: none; font-family: inherit;
+            transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
         }
-        .container input:focus { border-color: #007bff; background: #fff; }
+        .container input:focus { border-color: #007bff; background: #fff; box-shadow: 0 0 0 3px rgba(0,123,255,0.12); }
+        .container input[type="checkbox"] { width: 18px; min-height: 18px; height: 18px; margin: 0; accent-color: #007bff; }
 
         .flash-msg {
             width: 100%; background: #fff3cd; border: 1px solid #ffe69c; color: #664d03;
@@ -103,36 +104,46 @@
         /* ── Panneaux de formulaire (mécanisme original) ── */
         .form-container {
             position: absolute; top: 0; height: 100%;
-            transition: all 0.6s ease-in-out;
+            transition: transform 0.6s cubic-bezier(.2,.8,.2,1), opacity 0.35s ease, visibility 0s linear 0.6s;
         }
 
-        .sign-in { left: 0; width: 50%; z-index: 2; }
+        .sign-in { left: 0; width: 50%; z-index: 2; visibility: visible; }
         .container.active .sign-in { transform: translateX(100%); }
 
-        .sign-up { left: 0; width: 50%; opacity: 0; z-index: 1; }
+        .sign-up { left: 0; width: 50%; opacity: 0; z-index: 1; visibility: hidden; pointer-events: none; }
         .container.active .sign-up {
-            transform: translateX(100%); opacity: 1; z-index: 5;
+            transform: translateX(100%); opacity: 1; z-index: 5; visibility: visible; pointer-events: auto;
             animation: move 0.6s;
         }
+        .container.active .sign-in { visibility: hidden; pointer-events: none; }
+        .container:not(.active) .sign-up { transform: translateX(-8%); }
+        .container:not(.active) .sign-in { opacity: 1; }
         @keyframes move {
             0%, 49.99% { opacity: 0; z-index: 1; }
             50%, 100% { opacity: 1; z-index: 5; }
         }
 
         /* ── Icônes sociales (OAuth réel) ── */
-        .social-icons { margin: 12px 0 2px; display: flex; gap: 8px; }
+        .social-icons { margin: 10px 0 12px; display: flex; gap: 10px; }
         .social-icons a.icon {
             border: 1.5px solid #e2e8f0; border-radius: 10px;
             display: inline-flex; justify-content: center; align-items: center;
-            width: 42px; height: 42px; color: #334155; text-decoration: none;
-            font-size: 1.1rem; transition: all 0.15s;
+            width: 48px; height: 46px; color: #334155; text-decoration: none;
+            transition: transform 0.18s ease, background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
         }
-        .social-icons a.icon:hover { background: #f8fafc; border-color: #007bff; color: #007bff; }
+        .social-icons a.icon svg { width: 21px; height: 21px; }
+        .social-icons a.icon:hover { background: #f8fafc; border-color: #007bff; color: #007bff; transform: translateY(-2px); box-shadow: 0 5px 14px rgba(15,23,42,0.1); }
+        .social-icons a.icon:focus-visible, .mobile-switch button:focus-visible, .toggle-panel button:focus-visible { outline: 3px solid #80bdff; outline-offset: 3px; }
+        .social-label { color: #64748b; font-size: 0.78rem; margin-top: 6px; }
+        .auth-switch {
+            border: 0; padding: 6px 8px; background: transparent; color: #007bff;
+            font: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer;
+        }
 
         /* ── Panneau de bascule décoratif ── */
         .toggle-container {
             position: absolute; top: 0; left: 50%; width: 50%; height: 100%;
-            overflow: hidden; transition: all 0.6s ease-in-out;
+            overflow: hidden; transition: transform 0.6s cubic-bezier(.2,.8,.2,1), border-radius 0.6s ease;
             border-radius: 150px 0 0 100px; z-index: 1000;
         }
         .container.active .toggle-container {
@@ -144,7 +155,7 @@
             background: linear-gradient(160deg, #007bff 0%, #0056d6 55%, #0f172a 140%);
             color: #fff; position: relative; left: -100%;
             height: 100%; width: 200%;
-            transform: translateX(0); transition: all 0.6s ease-in-out;
+            transform: translateX(0); transition: transform 0.6s cubic-bezier(.2,.8,.2,1);
         }
         .container.active .toggle { transform: translateX(50%); }
 
@@ -152,13 +163,13 @@
             position: absolute; width: 50%; height: 100%;
             display: flex; align-items: center; justify-content: center;
             flex-direction: column; padding: 0 30px; text-align: center; top: 0;
-            transform: translateX(0); transition: all 0.6s ease-in-out;
+            transform: translateX(0); transition: transform 0.6s cubic-bezier(.2,.8,.2,1), opacity 0.3s ease;
         }
         .toggle-panel img {
             width: 56px; height: 56px; border-radius: 14px; margin-bottom: 16px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.25);
         }
-        .toggle-panel h2 { color: #fff; font-size: 1.4rem; margin: 0 0 10px; }
+        .toggle-panel h1 { color: #fff; font-size: 1.4rem; margin: 0 0 10px; }
         .toggle-panel p { color: rgba(255,255,255,0.85); margin: 0 0 22px; }
 
         .toggle-left { transform: translateX(-200%); }
@@ -170,68 +181,61 @@
         /* ── Responsive : le mécanisme à bascule slide ne tient pas sur petit
              écran, on retombe sur un affichage empilé classique ── */
         @media (max-width: 768px) {
-            .container { min-height: 0; border-radius: 22px; }
+            .container { min-height: 0; border-radius: 22px; display: grid; overflow: hidden; }
             .toggle-container { display: none; }
             .form-container {
-                position: relative; width: 100% !important; padding: 32px 0;
-                transform: none !important; opacity: 1 !important; z-index: 1 !important;
+                position: relative; grid-area: 1 / 1; width: 100% !important; height: auto;
+                padding: 20px 0; transform: none !important; z-index: 1 !important;
+                transition: opacity 0.25s ease, visibility 0s linear 0.25s;
                 animation: none !important;
             }
-            .sign-up { display: none; }
-            .container.active .sign-in { display: none; }
-            .container.active .sign-up { display: flex; }
+            .container form { padding: 10px 28px 18px; }
+            .sign-up { opacity: 0; visibility: hidden; }
+            .container.active .sign-up { opacity: 1; visibility: visible; }
+            .container.active .sign-in { opacity: 0; visibility: hidden; }
+            .container:not(.active) .sign-in { opacity: 1; visibility: visible; }
+            .container:not(.active) .sign-up { transform: none; }
             .mobile-switch { display: block !important; }
+            .container h1, .container h2 { font-size: 1.35rem; }
         }
         .mobile-switch {
             display: none; margin-top: 14px; font-size: 0.82rem; color: #64748b;
         }
-        .mobile-switch a { color: #007bff; font-weight: 700; text-decoration: none; cursor: pointer; }
-    
-        .ico-g{font-weight:800;font-size:1.05rem;font-family:Arial,sans-serif}
-        .age-check,.rester{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#475569;text-align:left;margin:8px 0;width:100%}
-        .age-check input,.rester input{width:auto;margin:2px 0 0;flex-shrink:0}
-        .age-check a{color:#0056d6}
-        .age-check,.rester{margin:6px 0}
-        .social-icons a.icon svg{display:block}
-            .age-check{margin:4px 0 0;font-size:11px;line-height:1.35}
-        .row-opts{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0}
-        .row-opts .rester{width:auto;margin:0;font-size:12px}
-        .row-opts .forget-link{margin:12px 0 8px}
-        .auth-legal{max-width:768px;margin:14px 8px 0;font-size:12px;line-height:1.5;color:#64748b;text-align:center}
-        .auth-legal a{color:#0056d6}
-        .container input:focus-visible{outline:none!important}
-        .site-footer{margin-top:0;padding-top:8px}
-            .container .age-check input,.container .rester input{width:16px;height:16px;padding:0;margin:2px 0 0;flex-shrink:0;accent-color:#007bff}
-        .rester span{white-space:nowrap}
+        .mobile-switch button { margin-left: 2px; }
     </style>
 </head>
 <body>
 {% include '_topbar.html' %}
-<main id="contenu" tabindex="-1">
 
 <div class="auth-stage">
-    <h1 class="sr-only">Connexion à Hirondelle Conjugaison</h1>
     <div class="container" id="container">
+        {% set auth_flash_messages = get_flashed_messages() %}
 
         <!-- Inscription -->
         <div class="form-container sign-up">
             <form method="POST" action="/inscription">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <h2>Créer un compte</h2>
+                <span class="social-label">Créer un compte avec</span>
                 <div class="social-icons">
-                    <a href="/connexion/google" class="icon" title="Google" aria-label="Continuer avec Google"><i class="fa-brands fa-google"></i></a>
-                    <a href="/connexion/github" class="icon" title="Github" aria-label="Continuer avec Github"><i class="fa-brands fa-github"></i></a>
+                    <a href="/connexion/google" class="icon" aria-label="Continuer avec Google" title="Continuer avec Google">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.09-1.92 3.27-4.74 3.27-8.1Z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.65l-3.57-2.77c-.99.66-2.25 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.15v2.84A11 11 0 0 0 12 23Z"/><path fill="#FBBC05" d="M5.84 14.11a6.6 6.6 0 0 1 0-4.22V7.05H2.15a11 11 0 0 0 0 9.9l3.69-2.84Z"/><path fill="#EA4335" d="M12 4.36c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 1.09 14.97 0 12 0A11 11 0 0 0 2.15 7.05l3.69 2.84C6.71 7.29 9.14 4.36 12 4.36Z"/></svg>
+                    </a>
+                    <a href="/connexion/github" class="icon" aria-label="Continuer avec GitHub" title="Continuer avec GitHub">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.56.1.76-.24.76-.54v-2.1c-3.1.67-3.76-1.32-3.76-1.32-.5-1.28-1.23-1.62-1.23-1.62-1.01-.69.08-.68.08-.68 1.12.08 1.7 1.15 1.7 1.15.99 1.7 2.6 1.21 3.23.93.1-.72.39-1.21.7-1.49-2.47-.28-5.07-1.24-5.07-5.5 0-1.22.44-2.21 1.15-2.99-.12-.28-.5-1.42.11-2.95 0 0 .94-.3 3.05 1.14a10.6 10.6 0 0 1 5.55 0c2.12-1.44 3.05-1.14 3.05-1.14.61 1.53.23 2.67.11 2.95.72.78 1.15 1.77 1.15 2.99 0 4.27-2.6 5.21-5.08 5.49.4.35.75 1.02.75 2.06v3.08c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z"/></svg>
+                    </a>
                 </div>
-                <span>ou utilise ton email pour t'inscrire</span>
+                <span>ou utilise ton email</span>
                 <div style="position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden;" aria-hidden="true">
                     <label for="site_web">Site web</label>
                     <input type="text" id="site_web" name="site_web" tabindex="-1" autocomplete="off">
                 </div>
-                <input type="text" name="nom" placeholder="Prénom (optionnel)" aria-label="Prénom (optionnel)">
-                <input type="email" name="email" placeholder="Email" required aria-label="Email">
-                <input type="password" name="password" placeholder="Mot de passe (8 caractères min.)" required minlength="8" aria-label="Mot de passe (8 caractères min.)">
-                <label class="age-check"><input type="checkbox" name="age_ok" required> <span>J'ai 15 ans ou plus (ou l'accord de mon représentant légal) et j'accepte les <a href="/conditions" target="_blank" rel="noopener">conditions</a>.</span></label>
+                <input type="text" name="nom" placeholder="Prénom (optionnel)" aria-label="Prénom (optionnel)" autocomplete="given-name">
+                <input type="email" name="email" placeholder="Email" aria-label="Adresse email" autocomplete="email" required>
+                <input type="password" name="password" placeholder="Mot de passe (8 caractères min.)" aria-label="Mot de passe (8 caractères minimum)" autocomplete="new-password" required minlength="8">
+                {% for msg in auth_flash_messages %}<div class="flash-msg">{{ msg }}</div>{% endfor %}
                 <button type="submit" class="submit-btn">S'inscrire</button>
+                <p class="mobile-switch">Déjà inscrit(e) ? <button type="button" class="auth-switch" data-auth-show="login">Se connecter</button></p>
             </form>
         </div>
 
@@ -239,24 +243,25 @@
         <div class="form-container sign-in">
             <form method="POST" action="/connexion">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <h2>Se connecter</h2>
+                <h1>Se connecter</h1>
+                <span class="social-label">Connexion rapide avec</span>
                 <div class="social-icons">
-                    <a href="/connexion/google" class="icon" title="Google" aria-label="Continuer avec Google"><i class="fa-brands fa-google"></i></a>
-                    <a href="/connexion/github" class="icon" title="Github" aria-label="Continuer avec Github"><i class="fa-brands fa-github"></i></a>
+                    <a href="/connexion/google" class="icon" aria-label="Continuer avec Google" title="Continuer avec Google">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.09-1.92 3.27-4.74 3.27-8.1Z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.65l-3.57-2.77c-.99.66-2.25 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.15v2.84A11 11 0 0 0 12 23Z"/><path fill="#FBBC05" d="M5.84 14.11a6.6 6.6 0 0 1 0-4.22V7.05H2.15a11 11 0 0 0 0 9.9l3.69-2.84Z"/><path fill="#EA4335" d="M12 4.36c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 1.09 14.97 0 12 0A11 11 0 0 0 2.15 7.05l3.69 2.84C6.71 7.29 9.14 4.36 12 4.36Z"/></svg>
+                    </a>
+                    <a href="/connexion/github" class="icon" aria-label="Continuer avec GitHub" title="Continuer avec GitHub">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.56.1.76-.24.76-.54v-2.1c-3.1.67-3.76-1.32-3.76-1.32-.5-1.28-1.23-1.62-1.23-1.62-1.01-.69.08-.68.08-.68 1.12.08 1.7 1.15 1.7 1.15.99 1.7 2.6 1.21 3.23.93.1-.72.39-1.21.7-1.49-2.47-.28-5.07-1.24-5.07-5.5 0-1.22.44-2.21 1.15-2.99-.12-.28-.5-1.42.11-2.95 0 0 .94-.3 3.05 1.14a10.6 10.6 0 0 1 5.55 0c2.12-1.44 3.05-1.14 3.05-1.14.61 1.53.23 2.67.11 2.95.72.78 1.15 1.77 1.15 2.99 0 4.27-2.6 5.21-5.08 5.49.4.35.75 1.02.75 2.06v3.08c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z"/></svg>
+                    </a>
                 </div>
                 <span>ou utilise ton email et mot de passe</span>
-                <input type="email" name="email" placeholder="Email" required aria-label="Email">
-                <input type="password" name="password" placeholder="Mot de passe" required aria-label="Mot de passe">
-                <div class="row-opts"><label class="rester"><input type="checkbox" name="rester"> <span>Rester connecté</span></label><a href="/mot-de-passe-oublie" class="forget-link">Mot de passe oublié ?</a></div>
+                <input type="email" name="email" placeholder="Email" aria-label="Adresse email" autocomplete="email" required>
+                <input type="password" name="password" placeholder="Mot de passe" aria-label="Mot de passe" autocomplete="current-password" required>
+                <a href="/mot-de-passe-oublie" class="forget-link">Mot de passe oublié ?</a>
 
-                {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                        {% for msg in messages %}<div class="flash-msg">{{ msg }}</div>{% endfor %}
-                    {% endif %}
-                {% endwith %}
+                {% for msg in auth_flash_messages %}<div class="flash-msg">{{ msg }}</div>{% endfor %}
 
                 <button type="submit" class="submit-btn">Se connecter</button>
-                <p class="mobile-switch">Pas encore de compte ? <a onclick="toggleAuth(true)">S'inscrire</a></p>
+                <p class="mobile-switch">Pas encore de compte ? <button type="button" class="auth-switch" data-auth-show="signup">S'inscrire</button></p>
             </form>
         </div>
 
@@ -267,34 +272,27 @@
                     <img src="/static/img/logo.png" alt="Hirondelle">
                     <h2>Bon retour !</h2>
                     <p>Connecte-toi pour retrouver ta progression et tes statistiques.</p>
-                    <button class="hidden" id="login" onclick="toggleAuth(false)">Se connecter</button>
+                    <button type="button" class="hidden" data-auth-show="login">Se connecter</button>
                 </div>
                 <div class="toggle-panel toggle-right">
                     <img src="/static/img/logo.png" alt="Hirondelle">
                     <h2>Nouveau ici ?</h2>
                     <p>Crée un compte gratuit pour sauvegarder ta progression et débloquer tes statistiques.</p>
-                    <button class="hidden" id="register" onclick="toggleAuth(true)">S'inscrire</button>
+                    <button type="button" class="hidden" data-auth-show="signup">S'inscrire</button>
                 </div>
             </div>
         </div>
 
     </div>
-    <p class="auth-legal">En créant un compte, ou en te connectant avec Google ou Github, tu confirmes avoir 15 ans ou plus (ou l'accord de ton représentant légal) et tu acceptes les <a href="/conditions">conditions d'utilisation</a> et la <a href="/confidentialite">politique de confidentialité</a>.</p>
-    </div>
+</div>
 
 <script>
-    function toggleAuth(showSignup) {
-        document.getElementById('container').classList.toggle('active', showSignup);
-    }
-
     const container = document.getElementById('container');
-    const registerBtn = document.getElementById('register');
-    const loginBtn = document.getElementById('login');
-
-    registerBtn.addEventListener('click', () => container.classList.add('active'));
-    loginBtn.addEventListener('click', () => container.classList.remove('active'));
+    container.querySelectorAll('[data-auth-show]').forEach((button) => {
+        button.addEventListener('click', () => {
+            container.classList.toggle('active', button.dataset.authShow === 'signup');
+        });
+    });
 </script>
-</main>
-{% include '_footer.html' %}
 </body>
 </html>
