@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="ui-YgD7jU6E1Z3Ti7rLcxAvVe1BLAuyZWCfb5jUoKjE">
+    <title>Quiz de Conjugaison | Hirondelle</title>
+    <meta name="description" content="Quiz interactif de conjugaison française : entraînement libre ou évaluation chronométrée. Gratuit, sans pub.">
+    <link rel="icon" type="image/png" href="/static/img/logo.png">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+{% include '_topbar.html' %}
+
+<button id="settings-gear" class="settings-gear" aria-expanded="false" aria-controls="settings-popup" aria-label="Paramètres">
+  <svg viewBox="0 0 24 24" width="36" height="36" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" role="img">
+    <path
+      d="M12 2.5
+         L13.2 2.5
+         L13.7 5
+         A7 7 0 0 1 16 6
+         L18 4.5
+         L19.5 6
+         L18 8
+         A7 7 0 0 1 19 10.3
+         L21.5 10.8
+         L21.5 13.2
+         L19 13.7
+         A7 7 0 0 1 18 16
+         L19.5 18
+         L18 19.5
+         L16 18
+         A7 7 0 0 1 13.7 19
+         L13.2 21.5
+         L10.8 21.5
+         L10.3 19
+         A7 7 0 0 1 8 18
+         L6 19.5
+         L4.5 18
+         L6 16
+         A7 7 0 0 1 5 13.7
+         L2.5 13.2
+         L2.5 10.8
+         L5 10.3
+         A7 7 0 0 1 6 8
+         L4.5 6
+         L6 4.5
+         L8 6
+         A7 7 0 0 1 10.3 5
+         L10.8 2.5
+         Z"
+      fill="none"
+      stroke="black"
+      stroke-width="1.5"
+      stroke-linejoin="round"
+      stroke-linecap="round"
+    />
+    <circle
+      cx="12"
+      cy="12"
+      r="3"
+      fill="none"
+      stroke="black"
+      stroke-width="1.5"
+    />
+  </svg>
+</button>
+
+<!-- POPUP (UN SEUL exemplaire, placé dans le body) -->
+<div id="settings-popup" class="settings-popup" role="dialog" aria-hidden="true" aria-labelledby="settings-title">
+  <div class="settings-popup-inner">
+    <h2 id="settings-title">Paramètres</h2>
+
+    <!-- Interface switch -->
+    <div class="setting-block">
+      <label class="setting-label">Interface</label>
+
+      <div class="switch-container interface-switch" role="group" aria-label="Interface mobile ou PC">
+        <span class="switch-label">Mobile</span>
+
+        <label class="switch" aria-hidden="true">
+          <input type="checkbox" id="interface-toggle" aria-checked="true" />
+          <span class="slider" aria-hidden="true"></span>
+        </label>
+
+        <span class="switch-label">PC</span>
+      </div>
+
+      <p class="muted small-note">Active Mobile pour adapter l'interface à ton téléphone.</p>
+    </div>
+
+    <div class="setting-block">
+      <p class="muted">Cliquez de nouveau sur l'engrenage pour fermer.</p>
+    </div>
+  </div>
+</div>
+
+
+<div class="container">
+
+    <h1 class="sr-only" style="position:absolute;left:-9999px;">Quiz de conjugaison française — Hirondelle</h1>
+
+    {% if mode == "evaluation" %}
+    <div class="eval-header">
+        <div class="eval-badge">Mode Évaluation</div>
+
+        {% if temps_restant is not none %}
+            <div class="timer-box timer">
+                {{ (temps_restant // 60)|int }}:{{ '%02d' % (temps_restant % 60) }}
+            </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if session.get("questions_restantes") %}
+        
+        <div class="progress-container">
+            <div class="progress-bar" style="width: {{ (10 - session.questions_restantes) * 10 }}%;"></div>
+        </div>
+
+        <p class="progress-text">
+            Question {{ 10 - session.questions_restantes + 1 }} / 10
+        </p>
+    {% endif %}
+
+    {% if palier and mode in ["entrainement", "evaluation"] %}
+    <form method="POST" action="/palier" id="palier-form" class="palier-bar" aria-label="Choix de la difficulté">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="palier-top">
+            <label for="palier-range" class="palier-titre">Difficulté</label>
+            <span class="palier-nom" id="palier-nom" aria-live="polite">Palier {{ palier.courant }}/{{ palier.total }} — {{ palier.nom }}</span>
+        </div>
+        <input type="range" name="valeur" id="palier-range" min="1" max="{{ palier.max }}" step="1"
+               value="{{ palier.courant }}"{% if mode == "evaluation" %} disabled{% endif %}>
+        <p class="palier-aide">
+            {% if mode == "evaluation" %}Verrouillé pendant l'évaluation : les questions couvrent tous les paliers jusqu'à celui-ci.
+            {% elif palier.connecte and palier.prochain_niveau %}Prochain palier débloqué au niveau {{ palier.prochain_niveau }}. Ta difficulté suit ton niveau.
+            {% elif palier.connecte %}Tous les paliers sont débloqués.
+            {% else %}Règle la difficulté à ton niveau. Avec un compte, elle monte toute seule quand tu progresses.{% endif %}
+        </p>
+    </form>
+    <style>
+        .palier-bar { background:#fff; border:1.5px solid #e2e8f0; border-radius:14px; padding:12px 16px; margin:0 0 14px; text-align:left; box-shadow:0 2px 10px rgba(15,23,42,0.05); }
+        .palier-top { display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:6px; }
+        .palier-titre { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#94a3b8; }
+        .palier-nom { font-size:0.84rem; font-weight:700; color:#0056d6; }
+        #palier-range { width:100%; accent-color:#007bff; margin:4px 0; }
+        .palier-aide { font-size:0.74rem; color:#64748b; margin:2px 0 0; line-height:1.4; }
+    </style>
+    <script>
+    (function () {
+        var range = document.getElementById('palier-range');
+        if (!range) return;
+        var noms = {{ paliers_noms | tojson }};
+        var total = {{ palier.total }};
+        var connecte = {{ 'true' if palier.connecte else 'false' }};
+        var explicite = {{ 'true' if palier.explicite else 'false' }};
+        var label = document.getElementById('palier-nom');
+        var form = document.getElementById('palier-form');
+        var KEY = 'hirondelle_palier';
+        function maj() {
+            label.textContent = 'Palier ' + range.value + '/' + total + ' — ' + noms[range.value - 1];
+            range.setAttribute('aria-valuetext', label.textContent);
+        }
+        range.addEventListener('input', maj);
+        range.addEventListener('change', function () {
+            if (!connecte) { try { localStorage.setItem(KEY, range.value); } catch (e) {} }
+            form.submit();
+        });
+        if (!connecte && !explicite) {
+            try {
+                var s = localStorage.getItem(KEY);
+                if (s && s !== range.value && !sessionStorage.getItem('palier_sync')) {
+                    sessionStorage.setItem('palier_sync', '1');
+                    range.value = Math.min(Math.max(parseInt(s, 10) || 1, 1), total);
+                    form.submit();
+                }
+            } catch (e) {}
+        }
+        maj();
+    })();
+    </script>
+    {% endif %}
+    <h2 class="question-text">{{ question }}</h2>
+
+    <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="text" name="reponse" placeholder="Ta réponse…" autofocus required>
+        <div class="eval-actions">
+            <button class="btn">Valider</button>
+        </div>
+
+    </form>
+
+    {% if feedback %}
+        <p class="feedback" aria-live="polite">{{ feedback }}</p>
+        {% if conseil %}<p class="learning-tip"><strong>À retenir :</strong> {{ conseil }}</p>{% endif %}
+    {% endif %}
+    
+    {% if reaction %}
+    <div id="hirondelle-mascotte" style="position:fixed;bottom:20px;left:20px;z-index:999;display:flex;align-items:flex-end;gap:10px;animation:hirondelle-entree 0.4s ease-out;">
+        <img src="/static/img/logo.png" alt="Hirondelle" style="width:56px;height:56px;border-radius:16px;box-shadow:0 6px 18px rgba(0,123,255,0.3);animation:hirondelle-flotte 2s ease-in-out infinite;">
+        <div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:14px;padding:10px 14px;max-width:220px;box-shadow:0 4px 16px rgba(15,23,42,0.1);position:relative;">
+            <p style="margin:0;font-size:0.82rem;color:#0f172a;">{{ reaction }}</p>
+        </div>
+    </div>
+    <style>
+        .learning-tip {
+            margin: 8px 0 16px; padding: 12px 14px; border-left: 3px solid #007bff;
+            border-radius: 8px; background: #eff6ff; color: #334155; text-align: left;
+            font-size: 0.88rem; line-height: 1.55;
+        }
+    @keyframes hirondelle-entree { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes hirondelle-flotte { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    </style>
+    <script>
+    setTimeout(() => {
+        const m = document.getElementById('hirondelle-mascotte');
+        if (m) { m.style.transition = 'opacity 0.5s'; m.style.opacity = '0'; setTimeout(() => m.remove(), 500); }
+    }, 5000);
+    </script>
+    {% endif %}
+
+    {% if level_up %}
+        <div class="gami-toast gami-toast-level">
+            <span class="gami-icon">🆙</span>
+            <div><strong>Niveau {{ user_niveau }} !</strong><span>Tu progresses, continue comme ça.</span></div>
+        </div>
+    {% endif %}
+
+    {% for badge in nouveaux_badges %}
+        <div class="gami-toast gami-toast-badge">
+            <span class="gami-icon">{{ badge.icone }}</span>
+            <div><strong>Badge débloqué : {{ badge.label }}</strong><span>{{ badge.desc }}</span></div>
+        </div>
+    {% endfor %}
+
+    {% if mode != "evaluation" %}
+        <a href="/fin" class="stop-button">Arrêter et voir le bilan.</a>
+    {% endif %}
+
+</div>
+
+<style>
+    .gami-toast {
+        display: flex; align-items: center; gap: 12px;
+        background: linear-gradient(135deg, #fff7ed, #fef3c7);
+        border: 1.5px solid rgba(245,158,11,0.3);
+        border-radius: 14px; padding: 12px 16px; margin: 10px 0;
+        animation: gami-pop 0.4s ease-out;
+    }
+    .gami-toast-level {
+        background: linear-gradient(135deg, #eff6ff, #dbeafe);
+        border-color: rgba(0,123,255,0.3);
+    }
+    .gami-icon { font-size: 1.8rem; flex-shrink: 0; }
+    .gami-toast strong { display: block; font-size: 0.9rem; color: #0f172a; }
+    .gami-toast span { font-size: 0.78rem; color: #64748b; }
+    @keyframes gami-pop {
+        0% { transform: scale(0.92) translateY(6px); opacity: 0; }
+        100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+</style>
+
+{% if mode == "evaluation" and temps_restant is not none %}
+<script>
+    let remaining = {{ temps_restant }};
+    const timerElement = document.querySelector(".timer");
+
+    function updateTimer() {
+        if (!timerElement) return;
+
+        if (remaining <= 0) {
+            window.location.href = "/fin";
+            return;
+        }
+
+        const minutes = Math.floor(remaining / 60);
+        const seconds = String(remaining % 60).padStart(2, "0");
+
+        timerElement.textContent = `${minutes}:${seconds}`;
+
+        // Micro-animation quand il reste peu de temps
+        if (remaining <= 10) {
+            timerElement.classList.add("timer-warning");
+        }
+
+        remaining--;
+    }
+
+    updateTimer();
+    setInterval(updateTimer, 1000);
+</script>
+{% endif %}
+<script src="/static/js/settings.js" defer></script>
+
+<script>
+/* ══════════════════════════════════════════════
+   SONS DU QUIZ — générés en Web Audio API, aucun
+   fichier à charger. Toggle on/off via localStorage.
+   ══════════════════════════════════════════════ */
+(function() {
+    let ctx = null;
+    function getCtx() {
+        if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+        return ctx;
+    }
+
+    function sonsActives() {
+        return localStorage.getItem('hirondelle_sons') !== 'off';
+    }
+
+    function jouerNote(freq, debut, duree, volume, type) {
+        const c = getCtx();
+        const osc = c.createOscillator();
+        const gain = c.createGain();
+        osc.type = type || 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0, c.currentTime + debut);
+        gain.gain.linearRampToValueAtTime(volume, c.currentTime + debut + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + debut + duree);
+        osc.connect(gain);
+        gain.connect(c.destination);
+        osc.start(c.currentTime + debut);
+        osc.stop(c.currentTime + debut + duree);
+    }
+
+    window.sonBonneReponse = function() {
+        if (!sonsActives()) return;
+        jouerNote(523.25, 0, 0.12, 0.15, 'sine');   // Do
+        jouerNote(659.25, 0.08, 0.18, 0.15, 'sine'); // Mi
+    };
+
+    window.sonMauvaiseReponse = function() {
+        if (!sonsActives()) return;
+        jouerNote(220, 0, 0.22, 0.12, 'triangle');
+    };
+
+    window.sonLevelUp = function() {
+        if (!sonsActives()) return;
+        jouerNote(523.25, 0, 0.1, 0.14, 'sine');
+        jouerNote(659.25, 0.1, 0.1, 0.14, 'sine');
+        jouerNote(783.99, 0.2, 0.25, 0.16, 'sine');
+    };
+
+    window.sonBadge = function() {
+        if (!sonsActives()) return;
+        jouerNote(659.25, 0, 0.1, 0.13, 'sine');
+        jouerNote(783.99, 0.1, 0.1, 0.13, 'sine');
+        jouerNote(987.77, 0.2, 0.1, 0.13, 'sine');
+        jouerNote(1318.51, 0.3, 0.3, 0.15, 'sine');
+    };
+})();
+
+document.addEventListener('DOMContentLoaded', function() {
+    {% if feedback %}
+        {% if "Correct" in feedback %}
+            if (window.sonBonneReponse) sonBonneReponse();
+        {% else %}
+            if (window.sonMauvaiseReponse) sonMauvaiseReponse();
+        {% endif %}
+    {% endif %}
+    {% if level_up %}
+        setTimeout(function() { if (window.sonLevelUp) sonLevelUp(); }, 200);
+    {% endif %}
+    {% if nouveaux_badges %}
+        setTimeout(function() { if (window.sonBadge) sonBadge(); }, 200);
+    {% endif %}
+});
+</script>
+</body>
+</html>
