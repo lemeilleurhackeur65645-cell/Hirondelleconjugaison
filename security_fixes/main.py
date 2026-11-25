@@ -135,11 +135,9 @@ app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 
-app.secret_key = os.environ.get("SECRET_KEY", "secret123")
-if app.secret_key == "secret123":
-    print("[ALERTE SÉCURITÉ] SECRET_KEY n'est pas définie en variable d'environnement — "
-          "le fallback en dur dans le code est utilisé. N'importe qui lisant le code source "
-          "peut forger une session valide. Configure SECRET_KEY sur Render immédiatement.", flush=True)
+app.secret_key = os.environ.get("SECRET_KEY")
+if not app.secret_key:
+    raise RuntimeError("SECRET_KEY doit être définie dans les variables d'environnement.")
 
 # Sécurité des cookies de session :
 # - Secure   : le cookie n'est envoyé que sur HTTPS (Render fournit HTTPS par défaut)
@@ -1086,6 +1084,9 @@ def nettoyer_bdd():
     from flask import jsonify
     from models import CodeVerification, Ticket
     from datetime import datetime, timezone, timedelta
+
+    if not INDEXNOW_ADMIN_TOKEN:
+        return jsonify({"erreur": "INDEXNOW_ADMIN_TOKEN non configuré."}), 503
 
     if request.args.get("token") != INDEXNOW_ADMIN_TOKEN:
         return jsonify({"erreur": "Token invalide."}), 403
