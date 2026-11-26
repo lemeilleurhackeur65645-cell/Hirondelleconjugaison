@@ -373,25 +373,25 @@
     <h1>Conjugaison de <span>{{ verbe }}</span> — {{ label_temps }}</h1>
     <p class="subtitle">
       {% if mode == "subjonctif" %}
-        Le subjonctif de <strong>{{ verbe }}</strong> maîtrisé en moins de 5 minutes — tableau complet, quiz intégré, zéro excuse pour rater le bac.
+        Découvre les formes de <strong>{{ verbe }}</strong> au subjonctif {{ label_temps | lower }}, puis entraîne-toi sur celles-ci.
       {% elif mode == "conditionnel" %}
-        Le conditionnel de <strong>{{ verbe }}</strong> enfin sans faute — toutes les formes, un quiz pour ancrer ça une bonne fois pour toutes.
+        Observe les formes de <strong>{{ verbe }}</strong> au conditionnel {{ label_temps | lower }} et vérifie ce que tu as retenu.
       {% elif mode == "impératif" %}
-        L'impératif de <strong>{{ verbe }}</strong> — les 3 formes à connaître absolument, les pièges évités, le quiz pour valider.
+        Retrouve les formes de l'impératif de <strong>{{ verbe }}</strong>, puis teste-les dans un quiz ciblé.
       {% elif temps == "passé simple" %}
-        Le passé simple de <strong>{{ verbe }}</strong> — le temps littéraire que le bac adore piéger. Toutes les formes, mémorisées pour de bon.
+        Consulte les formes du passé simple de <strong>{{ verbe }}</strong> et entraîne-toi à les reconnaître.
       {% elif temps == "imparfait" %}
-        L'imparfait de <strong>{{ verbe }}</strong> — des formes régulières qui n'ont plus aucun secret pour toi après ce tableau.
+        Observe les formes de <strong>{{ verbe }}</strong> à l'imparfait et repère leurs terminaisons.
       {% elif temps == "futur simple" %}
-        Le futur simple de <strong>{{ verbe }}</strong> — maîtrise les 6 formes et ne fais plus jamais la confusion avec le conditionnel.
+        Parcours les formes du futur simple de <strong>{{ verbe }}</strong>, puis vérifie-les avec un quiz.
       {% else %}
-        <strong>{{ verbe | capitalize }}</strong> à l'{{ label_mode | lower }} {{ label_temps | lower }} — tableau complet, explications claires, quiz immédiat. Tout ce qu'il faut pour le bac.
+        Consulte <strong>{{ verbe | capitalize }}</strong> à l'{{ label_mode | lower }} {{ label_temps | lower }} et entraîne-toi sur les formes de ce tableau.
       {% endif %}
     </p>
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
-      <span style="padding:4px 11px;background:rgba(255,255,255,0.9);border:1.5px solid rgba(0,123,255,0.2);border-radius:20px;font-size:.73rem;font-weight:700;color:#0056d6;">🔥 MAÎTRISE GARANTIE</span>
-      <span style="padding:4px 11px;background:rgba(255,255,255,0.9);border:1.5px solid rgba(0,123,255,0.2);border-radius:20px;font-size:.73rem;font-weight:700;color:#0056d6;">⚡ QUIZ INTÉGRÉ</span>
-      <span style="padding:4px 11px;background:rgba(255,255,255,0.9);border:1.5px solid rgba(0,123,255,0.2);border-radius:20px;font-size:.73rem;font-weight:700;color:#0056d6;">📈 IDÉAL BAC</span>
+      <span style="padding:4px 11px;background:rgba(255,255,255,0.9);border:1.5px solid rgba(0,123,255,0.2);border-radius:20px;font-size:.73rem;font-weight:700;color:#0056d6;">Tableau complet</span>
+      <span style="padding:4px 11px;background:rgba(255,255,255,0.9);border:1.5px solid rgba(0,123,255,0.2);border-radius:20px;font-size:.73rem;font-weight:700;color:#0056d6;">Exemple en contexte</span>
+      <span style="padding:4px 11px;background:rgba(255,255,255,0.9);border:1.5px solid rgba(0,123,255,0.2);border-radius:20px;font-size:.73rem;font-weight:700;color:#0056d6;">Quiz sur ce temps</span>
     </div>
   </header>
 
@@ -416,10 +416,10 @@
   <!-- CTA Quiz -->
   <div class="cta-quiz">
     <div class="cta-quiz-text">
-      <h3>Teste tes connaissances maintenant</h3>
-      <p>Quiz ciblé sur <strong>{{ verbe }}</strong> · {{ label_mode }} {{ label_temps }} · Résultats immédiats</p>
+      <h3>À toi de jouer : {{ verbe }} au {{ label_temps | lower }}</h3>
+      <p>Le quiz sera limité à ce verbe et à ce temps.</p>
     </div>
-    <a href="/cible" class="btn-cta">S'entraîner →</a>
+    <a href="/quiz?mode=cible&amp;verbe={{ verbe|urlencode }}&amp;mode_verbe={{ mode|urlencode }}&amp;temps_cible={{ temps|urlencode }}" class="btn-cta">Lancer ce quiz →</a>
   </div>
 
   <!-- Astuce pédagogique — spécifique au mode ET au temps -->

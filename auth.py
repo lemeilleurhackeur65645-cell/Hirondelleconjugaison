@@ -261,6 +261,20 @@ def reinitialiser_password():
     return render_template("verifier_code.html", email=email, contexte="reset_password")
 
 
+@auth_bp.route("/renvoyer-code-reset", methods=["POST"])
+@limiter.limit("3 per minute")
+def renvoyer_code_reset():
+    email = session.get("email_reset")
+    if not email:
+        return redirect(url_for("auth.mot_de_passe_oublie"))
+
+    from email_verification import creer_code_reset_password
+
+    _, message = creer_code_reset_password(db, email)
+    flash(message)
+    return redirect(url_for("auth.reinitialiser_password"))
+
+
 @auth_bp.route("/connexion", methods=["GET", "POST"])
 @limiter.limit("10 per minute")
 def connexion():

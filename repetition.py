@@ -137,7 +137,7 @@ BADGES = {
     "cinq_mille_xp":  {"label": "Vétéran",            "icone": "🥇", "desc": "5000 XP cumulés"},
     "sans_faute_20":  {"label": "Machine à réponses", "icone": "💎", "desc": "20 bonnes réponses d'affilée"},
     "note_parfaite":  {"label": "Sans accroc",        "icone": "🎓", "desc": "10/10 en mode évaluation"},
-    "noctambule":     {"label": "Noctambule",         "icone": "🌙", "desc": "A joué après minuit"},
+    "noctambule":     {"label": "Noctambule",         "icone": "🌙", "desc": "Réponds à une question entre minuit et 5 h"},
 }
 
 def appliquer_gain_xp(user, correct, etait_difficile=False):

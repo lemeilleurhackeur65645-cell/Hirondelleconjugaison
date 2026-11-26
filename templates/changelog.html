@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="/static/fonts.css">
   <link rel="stylesheet" href="/static/a11y.css">
+  <style>
+    .changelog-section { display:grid; gap:0; max-width:860px; margin:24px auto; }
+    .changelog-period { margin:0 0 18px; padding:18px 20px; border:1px solid #e2e8f0; border-radius:16px; background:#fff; box-shadow:0 4px 16px rgba(15,23,42,.05); }
+    .changelog-period h3 { margin:0 0 10px; color:#1456ad; font-size:.9rem; }
+    .changelog-period .changelog-entry { padding:8px 0; border-top:1px solid #f1f5f9; color:#334155; font-size:.86rem; line-height:1.5; }
+    @media(max-width:600px) { .changelog-period { padding:15px; } }
+  </style>
 </head>
 <body>
 <a class="skip-link" href="#contenu">Aller au contenu</a>
@@ -89,7 +96,7 @@
     </div>
 
     <div class="setting-block">
-      <p class="muted">Cliquez de nouveau sur l'engrenage pour fermer.</p>
+      <p class="muted">Clique à nouveau sur l'engrenage pour fermer.</p>
     </div>
   </div>
 </div>
@@ -201,10 +208,48 @@
         <div class="changelog-entry">Nouveau classement des joueurs, avec sa propre page</div>
         <div class="changelog-entry">Export en PDF d'une fiche de révision personnalisée</div>
         <div class="changelog-entry">Un petit secret caché quelque part sur le site, à toi de le trouver</div>
+
+        <h3>26 novembre 2026</h3>
+        <div class="changelog-entry">Parcours de sélection guidé et recherche rapide dans le quiz ciblé</div>
+        <div class="changelog-entry">Classement relié aux comptes qui choisissent explicitement d’y apparaître</div>
+        <div class="changelog-entry">Meilleurs repères de progression, de révision et de fin d’évaluation</div>
+        <div class="changelog-entry">Améliorations de confort mobile pour les codes de vérification et les pages légales</div>
     </div>
 
         <a href="/" class="back-button">← Retour à l’accueil</a>
     </div>
+    <script>
+    (() => {
+        const journal = document.querySelector('.changelog-section');
+        const mois = {
+            janvier: 0, février: 1, mars: 2, avril: 3, mai: 4, juin: 5,
+            juillet: 6, août: 7, septembre: 8, octobre: 9, novembre: 10, décembre: 11
+        };
+        const groupes = [];
+        let groupe = null;
+        Array.from(journal.children).forEach(element => {
+            if (element.matches('h3')) {
+                groupe = { date: element.textContent.trim(), elements: [element] };
+                groupes.push(groupe);
+            } else if (groupe) {
+                groupe.elements.push(element);
+            }
+        });
+        const dateValue = value => {
+            const match = value.match(/(\d{1,2})\s+([a-zéû]+)(?:\s+(\d{4}))?/i);
+            if (!match) return 0;
+            const moisIndex = mois[match[2].toLocaleLowerCase('fr')];
+            return Date.UTC(Number(match[3] || 2026), moisIndex ?? 0, Number(match[1]));
+        };
+        groupes.sort((a, b) => dateValue(b.date) - dateValue(a.date));
+        journal.replaceChildren(...groupes.map(item => {
+            const section = document.createElement('section');
+            section.className = 'changelog-period';
+            item.elements.forEach(element => section.appendChild(element));
+            return section;
+        }));
+    })();
+    </script>
 <script src="/static/js/settings.js" defer></script>
 
 </main>

@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/static/style.css">
     <style>
         body { padding-top: 56px; }
-        .prog-wrap { max-width: 760px; margin: 32px auto 60px; padding: 0 20px; text-align: left; }
+        .prog-wrap { width: min(100% - 32px, 1040px); margin: 32px auto 60px; padding: 0 4px; text-align: left; }
 
         .prog-header { margin-bottom: 24px; }
         .prog-header h1 { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0 0 6px; }
@@ -58,6 +58,17 @@
             display: inline-block; margin-top: 14px; background: linear-gradient(135deg, #007bff, #0056d6);
             color: #fff; font-weight: 700; padding: 10px 22px; border-radius: 10px; text-decoration: none; font-size: 0.86rem;
         }
+        .prog-recommendations { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+        .prog-recommendation { padding:16px; border:1px solid #dbeafe; border-radius:14px; background:linear-gradient(140deg,#f8fbff,#eff6ff); }
+        .prog-recommendation strong { display:block; margin-bottom:5px; color:#1456ad; }
+        .prog-recommendation p { margin:0 0 10px; color:#475569; font-size:.84rem; line-height:1.5; }
+        .prog-recommendation a { color:#1769e0; font-size:.82rem; font-weight:700; text-decoration:none; }
+        .evolution-chart { display:flex; align-items:flex-end; gap:clamp(5px,1.5vw,16px); min-height:190px; padding:20px 10px 6px; border-bottom:1px solid #e2e8f0; }
+        .evolution-day { display:flex; flex:1; min-width:0; flex-direction:column; align-items:center; justify-content:flex-end; gap:8px; height:170px; }
+        .evolution-bar { display:flex; width:min(100%,54px); height:140px; align-items:flex-end; overflow:hidden; border-radius:12px 12px 5px 5px; background:#f1f5f9; }
+        .evolution-bar span { display:block; width:100%; min-height:4px; border-radius:inherit; background:linear-gradient(180deg,#60a5fa,#1769e0); }
+        .evolution-day small { color:#64748b; font-size:.72rem; white-space:nowrap; }
+        .evolution-legend { margin:12px 0 0; color:#64748b; font-size:.78rem; }
     </style>
 </head>
 <body>
@@ -67,13 +78,13 @@
 <div class="prog-wrap">
     <div class="prog-header">
         <h1>Ta progression</h1>
-        <p>L'historique complet de tes sessions d'entraînement, mis à jour en temps réel.</p>
+        <p>Repère ce qui progresse et choisis ton prochain petit défi.</p>
     </div>
 
     {% if total == 0 %}
     <div class="prog-section">
         <div class="empty-state">
-            <p>Tu n'as pas encore fait de quiz connecté(e). Lance-toi !</p>
+            <p>Ta progression commence avec une première question. Choisis un verbe, réponds à ton rythme, et tes repères apparaîtront ici.</p>
             <a href="/quiz?mode=entrainement">Commencer l'entraînement →</a>
         </div>
     </div>
@@ -91,6 +102,54 @@
         <div class="prog-stat-card">
             <strong>{{ taux }}%</strong>
             <span>Taux de réussite</span>
+        </div>
+    </div>
+
+    {% if evolution %}
+    <div class="prog-section">
+        <h2>📈 Tes 30 dernières réponses, par jour</h2>
+        <div class="evolution-chart" role="img" aria-label="Taux de bonnes réponses par jour sur les 30 dernières réponses">
+            {% for jour in evolution %}
+            <div class="evolution-day" title="{{ jour.date }} : {{ jour.taux }}% sur {{ jour.total }} réponse{{ 's' if jour.total != 1 else '' }}">
+                <div class="evolution-bar"><span style="height:{{ jour.taux }}%;"></span></div>
+                <small>{{ jour.date }}</small>
+            </div>
+            {% endfor %}
+        </div>
+        <p class="evolution-legend">Chaque barre montre ton taux de réussite ce jour-là ; les réponses récentes sont regroupées par date.</p>
+    </div>
+    {% endif %}
+
+    <div class="prog-section">
+        <h2>🧭 Ton prochain pas</h2>
+        <div class="prog-recommendations">
+            {% if verbes_a_revoir %}
+                {% set verbe_prioritaire = verbes_a_revoir[0][0] %}
+                <div class="prog-recommendation">
+                    <strong>Reprends une difficulté ciblée</strong>
+                    <p>« {{ verbe_prioritaire }} » demande le plus de pratique dans tes statistiques cumulées.</p>
+                    <a href="/conjugaison/{{ verbe_prioritaire }}">Voir sa conjugaison →</a>
+                </div>
+            {% else %}
+                <div class="prog-recommendation">
+                    <strong>Explore un nouveau verbe</strong>
+                    <p>Pas de verbe prioritaire pour le moment : continue à varier tes questions.</p>
+                    <a href="/cible">Créer un quiz ciblé →</a>
+                </div>
+            {% endif %}
+            {% if mode_a_travailler %}
+                <div class="prog-recommendation">
+                    <strong>Varie les modes</strong>
+                    <p>Ton taux sur {{ mode_a_travailler }} est à travailler en priorité. Reprends quelques questions sans te presser.</p>
+                    <a href="/quiz?mode=entrainement">Lancer un entraînement →</a>
+                </div>
+            {% else %}
+                <div class="prog-recommendation">
+                    <strong>Construis ton premier repère</strong>
+                    <p>Un court entraînement suffit pour commencer à faire apparaître tes tendances.</p>
+                    <a href="/quiz?mode=entrainement">Faire un quiz →</a>
+                </div>
+            {% endif %}
         </div>
     </div>
 

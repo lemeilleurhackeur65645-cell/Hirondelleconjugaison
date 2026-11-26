@@ -46,7 +46,7 @@
 <p>Les polices et les icônes sont hébergées sur le site lui-même : leur affichage n'envoie aucune requête à un tiers.</p>
 
 <h2>6. Tes droits</h2>
-<p>Tu peux demander l'accès à tes données, leur rectification, leur effacement, la limitation ou l'opposition à leur traitement, leur portabilité, et retirer ton consentement à tout moment. Dans « Mon compte », tu peux <a href="/compte/export">télécharger tes données</a> (format JSON), régler tes préférences et supprimer ton compte, ce qui efface aussi tes messages. Pour toute autre demande, écris à {% if contact_email %}<a href="mailto:{{ contact_email }}">{{ contact_email }}</a>{% else %}via la <a href="/contact">page de contact</a> du site (un compte est nécessaire){% endif %}. Nous répondons dans un délai d'un mois.</p>
+<p>Tu peux demander l'accès à tes données, leur rectification, leur effacement, la limitation ou l'opposition à leur traitement, leur portabilité, et retirer ton consentement à tout moment. Dans « Mon compte », tu peux <a href="/compte/export">télécharger tes données</a> (format JSON), régler tes préférences et supprimer ton compte, ce qui efface aussi tes messages. Pour toute autre demande, {% if contact_email %}écris à <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>{% else %}utilise la <a href="/contact">page de contact</a> du site (un compte est nécessaire){% endif %}. Nous répondons dans un délai d'un mois.</p>
 <p>Si tu estimes que tes droits ne sont pas respectés, tu peux saisir la CNIL : <a href="https://www.cnil.fr" rel="noopener">cnil.fr</a>, 3 place de Fontenoy, TSA 80715, 75334 Paris Cedex 07.</p>
 
 <h2>7. Mineurs</h2>

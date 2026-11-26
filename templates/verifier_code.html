@@ -28,9 +28,10 @@
         }
 
         .code-input {
-            width: 100%; padding: 16px; border: 1.5px solid #e2e8f0; border-radius: 12px;
-            font-size: 1.6rem; font-weight: 800; letter-spacing: 8px; text-align: center;
-            color: #0f172a; margin-bottom: 18px; font-family: inherit;
+            width: 100%; padding: 15px 10px; border: 1.5px solid #e2e8f0; border-radius: 12px;
+            font-size: clamp(1.25rem, 8vw, 1.7rem); font-weight: 800; letter-spacing: clamp(5px, 2vw, 10px); text-align: center;
+            color: #0f172a; margin-bottom: 18px; font-family: inherit; font-variant-numeric: tabular-nums;
+            -webkit-appearance: none; appearance: none;
         }
         .code-input:focus { outline: none; border-color: #007bff; }
 
@@ -45,6 +46,7 @@
             display: inline-block; margin-top: 16px; font-size: 0.8rem; color: #007bff;
             text-decoration: none; font-weight: 600;
         }
+        .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
     </style>
 </head>
 <body>
@@ -54,7 +56,7 @@
     <div class="card">
         <div class="icon">📧</div>
         <h1>{{ "Confirme ton compte" if contexte == "inscription" else "Réinitialise ton mot de passe" }}</h1>
-        <p>Un code à 6 chiffres a été envoyé à <strong>{{ email }}</strong>. Il expire dans 15 minutes.</p>
+        <p>Un code à 6 chiffres a été envoyé à <strong>{{ email }}</strong>. Il expire dans 15 minutes. S'il n'arrive pas ou a expiré, tu peux demander un nouvel envoi ci-dessous.</p>
 
         {% with messages = get_flashed_messages() %}
             {% if messages %}
@@ -64,8 +66,9 @@
 
         <form method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <input type="text" name="code" class="code-input" maxlength="6" pattern="[0-9]{6}"
-                   inputmode="numeric" placeholder="000000" autofocus required aria-label="000000">
+            <label class="sr-only" for="verification-code">Code de vérification à 6 chiffres</label>
+            <input id="verification-code" type="text" name="code" class="code-input" maxlength="6" minlength="6" pattern="[0-9]{6}"
+                   inputmode="numeric" autocomplete="one-time-code" placeholder="000000" autofocus required aria-label="Code de vérification à 6 chiffres">
 
             {% if contexte == "reset_password" %}
             <input type="password" name="password" placeholder="Nouveau mot de passe (8 caractères min.)"
@@ -80,9 +83,20 @@
 
         {% if contexte == "inscription" %}
         <a href="/renvoyer-code-inscription" class="resend-link">Je n'ai rien reçu — renvoyer le code</a>
+        {% else %}
+        <form method="POST" action="{{ url_for('auth.renvoyer_code_reset') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="resend-link" style="border:0;background:transparent;cursor:pointer;font:inherit;">Renvoyer le code de réinitialisation</button>
+        </form>
         {% endif %}
     </div>
 </div>
+<script>
+const verificationCode = document.getElementById('verification-code');
+verificationCode.addEventListener('input', () => {
+    verificationCode.value = verificationCode.value.replace(/\D/g, '').slice(0, 6);
+});
+</script>
 </main>
 {% include '_footer.html' %}
 </body>

@@ -18,6 +18,7 @@
         .row:nth-child(3) .rang { color: #b45309; }
         .pseudo { flex: 1; font-weight: 700; color: #0f172a; font-size: 0.9rem; }
         .meta { font-size: 0.76rem; color: #64748b; }
+        @media(max-width:520px) { .row { align-items:flex-start; flex-wrap:wrap; gap:7px 10px; padding:13px; } .meta { width:calc(100% - 38px); margin-left:38px; } }
     </style>
 </head>
 <body>
@@ -25,7 +26,7 @@
 <main id="contenu" tabindex="-1">
 <div class="wrap">
     <h1>🏆 Classement</h1>
-    <p style="color:#64748b;font-size:0.85rem;">Les meilleurs joueurs qui ont choisi d'apparaître ici. Tu peux activer ta présence dans Mon compte, rubrique Confidentialité.</p>
+    <p style="color:#64748b;font-size:0.85rem;">Ce classement n'inclut que les comptes qui ont choisi d'y apparaître. Les adresses email ne sont jamais affichées. Tu peux modifier ce choix dans <a href="/compte">Mon compte</a>.</p>
     {% if not classement %}<div class="row"><span class="meta">Aucun joueur n'apparaît encore dans le classement. Active ta présence dans <a href="/compte">Mon compte</a> pour être le premier.</span></div>{% endif %}
     {% for j in classement %}
     <div class="row" {% if j.get('moi') %}style="border:2px solid #007bff;background:#eff6ff;"{% endif %}>

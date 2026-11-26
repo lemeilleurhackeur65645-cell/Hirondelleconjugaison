@@ -146,7 +146,7 @@ class ApplicationTests(unittest.TestCase):
                 "voix_question": "active",
             })
 
-        response = self.client.post("/quiz", data={"reponse": "etais"})
+        response = self.client.post("/quiz", data={"reponse": "etaisent"})
         self.assertEqual(response.status_code, 200)
         page = response.get_data(as_text=True)
         self.assertIn("Réponse attendue", page)
@@ -178,6 +178,10 @@ class ApplicationTests(unittest.TestCase):
         page = response.get_data(as_text=True)
         self.assertNotIn("Réponse attendue", page)
         self.assertNotIn("À retenir", page)
+        self.assertIn('role="timer"', page)
+        self.assertIn('aria-valuenow="1"', page)
+        self.assertIn('aria-valuemax="10"', page)
+        self.assertIn("bilan s'affiche automatiquement", page)
 
     def test_cleanup_requires_admin_and_post(self):
         self.assertEqual(self.client.get("/admin/nettoyer-bdd").status_code, 405)
@@ -223,6 +227,169 @@ class ApplicationTests(unittest.TestCase):
     def test_learning_hint_handles_common_rules(self):
         self.assertIn("radical du futur", main.conseil_conjugaison("conditionnel", "présent"))
         self.assertIn("s’accorde", main.conseil_conjugaison("indicatif", "présent", "passive"))
+
+    def test_targeted_quiz_page_explains_selection_steps(self):
+        response = self.client.get("/cible")
+        self.assertEqual(response.status_code, 200)
+        page = response.get_data(as_text=True)
+        self.assertIn("Étape 1", page)
+        self.assertIn("Ta sélection", page)
+        self.assertIn("Pour commencer rapidement", page)
+        self.assertIn("verb-filter", page)
+
+    def test_targeted_quiz_rejects_empty_selection(self):
+        response = self.client.post("/cible_start", data={})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.headers["Location"], "/cible")
+
+    def test_unknown_route_renders_custom_not_found_page(self):
+        response = self.client.get("/page-inconnue-pour-test")
+        self.assertEqual(response.status_code, 404)
+        self.assertIn("Oups, cette page a pris son envol", response.get_data(as_text=True))
+
+    def test_targeted_quiz_with_both_voices_uses_only_available_voice(self):
+        response = self.client.post(
+            "/cible_start",
+            data={
+                "modes": ["indicatif"],
+                "temps": ["indicatif|présent"],
+                "personnes": ["1s"],
+                "voix": ["actif", "passif"],
+                "verbes": ["aller"],
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.headers["Location"], "/quiz")
+
+        response = self.client.get("/quiz")
+        self.assertEqual(response.status_code, 200)
+        with self.client.session_transaction() as session:
+            self.assertEqual(session["voix_question"], "active")
+            self.assertEqual(session["verbe"], "aller")
+
+    def test_legal_pages_are_routed_and_include_responsive_table_support(self):
+        for path in ("/conditions", "/confidentialite", "/mentions-legales"):
+            response = self.client.get(path)
+            self.assertEqual(response.status_code, 200, path)
+            self.assertIn('class="legal"', response.get_data(as_text=True))
+        privacy = self.client.get("/confidentialite").get_data(as_text=True)
+        self.assertIn("<table>", privacy)
+        self.assertIn("overflow-x:auto", privacy)
+
+    def test_leaderboard_only_shows_opted_in_players_and_no_emails(self):
+        opted_in = User(email="visible@example.test", nom="Élève", classement_public=True, xp_total=25)
+        private = User(email="private@example.test", nom="Privé", classement_public=False, xp_total=1000)
+        db.session.add_all([opted_in, private])
+        db.session.commit()
+
+        response = self.client.get("/classement")
+        self.assertEqual(response.status_code, 200)
+        page = response.get_data(as_text=True)
+        self.assertIn("Élève", page)
+        self.assertNotIn("Privé", page)
+        self.assertNotIn("visible@example.test", page)
+        self.assertNotIn("private@example.test", page)
+
+    def test_account_preferences_and_export_work(self):
+        user = User(email="account@example.test", nom="Compte test")
+        db.session.add(user)
+        db.session.commit()
+        with self.client.session_transaction() as login_session:
+            login_session["_user_id"] = str(user.id)
+            login_session["_fresh"] = True
+
+        response = self.client.post("/compte/preferences", data={"classement": "on"})
+        self.assertEqual(response.status_code, 302)
+        db.session.refresh(user)
+        self.assertTrue(user.classement_public)
+        self.assertFalse(user.rappels_email)
+
+        response = self.client.get("/compte/export")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("attachment;", response.headers["Content-Disposition"])
+        export = response.get_json()
+        self.assertEqual(export["compte"]["email"], user.email)
+        self.assertNotIn("password_hash", export["compte"])
+
+    def test_answer_normalization_accepts_missing_accents_and_case(self):
+        self.assertEqual(main.normaliser_reponse(" ÉTAIS "), main.normaliser_reponse("etais"))
+
+    def test_session_results_show_charts_and_use_informal_tone(self):
+        with self.client.session_transaction() as quiz_session:
+            quiz_session.update({
+                "mode": "evaluation",
+                "start": time.time(),
+                "total": 2,
+                "score": 1,
+                "erreurs": [{
+                    "verbe": "être", "mode": "indicatif", "temps": "imparfait",
+                    "personne": "je", "voix": "active", "attendu": "étais", "donne": "étaient",
+                }],
+            })
+
+        response = self.client.get("/fin")
+        self.assertEqual(response.status_code, 200)
+        page = response.get_data(as_text=True)
+        self.assertIn("Évaluation terminée", page)
+        self.assertIn("analysis-charts", page)
+        self.assertIn("tes résultats", page)
+        self.assertIn("Créer un quiz ciblé", page)
+
+    def test_unsubscribe_requires_confirmation_then_disables_reminders(self):
+        user = User(email="unsubscribe@example.test")
+        db.session.add(user)
+        db.session.commit()
+        from rappels import token_desabonnement
+
+        url = f"/desabonnement/{token_desabonnement(user.id)}"
+        self.assertIn("Me désabonner", self.client.get(url).get_data(as_text=True))
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 200)
+        db.session.refresh(user)
+        self.assertFalse(user.rappels_email)
+        self.assertIn("Tu ne recevras plus de rappels", response.get_data(as_text=True))
+
+    def test_password_reset_code_can_be_resent_from_verification_page(self):
+        user = User(email="reset@example.test", methode_connexion="email")
+        db.session.add(user)
+        db.session.commit()
+        with self.client.session_transaction() as reset_session:
+            reset_session["email_reset"] = user.email
+
+        with patch("email_verification.envoyer_email", return_value=(True, None)):
+            response = self.client.post("/renvoyer-code-reset", data={})
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.headers["Location"], "/reinitialiser-password")
+        self.assertIsNotNone(CodeVerification.query.filter_by(
+            email=user.email, type="reset_password", utilise=False
+        ).first())
+
+    def test_perfect_evaluation_unlocks_its_badge(self):
+        user = User(email="perfect@example.test", email_verifie=True)
+        db.session.add(user)
+        db.session.commit()
+        with self.client.session_transaction() as login_session:
+            login_session["_user_id"] = str(user.id)
+            login_session["_fresh"] = True
+            login_session.update({
+                "mode": "evaluation", "score": 0, "total": 0, "erreurs": [],
+                "start": time.time(), "timer": 300, "questions_restantes": 10,
+                "bonne": "étais", "verbe": "être", "mode_verbe": "indicatif",
+                "temps": "imparfait", "sujet": "je", "voix_question": "active",
+            })
+
+        for _ in range(10):
+            with self.client.session_transaction() as quiz_session:
+                quiz_session.update({
+                    "bonne": "étais", "verbe": "être", "mode_verbe": "indicatif",
+                    "temps": "imparfait", "sujet": "je", "voix_question": "active",
+                })
+            response = self.client.post("/quiz", data={"reponse": "étais"})
+
+        self.assertEqual(response.status_code, 302)
+        db.session.refresh(user)
+        self.assertIn("note_parfaite", user.liste_badges())
 
 
 if __name__ == "__main__":

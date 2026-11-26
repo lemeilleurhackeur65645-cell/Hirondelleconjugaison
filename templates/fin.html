@@ -159,6 +159,18 @@
             font-size: 0.88rem;
         }
         .badge-locked strong { display: block; font-size: 1rem; color: #334155; margin-bottom: 6px; }
+        .bilan-container { width:min(100% - 32px,1100px); max-width:none; }
+        .analysis-charts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; width:100%; margin:16px 0; }
+        .analysis-chart { min-width:0; padding:20px; border:1px solid #e2e8f0; border-radius:16px; background:linear-gradient(145deg,#fff,#f8fbff); }
+        .analysis-chart h3 { margin:0 0 15px; color:#0f172a; font-size:.95rem; }
+        .analysis-row { display:grid; grid-template-columns:minmax(90px,150px) 1fr auto; align-items:center; gap:10px; margin:11px 0; color:#475569; font-size:.8rem; }
+        .analysis-track { height:10px; overflow:hidden; border-radius:999px; background:#e9eff7; }
+        .analysis-fill { height:100%; border-radius:inherit; background:linear-gradient(90deg,#60a5fa,#1769e0); }
+        .analysis-count { color:#1456ad; font-weight:800; font-variant-numeric:tabular-nums; }
+        .next-actions { display:flex; flex-wrap:wrap; gap:10px; margin:22px 0; }
+        .next-actions .btn,.next-actions .back-button { flex:1 1 190px; text-align:center; }
+        .next-step { padding:15px 18px; border:1px solid #bfdbfe; border-radius:14px; background:#eff6ff; color:#334155; }
+        @media(max-width:680px) { .analysis-charts { grid-template-columns:1fr; } .analysis-row { grid-template-columns:100px 1fr auto; gap:7px; } .analysis-chart { padding:16px; } }
     </style>
 </head>
 
@@ -190,7 +202,7 @@
       <p class="muted small-note">Active Mobile pour adapter l'interface à ton téléphone.</p>
     </div>
     <div class="setting-block">
-      <p class="muted">Cliquez de nouveau sur l'engrenage pour fermer.</p>
+      <p class="muted">Clique à nouveau sur l'engrenage pour fermer.</p>
     </div>
   </div>
 </div>
@@ -198,7 +210,10 @@
 <div class="container bilan-container">
 
     <h1>Bilan de la session</h1>
-    <p class="intro">Plus vous répondez à des questions, plus le bilan devient précis et adapté à vos besoins.</p>
+    <p class="intro">Chaque réponse donne un indice sur la suite. Voici tes résultats et une action concrète pour continuer.</p>
+    {% if mode_quiz == "evaluation" %}
+    <p class="next-step" role="status">Évaluation terminée : tes réponses sont enregistrées dans ce bilan. Tu peux reprendre les erreurs ou lancer un nouvel entraînement.</p>
+    {% endif %}
 
     <!-- RÉSUMÉ GLOBAL -->
     <div class="bilan-block">
@@ -280,34 +295,41 @@
     {% if erreurs %}
     <h2>Analyse</h2>
     <div class="analyse-section">
-        <p class="analyse-title">Verbe(s) le(s) moins réussi(s)</p>
-        {% for verbe, nb in analyse.verbes %}
-            <div class="analyse-item">{{ verbe }} — {{ nb }} erreur{% if nb > 1 %}s{% endif %}</div>
-        {% endfor %}
-
-        <p class="analyse-title">Modes les moins réussis</p>
-        <div class="mode-list">
-            {% set modes_stats = {} %}
-            {% if analyse.modes_complet %}
-                {% for k, v in analyse.modes_complet.items() %}{% set _ = modes_stats.update({k: (v | int)}) %}{% endfor %}
-            {% elif analyse.modes %}
-                {% for k, v in analyse.modes %}{% set _ = modes_stats.update({k: (v | int)}) %}{% endfor %}
-            {% endif %}
-            {% if modes_stats|length == 0 %}
-                <div class="analyse-item">Aucun mode analysé.</div>
-            {% else %}
-                {% for mode, nb in modes_stats.items() %}
-                    <div class="analyse-item"><strong>{{ mode }}</strong> : {{ nb }} erreur{% if nb > 1 %}s{% endif %}</div>
+        <p class="analyse-title">Les points à retravailler</p>
+        <div class="analysis-charts">
+            <section class="analysis-chart" aria-label="Erreurs par mode">
+                <h3>Par mode</h3>
+                {% for mode, nb in analyse.modes_complet|dictsort(by='value', reverse=true) %}
+                    {% if nb > 0 %}
+                    <div class="analysis-row">
+                        <span>{{ mode|capitalize }}</span>
+                        <div class="analysis-track"><div class="analysis-fill" style="width:{{ (nb * 100 / erreurs|length)|round|int }}%;"></div></div>
+                        <span class="analysis-count">{{ nb }}</span>
+                    </div>
+                    {% endif %}
                 {% endfor %}
-            {% endif %}
+            </section>
+            <section class="analysis-chart" aria-label="Erreurs par temps">
+                <h3>Par temps</h3>
+                {% for temps, nb in analyse.temps_complet|dictsort(by='value', reverse=true) %}
+                    {% if nb > 0 %}
+                    <div class="analysis-row">
+                        <span>{{ temps|capitalize }}</span>
+                        <div class="analysis-track"><div class="analysis-fill" style="width:{{ (nb * 100 / erreurs|length)|round|int }}%;"></div></div>
+                        <span class="analysis-count">{{ nb }}</span>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </section>
         </div>
-
-        <p class="analyse-title">Temps les moins réussis</p>
-        {% for temps, nb in analyse.temps %}
-            <div class="analyse-item">{{ temps }} — {{ nb }} erreur{% if nb > 1 %}s{% endif %}</div>
+        {% if analyse.verbes %}
+        <p class="analyse-title">Verbes à reprendre</p>
+        {% for verbe, nb in analyse.verbes %}
+            <div class="analyse-item">{{ verbe }} — {{ nb }} erreur{{ 's' if nb > 1 else '' }}</div>
         {% endfor %}
+        {% endif %}
 
-        <p class="analyse-title">Voix les moins réussies</p>
+        <p class="analyse-title">Répartition des erreurs par voix</p>
         {% set voix_data = voix if voix is defined else {} %}
         {% set active = voix_data.get('active', 0) if voix_data is mapping else 0 %}
         {% set passive = voix_data.get('passive', 0) if voix_data is mapping else 0 %}
@@ -326,18 +348,24 @@
         </div>
         <p class="muted">Active : {{ active }} erreur(s) — Passive : {{ passive }} erreur(s)</p>
 
+        {% if analyse.suggestion %}
         <h3>Suggestion de révision</h3>
-        <p class="suggestion">{{ analyse.suggestion }}</p>
+        <p class="suggestion">Commence par {{ analyse.suggestion }} : c'est la combinaison qui revient le plus souvent parmi tes erreurs.</p>
+        {% endif %}
     </div>
     {% endif %}
 
     <!-- BOUTONS -->
-    <div class="bilan-actions">
+    <div class="next-actions">
         {% if erreurs %}
-            <a href="/revision" class="btn">Réessayer mes erreurs</a>
+            <a href="/revision" class="btn">Réviser mes erreurs</a>
+            <a href="/cible" class="btn">Créer un quiz ciblé</a>
+        {% else %}
+            <p class="next-step">Aucune erreur à reprendre : garde ton élan avec un nouvel objectif ou explore un autre temps.</p>
+            <a href="/cible" class="btn">Choisir mon prochain défi</a>
         {% endif %}
-        <a href="/quiz" class="btn">Recommencer</a>
-        <a href="/" class="back-button">Retour au menu principal</a>
+        <a href="/quiz?mode=entrainement" class="btn">Continuer à t'entraîner</a>
+        <a href="/" class="back-button">Accueil</a>
     </div>
 
 </div>
@@ -378,23 +406,23 @@ function buildShareText() {
     if (TAUX === 100) {
         emoji = '🏆';
         perf = `SCORE PARFAIT — ${SCORE}/${TOTAL} (100%)`;
-        defi = `Saurez-vous faire aussi bien ? Essayez de faire autant que moi sur ce site.`;
+        defi = `Tu peux essayer de faire aussi bien sur ce site.`;
     } else if (TAUX >= 90) {
         emoji = '🔥';
         perf = `${SCORE}/${TOTAL} au quiz de conjugaison française (${TAUX}%)`;
-        defi = `Quasiment parfait. Je vous défie de faire mieux sur ce site.`;
+        defi = `Quasiment parfait. Je te défie de faire mieux sur ce site.`;
     } else if (TAUX >= 80) {
         emoji = '🎯';
         perf = `${SCORE}/${TOTAL} au quiz de conjugaison française (${TAUX}%)`;
-        defi = `Pas mal, mais peut mieux faire. Essayez de me battre (j'ai utilisé ce site).`;
+        defi = `Pas mal, mais je suis sûr que tu peux faire mieux. À toi de jouer !`;
     } else if (TAUX >= 60) {
         emoji = '📈';
         perf = `${SCORE}/${TOTAL} au quiz de conjugaison française (${TAUX}%)`;
-        defi = `Le subjonctif m'a eu… À votre tour ! Essayez ce site.`;
+        defi = `Le subjonctif m'a eu… À ton tour d'essayer !`;
     } else {
         emoji = '😅';
         perf = `${SCORE}/${TOTAL} au quiz de conjugaison française (${TAUX}%)`;
-        defi = `C'est dur la conjugaison française ! Essayez ce site.`;
+        defi = `La conjugaison française, c'est un défi ! À toi de jouer.`;
     }
 
     return `${emoji} ${perf}\n\n${defi}\n\n👉 ${SITE}`;

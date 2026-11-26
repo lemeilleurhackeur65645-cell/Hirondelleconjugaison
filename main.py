@@ -4,6 +4,7 @@ import time
 import json
 import os
 import uuid
+import unicodedata
 from pathlib import Path
 from datetime import date
 
@@ -325,9 +326,44 @@ def calculer_stats_user(user):
 @login_required
 def badges():
     from repetition import BADGES
+
     obtenus = set(current_user.liste_badges())
+    stats = calculer_stats_user(current_user)
+    agregats = stats["agregats"]
+    total_questions = stats["total"]
+    verbes = {agregat.verbe for agregat in agregats}
+    modes = set(session.get("modes_deja_joues", []))
+    bonnes_consecutives = session.get("consecutives", 0)
+
+    objectifs = {
+        "premiers_pas": (total_questions, 1, "Termine un quiz (au moins une question)."),
+        "serie_3": (current_user.streak_jours, 3, "Joue 3 jours de suite."),
+        "serie_7": (current_user.streak_jours, 7, "Joue 7 jours de suite."),
+        "serie_30": (current_user.streak_jours, 30, "Joue 30 jours de suite."),
+        "serie_100": (current_user.streak_jours, 100, "Joue 100 jours de suite."),
+        "cent_questions": (total_questions, 100, "Réponds à 100 questions."),
+        "mille_questions": (total_questions, 1000, "Réponds à 1 000 questions."),
+        "sans_faute": (bonnes_consecutives, 10, "Réussis 10 réponses d'affilée."),
+        "sans_faute_20": (bonnes_consecutives, 20, "Réussis 20 réponses d'affilée."),
+        "polyglotte": (len(verbes), 20, "Travaille 20 verbes différents."),
+        "polyglotte_pro": (len(verbes), 50, "Travaille 50 verbes différents."),
+        "cinq_mille_xp": (current_user.xp_total, 5000, "Cumule 5 000 XP."),
+        "tous_modes": (len(modes.intersection({"indicatif", "subjonctif", "conditionnel", "impératif"})), 4,
+                       "Joue dans chacun des 4 modes principaux."),
+    }
+    conditions_sans_progression = {
+        "toutes_voix": "Joue au moins une question en voix active et une en voix passive.",
+        "note_parfaite": "Obtiens 10/10 à une évaluation.",
+        "noctambule": "Réponds à une question entre minuit et 5 h.",
+    }
     liste = [
-        {"code": code, **info, "obtenu": code in obtenus}
+        {
+            "code": code, **info, "obtenu": code in obtenus,
+            "condition": conditions_sans_progression.get(
+                code, objectifs.get(code, (None, None, info["desc"]))[2]
+            ),
+            "progression": objectifs.get(code, (None, None, None))[:2],
+        }
         for code, info in BADGES.items()
     ]
     return render_template("badges.html", liste=liste, nb_obtenus=len(obtenus), nb_total=len(BADGES))
@@ -336,8 +372,72 @@ def badges():
 @app.route("/compte")
 @login_required
 def compte():
-    stats = calculer_stats_user(current_user)
-    return render_template("compte.html", stats=stats, titre_pour_niveau=titre_pour_niveau)
+    return render_template("compte.html")
+
+
+@app.route("/compte/preferences", methods=["POST"])
+@login_required
+def compte_preferences():
+    current_user.rappels_email = "rappels" in request.form
+    current_user.classement_public = "classement" in request.form
+    db.session.commit()
+    flash("Tes préférences de confidentialité ont été enregistrées.")
+    return redirect(url_for("compte"))
+
+
+@app.route("/compte/export")
+@login_required
+def compte_export():
+    from flask import make_response
+    from models import AgregatVerbe, MessageTicket, ReponseRecente, Ticket
+
+    agregats = current_user.agregats.order_by(AgregatVerbe.verbe, AgregatVerbe.mode, AgregatVerbe.temps).all()
+    historique = current_user.historique.order_by(ReponseRecente.date.desc()).all()
+    tickets = (
+        Ticket.query.filter_by(user_id=current_user.id)
+        .order_by(Ticket.date_creation.desc()).all()
+    )
+    donnees = {
+        "compte": {
+            "email": current_user.email,
+            "nom": current_user.nom,
+            "methode_connexion": current_user.methode_connexion,
+            "date_creation": current_user.date_creation.isoformat() if current_user.date_creation else None,
+            "niveau": current_user.niveau,
+            "xp_total": current_user.xp_total,
+            "streak_jours": current_user.streak_jours,
+            "streak_record": current_user.streak_record,
+            "badges": current_user.liste_badges(),
+            "rappels_email": current_user.rappels_email,
+            "classement_public": current_user.classement_public,
+        },
+        "statistiques": [
+            {"verbe": a.verbe, "mode": a.mode, "temps": a.temps,
+             "total": a.nb_total, "correctes": a.nb_correct}
+            for a in agregats
+        ],
+        "reponses_recentes": [
+            {"verbe": r.verbe, "mode": r.mode, "temps": r.temps, "correct": r.correct,
+             "date": r.date.isoformat() if r.date else None}
+            for r in historique
+        ],
+        "echanges_contact": [
+            {
+                "type": ticket.type, "sujet": ticket.sujet, "statut": ticket.statut,
+                "date_creation": ticket.date_creation.isoformat() if ticket.date_creation else None,
+                "messages": [
+                    {"auteur": message.auteur, "contenu": message.contenu,
+                     "date_creation": message.date_creation.isoformat() if message.date_creation else None}
+                    for message in ticket.messages.order_by(MessageTicket.date_creation).all()
+                ],
+            }
+            for ticket in tickets
+        ],
+    }
+    response = make_response(json.dumps(donnees, ensure_ascii=False, indent=2))
+    response.headers["Content-Type"] = "application/json; charset=utf-8"
+    response.headers["Content-Disposition"] = 'attachment; filename="hirondelle-mes-donnees.json"'
+    return response
 
 
 @app.route("/progression")
@@ -359,6 +459,13 @@ def progression():
     for m in par_mode.values():
         m["taux"] = round(m["correctes"] / m["total"] * 100, 1) if m["total"] else 0
     par_mode = dict(sorted(par_mode.items(), key=lambda kv: kv[1]["total"], reverse=True))
+    modes_a_renforcer = [
+        (mode, valeurs) for mode, valeurs in par_mode.items() if valeurs["total"] >= 5
+    ]
+    mode_a_travailler = (
+        min(modes_a_renforcer, key=lambda item: item[1]["taux"])[0]
+        if modes_a_renforcer else None
+    )
 
     # Verbes les plus ratés, en nombre absolu d'erreurs cumulées
     erreurs_par_verbe = Counter()
@@ -373,15 +480,27 @@ def progression():
         ReponseRecente.query
         .filter_by(user_id=current_user.id)
         .order_by(ReponseRecente.date.desc())
-        .limit(10)
+        .limit(30)
         .all()
     )
+    evolution_par_jour = {}
+    for reponse in historique_recent:
+        jour = reponse.date.date() if reponse.date else date.today()
+        jour_stats = evolution_par_jour.setdefault(jour, {"total": 0, "correctes": 0})
+        jour_stats["total"] += 1
+        jour_stats["correctes"] += int(reponse.correct)
+    evolution = [
+        {"date": jour.strftime("%d/%m"), "total": valeurs["total"],
+         "taux": round(valeurs["correctes"] / valeurs["total"] * 100)}
+        for jour, valeurs in sorted(evolution_par_jour.items())
+    ]
 
     return render_template(
         "progression.html",
         total=base["total"], correctes=base["correctes"], taux=base["taux"],
         par_mode=par_mode, verbes_a_revoir=verbes_a_revoir,
-        historique_recent=historique_recent,
+        historique_recent=historique_recent, evolution=evolution,
+        mode_a_travailler=mode_a_travailler,
         user=current_user,
     )
 
@@ -499,7 +618,9 @@ ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "")
 @app.context_processor
 def inject_is_admin():
     is_admin = current_user.is_authenticated and current_user.email == ADMIN_EMAIL
-    return dict(is_admin=is_admin)
+    site_url = os.environ.get("SITE_URL", "https://hirondelleconjugaison.onrender.com").rstrip("/")
+    contact_email = os.environ.get("CONTACT_EMAIL")
+    return dict(is_admin=is_admin, site_url=site_url, contact_email=contact_email)
 def _admin_requis():
     """Retourne une réponse de refus si l'utilisateur n'est pas l'admin, sinon None."""
     if not current_user.is_authenticated or current_user.email != ADMIN_EMAIL:
@@ -774,6 +895,8 @@ def index():
     stats = None
     xp_progress_pct = 0
     xp_prochain_niveau = 0
+    xp_restant_niveau = 0
+    parcours_niveaux = []
     streak_joue_aujourd_hui = False
     if current_user.is_authenticated:
         stats = calculer_stats_user(current_user)
@@ -784,11 +907,23 @@ def index():
         ecart = xp_prochain_niveau - xp_niveau_actuel
         progres = current_user.xp_total - xp_niveau_actuel
         xp_progress_pct = round(max(0, min(100, progres / ecart * 100)), 1) if ecart else 0
+        xp_restant_niveau = max(0, xp_prochain_niveau - current_user.xp_total)
+        premier_niveau = max(1, current_user.niveau - 1)
+        parcours_niveaux = [
+            {
+                "niveau": niveau,
+                "xp": xp_requis_pour_niveau(niveau),
+                "actuel": niveau == current_user.niveau,
+                "atteint": niveau <= current_user.niveau,
+            }
+            for niveau in range(premier_niveau, current_user.niveau + 3)
+        ]
         streak_joue_aujourd_hui = (current_user.derniere_session == date.today())
 
     return render_template(
         "index.html", stats=stats,
         xp_progress_pct=xp_progress_pct, xp_prochain_niveau=xp_prochain_niveau,
+        xp_restant_niveau=xp_restant_niveau, parcours_niveaux=parcours_niveaux,
         streak_joue_aujourd_hui=streak_joue_aujourd_hui,
         verbe_jour=verbe_du_jour(),
     )
@@ -811,6 +946,36 @@ def changelog():
     return render_template("changelog.html")
 
 
+@app.route("/conditions")
+def conditions():
+    return render_template("conditions.html")
+
+
+@app.route("/confidentialite")
+def confidentialite():
+    return render_template("confidentialite.html")
+
+
+@app.route("/mentions-legales")
+def mentions_legales():
+    return render_template("mentions_legales.html")
+
+
+@app.route("/desabonnement/<token>", methods=["GET", "POST"])
+def desabonnement(token):
+    from rappels import lire_token
+
+    user_id = lire_token(token)
+    utilisateur = db.session.get(User, user_id) if user_id is not None else None
+    if utilisateur is None:
+        return render_template("desabonnement.html", etat="invalide")
+    if request.method == "POST":
+        utilisateur.rappels_email = False
+        db.session.commit()
+        return render_template("desabonnement.html", etat="fait")
+    return render_template("desabonnement.html", etat="confirmer")
+
+
 @app.route("/cible")
 def cible():
     # Déblocage progressif : le quiz ciblé est accessible dès le niveau 3
@@ -824,6 +989,10 @@ def cible():
 
     # Modes disponibles (à partir de ACTIF)
     modes = sorted({m for v in ACTIF.values() for m in v.keys()})
+    verbes_recommandes = [
+        verbe for verbe in ["faire", "prendre", "voir", "rendre", "tenir", "recevoir"]
+        if verbe in ACTIF and verbe in PASSIF
+    ]
 
     # Mapping mode -> temps valides
     modes_temps = {}
@@ -975,6 +1144,8 @@ def cible():
         modes=modes,
         modes_temps_json=json.dumps(modes_temps, ensure_ascii=False),
         listes=LISTES_VERBES,
+        nb_verbes_disponibles=len(ACTIF),
+        verbes_recommandes=verbes_recommandes,
         verbes_passivables=VERBES_PASSIVABLES,
         niveau_bloque=niveau_bloque,
         niveau_requis=niveau_requis_cible,
@@ -983,38 +1154,27 @@ def cible():
 
 @app.route("/classement")
 def classement():
-    faux_classement = [
-        {"pseudo": "Chloe_Bzh", "niveau": 14, "streak": 23, "xp": 2840},
-        {"pseudo": "maxime.p", "niveau": 12, "streak": 9, "xp": 2415},
-        {"pseudo": "Arr34", "niveau": 11, "streak": 31, "xp": 2260},
-        {"pseudo": "Yanis44", "niveau": 10, "streak": 4, "xp": 1980},
-        {"pseudo": "The-yu", "niveau": 9, "streak": 17, "xp": 1755},
-        {"pseudo": "Gerj", "niveau": 8, "streak": 2, "xp": 1502},
-        {"pseudo": "sarahb", "niveau": 7, "streak": 12, "xp": 1290},
-        {"pseudo": "hugo.m", "niveau": 6, "streak": 6, "xp": 1088},
-        {"pseudo": "In.D°", "niveau": 5, "streak": 1, "xp": 810},
-        {"pseudo": "Nathan_29", "niveau": 4, "streak": 8, "xp": 645},
-    ]
-
-    moi = None
-    if current_user.is_authenticated:
-        moi = {
-            "pseudo": current_user.nom or current_user.email.split("@")[0],
-            "niveau": current_user.niveau,
-            "streak": current_user.streak_jours,
-            "xp": current_user.xp_total,
-            "moi": True,
+    utilisateurs = (
+        User.query.filter_by(classement_public=True)
+        .order_by(User.xp_total.desc(), User.id.asc())
+        .limit(50)
+        .all()
+    )
+    classement_reel = [
+        {
+            "pseudo": (
+                (utilisateur.nom or "").strip()
+                if "@" not in (utilisateur.nom or "")
+                else ""
+            ) or "Joueur",
+            "niveau": utilisateur.niveau,
+            "streak": utilisateur.streak_jours,
+            "xp": utilisateur.xp_total,
+            "moi": current_user.is_authenticated and utilisateur.id == current_user.id,
         }
-        # Insérer le joueur à sa vraie place par XP, seulement s'il atteint le top 10
-        classement_complet = faux_classement + [moi]
-        classement_complet.sort(key=lambda j: j["xp"], reverse=True)
-        rang_reel = classement_complet.index(moi) + 1
-        if rang_reel <= 10:
-            faux_classement = classement_complet[:10]
-        else:
-            moi = None  # pas affiché s'il est trop loin
-
-    return render_template("classement.html", classement=faux_classement, rang_moi=moi)
+        for utilisateur in utilisateurs
+    ]
+    return render_template("classement.html", classement=classement_reel)
 
 
 @app.route("/export-pdf")
@@ -1321,32 +1481,70 @@ def conseil_conjugaison(mode, temps, voix="active"):
         return "Au présent de l’indicatif, identifie d’abord le groupe du verbe et la personne : les terminaisons varient selon les deux."
     return "Repère le mode, le temps et la personne : le radical et la terminaison peuvent changer selon le verbe."
 
+
+def normaliser_reponse(reponse):
+    decomposed = unicodedata.normalize("NFD", reponse.casefold().strip())
+    return "".join(char for char in decomposed if unicodedata.category(char) != "Mn")
+
+
 # ============================================================
 # MODE RÉVISION CIBLÉE
 # ============================================================
 
 @app.route("/cible_start", methods=["POST"])
 def cible_start():
+    modes_selectionnes = list(dict.fromkeys(request.form.getlist("modes")))
+    choix_temps = list(dict.fromkeys(request.form.getlist("temps")))
+    personnes_selectionnees = list(dict.fromkeys(request.form.getlist("personnes")))
+    voix_selectionnees = list(dict.fromkeys(request.form.getlist("voix")))
+    modes_disponibles = {mode for verbe in ACTIF.values() for mode in verbe}
+    temps_disponibles = {
+        (mode, temps)
+        for conjugaison in ACTIF.values()
+        for mode, temps_dict in conjugaison.items()
+        for temps in temps_dict
+    }
+    personnes_valides = {"1s", "2s", "3s", "1p", "2p", "3p"}
+    temps_selectionnes = []
+    for choix in choix_temps:
+        mode, separateur, temps = choix.partition("|")
+        paire = (mode, temps)
+        if not separateur or mode not in modes_selectionnes or paire not in temps_disponibles:
+            flash("Un des temps sélectionnés n'est pas disponible pour les modes choisis.")
+            return redirect(url_for("cible"))
+        temps_selectionnes.append(paire)
+
+    if (
+        not modes_selectionnes
+        or not temps_selectionnes
+        or not personnes_selectionnees
+        or not voix_selectionnees
+        or any(mode not in modes_disponibles for mode in modes_selectionnes)
+        or any(personne not in personnes_valides for personne in personnes_selectionnees)
+        or any(voix not in {"actif", "passif"} for voix in voix_selectionnees)
+    ):
+        flash("Choisis au moins un mode, un temps, une personne et une voix avant de lancer le quiz.")
+        return redirect(url_for("cible"))
+
+    raw_verbes = list(dict.fromkeys(request.form.getlist("verbes")))
+    raw_verbes = [verbe for verbe in raw_verbes if verbe in ACTIF]
+    if voix_selectionnees == ["passif"]:
+        raw_verbes = [verbe for verbe in raw_verbes if verbe in VERBES_PASSIVABLES]
+    if not raw_verbes:
+        flash("Choisis au moins un verbe compatible avec la voix sélectionnée.")
+        return redirect(url_for("cible"))
+
+    session.pop("questions_cibles_id", None)
     session["mode"] = "cible"
     session["score"] = 0
     session["total"] = 0
     session["start"] = time.time()
-    session["cible_modes"] = request.form.getlist("modes")
-    session["cible_personnes"] = request.form.getlist("personnes")
-    session["cible_voix"] = request.form.getlist("voix")
+    session["cible_modes"] = modes_selectionnes
+    session["cible_personnes"] = personnes_selectionnees
+    session["cible_voix"] = voix_selectionnees
 
-    # Récupérer les verbes depuis le formulaire SANS les stocker directement en session
+    # Garder les sélections courtes dans le cookie, sans y placer des listes massives.
     # (un cookie Flask est limité à 4KB — 543 verbes le dépassent largement)
-    raw_verbes = list(dict.fromkeys(request.form.getlist("verbes")))  # dédupliquer
-
-    # Si uniquement passif, filtrer sur les passivables
-    if session["cible_voix"] == ["passif"]:
-        raw_verbes = [v for v in raw_verbes if v in VERBES_PASSIVABLES]
-
-    if not raw_verbes:
-        flash("Aucun verbe passivable sélectionné. Choisissez d'autres verbes ou activez la voix active.")
-        return redirect("/cible")
-
     # Stocker en session seulement si la liste est courte (≤ 30 verbes)
     # Pour les sélections larges, on passe par le store mémoire _QUESTIONS_STORE
     if len(raw_verbes) <= 30:
@@ -1354,14 +1552,7 @@ def cible_start():
     else:
         session["cible_verbes"] = []  # sera lu depuis le store via questions_cibles_id
 
-    raw_temps = request.form.getlist("temps")
-    session["cible_temps"] = []
-    for item in raw_temps:
-        try:
-            mode, temps = item.split("|")
-            session["cible_temps"].append((mode, temps))
-        except Exception:
-            continue
+    session["cible_temps"] = temps_selectionnes
 
     if not session["cible_modes"] or not session["cible_temps"] or not session["cible_personnes"] or not raw_verbes:
         flash("Veuillez sélectionner au moins un mode, un temps, une personne et un verbe.")
@@ -1370,40 +1561,45 @@ def cible_start():
     session["questions_cibles"] = []
     questions_cibles = []
 
-    # Déterminer la base selon la voix
-    voix = session["cible_voix"]
-    if voix == ["passif"]:
-        base = PASSIF
-    elif voix == ["actif"]:
-        base = ACTIF
-    else:
-        base = {**ACTIF, **PASSIF}  # union logique
+    bases_voix = []
+    if "actif" in session["cible_voix"]:
+        bases_voix.append(("active", ACTIF))
+    if "passif" in session["cible_voix"]:
+        bases_voix.append(("passive", PASSIF))
 
     for verbe in raw_verbes:
-        if verbe not in base:
-            continue
-        modes_dict = base[verbe]
-        for mode, temps in session["cible_temps"]:
-            if mode not in modes_dict:
+        for voix_question, base in bases_voix:
+            if verbe not in base:
                 continue
-            temps_dict = modes_dict[mode]
-            if temps not in temps_dict:
-                continue
-            formes = temps_dict[temps]
-            if not formes:
-                continue
-            for personne in session["cible_personnes"]:
-                # Vérifier que la personne existe dans les formes
-                mapping = ["je", "tu", "il", "nous", "vous", "ils"]
-                idx = mapping.index({
-                    "1s": "je", "2s": "tu", "3s": "il",
-                    "1p": "nous", "2p": "vous", "3p": "ils"
-                }[personne])
-                if idx >= len(formes):
+            modes_dict = base[verbe]
+            for mode, temps in session["cible_temps"]:
+                if mode not in modes_dict:
                     continue
-                questions_cibles.append((verbe, mode, temps, personne))
+                temps_dict = modes_dict[mode]
+                if temps not in temps_dict:
+                    continue
+                formes = temps_dict[temps]
+                if not formes:
+                    continue
+                if mode.lower() == "impératif":
+                    indices_personnes = {"2s": 0, "1p": 1, "2p": 2}
+                else:
+                    indices_personnes = {
+                        "1s": 0, "2s": 1, "3s": 2,
+                        "1p": 3, "2p": 4, "3p": 5,
+                    }
+                for personne in session["cible_personnes"]:
+                    idx = indices_personnes.get(personne)
+                    if idx is None or idx >= len(formes):
+                        continue
+                    questions_cibles.append((verbe, mode, temps, personne, voix_question))
 
     random.shuffle(questions_cibles)
+    if not questions_cibles:
+        session.pop("cible_verbes", None)
+        session.pop("cible_temps", None)
+        flash("Aucune question ne correspond à cette combinaison. Choisis d'autres temps ou verbes.")
+        return redirect(url_for("cible"))
 
     # Stocker côté serveur (pas dans le cookie — trop volumineux)
     qid = str(uuid.uuid4())
@@ -1456,6 +1652,24 @@ def quiz():
                 session["timer"] = 5 * 60
                 session["questions_restantes"] = 10
 
+    if request.method == "GET" and request.args.get("mode") == "cible":
+        verbe = request.args.get("verbe", "")
+        mode_verbe = request.args.get("mode_verbe", "")
+        temps_cible = request.args.get("temps_cible", "")
+        formes = ACTIF.get(verbe, {}).get(mode_verbe, {}).get(temps_cible, [])
+        if not formes:
+            flash("Cette combinaison de verbe et de temps n'est pas disponible.")
+            return redirect(url_for("cible"))
+
+        personnes = ["1s", "2s", "3s", "1p", "2p", "3p"]
+        session["mode"] = "cible"
+        session["cible_modes"] = [mode_verbe]
+        session["cible_temps"] = [(mode_verbe, temps_cible)]
+        session["cible_personnes"] = personnes[:min(len(formes), len(personnes))]
+        session["cible_voix"] = ["actif"]
+        session["cible_verbes"] = [verbe]
+        session.pop("questions_cibles_id", None)
+
     if _palier_sv is not None:
         session["palier"] = _palier_sv
         if _palier_ex:
@@ -1475,6 +1689,7 @@ def quiz():
             return redirect("/fin")
 
     feedback = None
+    feedback_type = None
     conseil = None
     reaction = None
 
@@ -1487,9 +1702,13 @@ def quiz():
 
         bonne = session["bonne"]
         session["total"] += 1
-        est_correct = (rep == bonne.lower())
+        est_correct = normaliser_reponse(rep) == normaliser_reponse(bonne)
         if mode != "evaluation":
-            feedback = "✔️ Correct" if est_correct else f"❌ Faux. Réponse attendue : {bonne}"
+            feedback_type = "correct" if est_correct else "incorrect"
+            if est_correct and rep != bonne.casefold():
+                feedback = f"✔️ Bonne réponse — pense à la graphie correcte : {bonne}"
+            else:
+                feedback = "✔️ Correct" if est_correct else f"❌ Réponse attendue : {bonne}"
             conseil = conseil_conjugaison(
                 session.get("mode_verbe", ""),
                 session.get("temps", ""),
@@ -1568,6 +1787,11 @@ def quiz():
                     nb_verbes_distincts=stats_rapides["nb_verbes_distincts"],
                     voix_utilisees=set(session["voix_deja_jouees"]),
                     modes_utilises=set(session["modes_deja_joues"]),
+                    note_evaluation=(
+                        session["score"]
+                        if mode == "evaluation" and session.get("questions_restantes", 10) <= 1
+                        else None
+                    ),
                 )
                 db.session.commit()
 
@@ -1602,34 +1826,66 @@ def quiz():
         voix_question = session.get("voix_question", "active")
 
     elif mode == "cible":
-        # Sélection de la base actif/passif
-        voix = session.get("cible_voix", ["actif"])
-
-        if "actif" in voix and "passif" in voix:
-            base = random.choice([ACTIF, PASSIF])
-            voix_question = "passive" if base is PASSIF else "active"
-        elif "passif" in voix:
-            base = PASSIF
-            voix_question = "passive"
-        else:
-            base = ACTIF
-            voix_question = "active"
-
         # Lire les verbes depuis le store mémoire (pas depuis la session — trop volumineux)
         qid = session.get("questions_cibles_id")
+        questions_stockees = _QUESTIONS_STORE.get(qid, []) if qid else []
         verbes_cibles = None
-        if qid and qid in _QUESTIONS_STORE:
+        if questions_stockees:
             # Extraire la liste unique des verbes depuis les questions stockées
-            verbes_cibles = list(dict.fromkeys(q[0] for q in _QUESTIONS_STORE[qid]))
+            verbe, mode_v, temps, personne, voix_question = random.choice(questions_stockees)
+            base = PASSIF if voix_question == "passive" else ACTIF
+            formes = base[verbe][mode_v][temps]
+            if mode_v.lower() == "impératif":
+                index_personnes = {"2s": 0, "1p": 1, "2p": 2}
+                sujets = {"2s": "tu", "1p": "nous", "2p": "vous"}
+                idx = index_personnes[personne]
+                sujet = sujets[personne]
+            elif len(formes) == 1:
+                idx = 0
+                sujet = "(forme impersonnelle)"
+            else:
+                index_personnes = {
+                    "1s": 0, "2s": 1, "3s": 2,
+                    "1p": 3, "2p": 4, "3p": 5,
+                }
+                sujets = {
+                    "1s": "je", "2s": "tu", "3s": "il",
+                    "1p": "nous", "2p": "vous", "3p": "ils",
+                }
+                idx = index_personnes[personne]
+                sujet = sujets[personne]
+            bonne = formes[idx]
+            mapping_desc = {
+                "je": "1re personne du singulier",
+                "tu": "2e personne du singulier",
+                "il": "3e personne du singulier",
+                "nous": "1re personne du pluriel",
+                "vous": "2e personne du pluriel",
+                "ils": "3e personne du pluriel",
+                "(forme impersonnelle)": "(forme impersonnelle)",
+            }
+            sujet_affiche = mapping_desc.get(sujet, sujet)
+            question = f"Conjugue : {verbe} — {mode_v} — {temps} — {sujet_affiche} — voix {voix_question}"
+        else:
+            voix = session.get("cible_voix", ["actif"])
+            if "actif" in voix and "passif" in voix:
+                base = random.choice([ACTIF, PASSIF])
+                voix_question = "passive" if base is PASSIF else "active"
+            elif "passif" in voix:
+                base = PASSIF
+                voix_question = "passive"
+            else:
+                base = ACTIF
+                voix_question = "active"
 
-        verbe, mode_v, temps, sujet, bonne, question = generer_question(
-            modes=session.get("cible_modes"),
-            temps=session.get("cible_temps"),
-            personnes=session.get("cible_personnes"),
-            verbes=verbes_cibles or session.get("cible_verbes"),
-            base=base,
-            voix_question=voix_question
-        )
+            verbe, mode_v, temps, sujet, bonne, question = generer_question(
+                modes=session.get("cible_modes"),
+                temps=session.get("cible_temps"),
+                personnes=session.get("cible_personnes"),
+                verbes=session.get("cible_verbes"),
+                base=base,
+                voix_question=voix_question
+            )
 
     else:
         # Répétition espacée : uniquement en entraînement, pour les connectés
@@ -1684,6 +1940,7 @@ def quiz():
         "quiz.html",
         question=question,
         feedback=feedback,
+        feedback_type=feedback_type,
         mode=mode,
         temps_restant=temps_restant,
         nouveaux_badges=badges_info,
@@ -1796,7 +2053,8 @@ def fin():
         analyse=analyse,
         total_voix=total_voix,
         erreurs_voix=erreurs_voix,
-        voix={"active": active_voix, "passive": passive_voix}
+        voix={"active": active_voix, "passive": passive_voix},
+        mode_quiz=session.get("mode", ""),
     )
 
 # ============================================================
@@ -1930,6 +2188,7 @@ def page_verbe(verbe):
 
     # Construire un résumé : pour chaque mode, afficher le présent (ou premier temps dispo)
     resume_modes = {}
+    temps_prioritaires = ["présent", "passé composé", "imparfait", "futur simple", "conditionnel présent"]
     for mode, temps_dict in modes_verbe.items():
         temps_prefere = "présent" if "présent" in temps_dict else list(temps_dict.keys())[0]
         resume_modes[mode] = {
@@ -1937,10 +2196,14 @@ def page_verbe(verbe):
             "temps": temps_prefere,
             "label_temps": LABELS_TEMPS.get(temps_prefere, temps_prefere.capitalize()),
             "formes": temps_dict[temps_prefere],
+            "exemple": EXEMPLES_PHRASES.get((verbe, mode, temps_prefere)),
             "tous_temps": [
                 {"temps": t, "label": LABELS_TEMPS.get(t, t.capitalize()),
                  "url": f"/conjugaison/{verbe}/{mode}/{t}"}
-                for t in temps_dict.keys()
+                for t in sorted(
+                    temps_dict.keys(),
+                    key=lambda nom: (temps_prioritaires.index(nom) if nom in temps_prioritaires else len(temps_prioritaires), list(temps_dict).index(nom)),
+                )
             ],
         }
 
@@ -1996,6 +2259,11 @@ def sitemap():
     xml_lines.append("</urlset>")
 
     return Response("\n".join(xml_lines), mimetype="application/xml")
+
+
+@app.errorhandler(404)
+def page_introuvable(error):
+    return render_template("404.html"), 404
 
 
 # ============================================================

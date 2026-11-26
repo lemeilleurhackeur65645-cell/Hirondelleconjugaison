@@ -25,7 +25,7 @@
             transition: transform 0.15s;
         }
         .badge-card.obtenu:hover { transform: translateY(-3px); }
-        .badge-card.locked { opacity: 0.5; filter: grayscale(0.6); }
+        .badge-card.locked { border:1px solid #e2e8f0; }
         .badge-icon { font-size: 2.4rem; margin-bottom: 10px; }
         .badge-card.locked .badge-icon { filter: grayscale(1); }
         .badge-label { font-size: 0.85rem; font-weight: 700; color: #0f172a; margin: 0 0 4px; }
@@ -36,6 +36,9 @@
         }
         .badge-card.obtenu .badge-tag { background: #eff6ff; color: #1d4ed8; }
         .badge-card.locked .badge-tag { background: #f1f5f9; color: #94a3b8; }
+        .badge-condition { margin:10px 0 0; color:#475569; font-size:.75rem; line-height:1.45; }
+        .badge-progress { display:block; width:100%; height:7px; margin:9px 0 4px; accent-color:#007bff; }
+        .badge-remaining { color:#64748b; font-size:.7rem; }
     </style>
 </head>
 <body>
@@ -54,6 +57,14 @@
             <div class="badge-icon">{{ b.icone }}</div>
             <p class="badge-label">{{ b.label }}</p>
             <p class="badge-desc">{{ b.desc }}</p>
+            {% if not b.obtenu %}
+            <p class="badge-condition">{{ b.condition }}</p>
+            {% if b.progression and b.progression[0] is not none %}
+            {% set actuel, objectif = b.progression %}
+            <progress class="badge-progress" value="{{ [actuel, objectif]|min }}" max="{{ objectif }}" aria-label="Progression vers {{ b.label }}"></progress>
+            <span class="badge-remaining">{{ [objectif - actuel, 0]|max }} restant{{ 's' if objectif - actuel > 1 else '' }}</span>
+            {% endif %}
+            {% endif %}
             <span class="badge-tag">{{ "✓ Obtenu" if b.obtenu else "🔒 Verrouillé" }}</span>
         </div>
         {% endfor %}

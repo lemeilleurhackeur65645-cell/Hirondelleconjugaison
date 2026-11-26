@@ -77,27 +77,15 @@
       <p class="muted small-note">Active Mobile pour adapter l'interface à ton téléphone.</p>
     </div>
     <div class="setting-block">
-      <p class="muted">Cliquez de nouveau sur l'engrenage pour fermer.</p>
+        <p class="muted">Clique à nouveau sur l'engrenage pour fermer.</p>
     </div>
   </div>
 </div>
 
 <div class="container">
     <h1>Paramètres</h1>
-
+    <p class="muted">Les réglages ci-dessous sont mémorisés dans ce navigateur. L'affichage mobile ou ordinateur se règle depuis l'engrenage.</p>
     <div class="setting-block">
-        <label class="setting-label">Interface</label>
-        <div class="switch-container interface-switch">
-            <span class="switch-label">Mobile</span>
-            <label class="switch">
-                <input type="checkbox" id="interface-toggle-main">
-                <span class="slider"></span>
-            </label>
-            <span class="switch-label">PC</span>
-        </div>
-        <p class="muted small-note">Active Mobile pour adapter l'interface à ton téléphone.</p>
-    </div>
-        <div class="setting-block">
         <label class="setting-label">Sons du quiz</label>
         <div class="switch-container" role="group">
             <span class="switch-label">Désactivés</span>
@@ -107,24 +95,43 @@
             </label>
             <span class="switch-label">Activés</span>
         </div>
-        <p class="muted small-note">Un petit son après chaque bonne/mauvaise réponse, niveau ou badge.</p>
+        <p class="muted small-note">Active ou coupe les sons de réponse et de progression. Ce choix reste enregistré sur cet appareil.</p>
     </div>
 
-    <script>
-    (function() {
-        const toggle = document.getElementById('sons-toggle');
-        if (!toggle) return;
-        toggle.checked = localStorage.getItem('hirondelle_sons') !== 'off';
-        toggle.addEventListener('change', function() {
-            localStorage.setItem('hirondelle_sons', toggle.checked ? 'on' : 'off');
-        });
-    })();
-    </script>
+    <div class="setting-block">
+        <button type="button" id="reset-settings" class="back-button">Rétablir les réglages par défaut</button>
+        <p id="settings-status" class="muted small-note" role="status" aria-live="polite"></p>
+    </div>
     <div style="margin-top: 30px;">
         <a href="/" class="back-button">← Retour à l'accueil</a>
     </div>
 </div>
 
+<script>
+(function() {
+    const soundToggle = document.getElementById('sons-toggle');
+    const resetButton = document.getElementById('reset-settings');
+    const status = document.getElementById('settings-status');
+    const soundKey = 'hirondelle_sons';
+    const interfaceKey = 'site_interface_mode';
+
+    soundToggle.checked = localStorage.getItem(soundKey) !== 'off';
+    soundToggle.addEventListener('change', function() {
+        localStorage.setItem(soundKey, soundToggle.checked ? 'on' : 'off');
+    });
+
+    resetButton.addEventListener('click', function() {
+        localStorage.removeItem(soundKey);
+        localStorage.removeItem(interfaceKey);
+        document.body.classList.remove('mobile-mode');
+        document.body.classList.add('pc-mode');
+        soundToggle.checked = true;
+        const gearToggle = document.getElementById('interface-toggle');
+        if (gearToggle) gearToggle.checked = true;
+        status.textContent = 'Réglages par défaut rétablis : interface ordinateur et sons activés.';
+    });
+})();
+</script>
 <script src="{{ url_for('static', filename='js/settings.js') }}" defer></script>
 </main>
 {% include '_footer.html' %}

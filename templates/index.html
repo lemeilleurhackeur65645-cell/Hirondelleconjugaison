@@ -67,6 +67,18 @@
         .welcome-xp-track { width: 220px; height: 6px; background: rgba(255,255,255,0.18); border-radius: 6px; overflow: hidden; margin-bottom: 4px; }
         .welcome-xp-fill { height: 100%; background: linear-gradient(90deg, #60a5fa, #fff); border-radius: 6px; transition: width 0.4s; }
         .welcome-xp-label { font-size: 0.7rem; color: rgba(255,255,255,0.6); }
+        .level-journey { position: relative; margin-top: 20px; padding: 16px 16px 13px; border: 1px solid rgba(255,255,255,.14); border-radius: 16px; background: rgba(255,255,255,.07); }
+        .level-journey-head { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 12px; }
+        .level-journey-head strong { font-size: .75rem; color: rgba(255,255,255,.9); }
+        .level-journey-head span { font-size: .68rem; color: #bfdbfe; }
+        .level-journey-track { display: grid; grid-template-columns: repeat({{ parcours_niveaux|length }}, minmax(0, 1fr)); position: relative; }
+        .level-journey-track::before { content: ""; height: 3px; position: absolute; top: 10px; left: 9px; right: 9px; background: rgba(255,255,255,.22); border-radius: 4px; }
+        .level-stop { position: relative; display: grid; justify-items: center; gap: 6px; z-index: 1; }
+        .level-stop-dot { width: 21px; height: 21px; display: grid; place-items: center; border: 2px solid rgba(255,255,255,.4); border-radius: 50%; background: #24466f; color: rgba(255,255,255,.7); font-size: .63rem; font-weight: 800; }
+        .level-stop.reached .level-stop-dot { border-color: #93c5fd; background: #60a5fa; color: #0f2c4f; }
+        .level-stop.current .level-stop-dot { border: 3px solid #fff; background: #1680f5; box-shadow: 0 0 0 4px rgba(147,197,253,.28); color: #fff; }
+        .level-stop-label { color: rgba(255,255,255,.6); font-size: .62rem; }
+        .level-stop.current .level-stop-label { color: #fff; font-weight: 800; }
         .welcome-text h1 { font-size: 1.5rem; font-weight: 800; margin: 0 0 6px; color: #fff; }
         .welcome-text p { font-size: 0.9rem; margin: 0; color: rgba(255,255,255,0.85); }
         .welcome-stats { display: flex; gap: 24px; }
@@ -205,7 +217,7 @@
       <p class="muted small-note">Active Mobile pour adapter l'interface à ton téléphone.</p>
     </div>
     <div class="setting-block">
-      <p class="muted">Cliquez de nouveau sur l'engrenage pour fermer.</p>
+      <p class="muted">Clique à nouveau sur l'engrenage pour fermer.</p>
     </div>
   </div>
 </div>
@@ -228,6 +240,20 @@
                 <div class="welcome-xp-fill" style="width: {{ xp_progress_pct }}%;"></div>
             </div>
             <span class="welcome-xp-label">{{ current_user.xp_total }} / {{ xp_prochain_niveau }} XP avant le niveau {{ current_user.niveau + 1 }}</span>
+            <div class="level-journey" aria-label="Parcours des niveaux">
+                <div class="level-journey-head">
+                    <strong>TON PARCOURS</strong>
+                    <span>Encore {{ xp_restant_niveau }} XP <span aria-hidden="true">→</span> niveau {{ current_user.niveau + 1 }}</span>
+                </div>
+                <div class="level-journey-track">
+                    {% for etape in parcours_niveaux %}
+                    <div class="level-stop {{ 'current' if etape.actuel else ('reached' if etape.atteint else '') }}" {% if etape.actuel %}aria-current="step"{% endif %}>
+                        <span class="level-stop-dot">{{ '✓' if etape.atteint and not etape.actuel else etape.niveau }}</span>
+                        <span class="level-stop-label">Niv. {{ etape.niveau }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
         <div class="welcome-stats">
             <div class="welcome-stat">

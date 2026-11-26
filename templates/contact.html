@@ -61,6 +61,11 @@
         .msg-user { background: #f8fafc; color: #334155; }
         .msg-admin { background: #eff6ff; color: #0f172a; }
         .msg-bubble strong { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 3px; opacity: 0.7; }
+        .msg-meta { display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:5px; }
+        .msg-meta strong { margin:0; }
+        .msg-meta time { color:#64748b; font-size:.7rem; font-weight:500; text-transform:none; letter-spacing:0; }
+        .follow-up-note { margin:0 0 16px; padding:12px 14px; border-radius:12px; background:#eff6ff; color:#334155; font-size:.8rem; line-height:1.5; }
+        .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 
         .reply-form { display: flex; gap: 8px; margin-top: 12px; }
         .reply-form input { flex: 1; }
@@ -79,8 +84,8 @@
 <div class="wrap">
 
     <div class="contact-card">
-        <h1>📬 Signaler un bug ou une suggestion</h1>
-        <p class="sub">Décris ton problème ou ton idée — nous te répondrons dans les plus brefs délais.</p>
+        <h1>📬 Parlons du site</h1>
+        <p class="sub">Choisis le type de message, puis donne-nous les détails utiles. La réponse et les échanges de suivi seront visibles ici, dans ton compte.</p>
 
         {% with messages = get_flashed_messages() %}
             {% if messages %}
@@ -93,9 +98,10 @@
 
             <label for="type">Type</label>
             <select name="type" id="type">
-                <option value="bug">☎️ Bug</option>
-                <option value="suggestion">💡 Suggestion</option>
+                <option value="bug">🐛 Signaler un bug</option>
+                <option value="suggestion">💡 Proposer une idée</option>
             </select>
+            <p class="follow-up-note" id="type-help">Pour un bug, indique les étapes pour le reproduire et ce que tu attendais. Nous répondrons dans ce fil de discussion.</p>
 
             <label for="sujet">Sujet</label>
             <input type="text" name="sujet" id="sujet" required maxlength="200" placeholder="Résume en quelques mots" aria-label="Résume en quelques mots">
@@ -107,7 +113,7 @@
         </form>
     </div>
 
-    <p class="section-title">Mes messages</p>
+    <h2 class="section-title">Mes échanges</h2>
 
     {% if tickets %}
         {% for ticket in tickets %}
@@ -119,14 +125,18 @@
 
             {% for msg in ticket.messages %}
             <div class="msg-bubble {{ 'msg-admin' if msg.auteur == 'admin' else 'msg-user' }}">
-                <strong>{{ 'Réponse' if msg.auteur == 'admin' else 'Toi' }}</strong>
+                <div class="msg-meta">
+                    <strong>{{ 'Réponse de l’équipe' if msg.auteur == 'admin' else 'Ton message' }}</strong>
+                    <time datetime="{{ msg.date_creation.isoformat() }}">{{ msg.date_creation.strftime('%d/%m/%Y · %H:%M') }}</time>
+                </div>
                 {{ msg.contenu }}
             </div>
             {% endfor %}
 
             <form method="POST" action="/contact/{{ ticket.id }}/repondre" class="reply-form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <input type="text" name="message" placeholder="Répondre à ce fil..." required aria-label="Répondre à ce fil...">
+                <label class="sr-only" for="reply-{{ ticket.id }}">Ajouter un message au fil « {{ ticket.sujet }} »</label>
+                <input id="reply-{{ ticket.id }}" type="text" name="message" placeholder="Ajouter un message au fil..." required aria-label="Ajouter un message au fil">
                 <button type="submit">Envoyer</button>
             </form>
         </div>
@@ -136,6 +146,15 @@
     {% endif %}
 
 </div>
+<script>
+const contactType = document.getElementById('type');
+const contactHelp = document.getElementById('type-help');
+contactType.addEventListener('change', () => {
+    contactHelp.textContent = contactType.value === 'bug'
+        ? 'Pour un bug, indique les étapes pour le reproduire et ce que tu attendais. Nous répondrons dans ce fil de discussion.'
+        : 'Pour une idée, explique le besoin auquel elle répond. Nous lirons ta proposition et répondrons dans ce fil de discussion.';
+});
+</script>
 </main>
 {% include '_footer.html' %}
 </body>

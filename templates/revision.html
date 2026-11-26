@@ -37,7 +37,7 @@
       <p class="muted small-note">Active Mobile pour adapter l'interface à ton téléphone.</p>
     </div>
     <div class="setting-block">
-      <p class="muted">Cliquez de nouveau sur l'engrenage pour fermer.</p>
+      <p class="muted">Clique à nouveau sur l'engrenage pour fermer.</p>
     </div>
   </div>
 </div>
@@ -46,7 +46,7 @@
     <h1>Révision des erreurs</h1>
 
     {% if erreurs %}
-        <p class="intro">Tu as fait <strong>{{ erreurs | length }}</strong> erreur{{ 's' if erreurs | length > 1 else '' }} lors de la session précédente. Entraîne-toi à les corriger !</p>
+        <p class="intro">Tu vas retrouver les <strong>{{ erreurs | length }} question{{ 's' if erreurs | length > 1 else '' }}</strong> ratée{{ 's' if erreurs | length > 1 else '' }} lors de ta session précédente. Réponds à nouveau, puis compare avec la forme attendue.</p>
 
         <div class="erreurs-block" style="margin-bottom:24px;">
             {% for e in erreurs %}
@@ -66,8 +66,13 @@
             <a href="/" class="back-button">Retour au menu principal</a>
         </div>
     {% else %}
-        <p>Aucune erreur à réviser dans cette session.</p>
+        <div class="erreurs-block" style="padding:24px;border-radius:16px;background:#f0fdf4;color:#166534;">
+            <strong>Rien à reprendre pour le moment.</strong>
+            <p>Cette session ne contient aucune erreur enregistrée. Tu peux continuer à consolider tes acquis ou choisir un exercice précis.</p>
+        </div>
         <div class="bilan-actions">
+            <a href="/quiz?mode=entrainement" class="btn">Continuer l'entraînement</a>
+            <a href="/cible" class="btn">Choisir un quiz ciblé</a>
             <a href="/" class="back-button">Retour au menu principal</a>
         </div>
     {% endif %}

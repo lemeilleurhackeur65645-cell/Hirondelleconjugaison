@@ -84,6 +84,13 @@
     .mode-block .td-num { width: 30px; color: #cbd5e1; font-size: .75rem; font-weight: 700; text-align: center; padding-right: 0; }
     .mode-block .td-forme { font-weight: 600; }
     .mode-block-footer { padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 6px; background: #f8fafc; border-top: 1px solid #f1f5f9; }
+    .tense-jump { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:-12px 0 24px; padding:14px 16px; background:rgba(255,255,255,.82); border:1px solid #e2e8f0; border-radius:16px; }
+    .tense-jump > span { color:#64748b; font-size:.78rem; font-weight:700; margin-right:4px; }
+    .tense-jump a { padding:7px 11px; border:1px solid #dbeafe; border-radius:999px; background:#eff6ff; color:#0056d6; font-size:.76rem; font-weight:700; text-decoration:none; transition:transform .15s,background .15s; }
+    .tense-jump a:hover { transform:translateY(-1px); background:#dbeafe; }
+    .mode-block { scroll-margin-top:76px; }
+    .verb-example { margin:0; padding:13px 18px; border-top:1px solid #eef2f7; color:#526177; font-size:.82rem; line-height:1.55; }
+    .verb-example strong { color:#1769e0; margin-right:7px; }
     .temps-chip { padding: 5px 11px; background: #fff; border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: .77rem; font-weight: 600; color: #334155; text-decoration: none; transition: all .12s; }
     .temps-chip:hover { background: #007bff; color: #fff; border-color: transparent; }
     .temps-chip.actif { background: linear-gradient(135deg,#007bff,#0056d6); color: #fff; border-color: transparent; pointer-events: none; }
@@ -142,6 +149,13 @@
     </div>
   </header>
 
+  <nav class="tense-jump" aria-label="Accès rapide aux modes et aux temps">
+    <span>Aller directement à</span>
+    {% for mode, info in resume_modes.items() %}
+    <a href="#mode-{{ loop.index }}">{{ info.label }} · {{ info.label_temps }}</a>
+    {% endfor %}
+  </nav>
+
   <!-- CTA QUIZ -->
   <div class="cta-quiz">
     <div class="cta-quiz-text">
@@ -154,9 +168,9 @@
   <!-- TABLEAU RÉCAP PAR MODE -->
   <div class="recap-grid">
     {% for mode, info in resume_modes.items() %}
-    <div class="mode-block">
+    <section class="mode-block" id="mode-{{ loop.index }}" aria-labelledby="mode-title-{{ loop.index }}">
       <div class="mode-block-header">
-        <h2>{{ info.label }}</h2>
+        <h2 id="mode-title-{{ loop.index }}">{{ info.label }}</h2>
         <span class="mode-chip">{{ info.label_temps }}</span>
       </div>
       <table>
@@ -176,7 +190,10 @@
         </a>
         {% endfor %}
       </div>
-    </div>
+      {% if info.exemple %}
+      <p class="verb-example"><strong>En contexte</strong> {{ info.exemple }}</p>
+      {% endif %}
+    </section>
     {% endfor %}
   </div>
 

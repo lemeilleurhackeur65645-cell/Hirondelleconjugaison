@@ -7,14 +7,28 @@
   <title>Page introuvable | Hirondelle Conjugaison</title>
   <link rel="icon" type="image/png" href="/static/img/logo.png">
   <link rel="stylesheet" href="/static/style.css">
+  <style>
+    .not-found { width:min(100% - 32px,620px); margin:72px auto 60px; padding:36px 24px; border:1px solid #dbeafe; border-radius:24px; background:linear-gradient(145deg,#fff,#f3f8ff); box-shadow:0 20px 50px rgba(15,23,42,.08); text-align:center; }
+    .not-found-code { color:#1769e0; font-size:clamp(4rem,18vw,7rem); font-weight:900; letter-spacing:-.08em; line-height:1; }
+    .not-found h1 { margin:12px 0 8px; color:#0f172a; font-size:1.5rem; }
+    .not-found p { color:#64748b; line-height:1.6; }
+    .not-found-actions { display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin-top:22px; }
+    .not-found-actions a { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:10px 16px; border-radius:12px; background:#eff6ff; color:#1456ad; font-weight:700; text-decoration:none; }
+    .not-found-actions a:first-child { background:linear-gradient(135deg,#007bff,#0056d6); color:#fff; }
+  </style>
 </head>
 <body>
 {% include '_topbar.html' %}
 <main id="contenu" tabindex="-1">
-<div class="container" style="margin-top:80px; text-align:center;">
-  <h1>404</h1>
-  <p>Cette page n'existe pas.</p>
-  <a href="/" class="btn">Retour à l'accueil</a>
+<div class="not-found">
+  <div class="not-found-code" aria-hidden="true">404</div>
+  <h1>Oups, cette page a pris son envol</h1>
+  <p>L'adresse est peut-être incorrecte ou la page a été déplacée. Repars d'un endroit utile :</p>
+  <nav class="not-found-actions" aria-label="Raccourcis">
+    <a href="/conjugaisons">Rechercher un verbe</a>
+    <a href="/quiz?mode=entrainement">Lancer un entraînement</a>
+    <a href="/">Accueil</a>
+  </nav>
 </div>
 <script src="/static/js/settings.js" defer></script>
 </main>
