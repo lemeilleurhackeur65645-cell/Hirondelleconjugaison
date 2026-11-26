@@ -85,6 +85,11 @@ def _oauth_configured(provider):
         return False
 
 
+def _oauth_authorize(provider):
+    callback = url_for(f"auth.callback_{provider}", _external=True)
+    return getattr(oauth, provider).authorize_redirect(callback)
+
+
 # ============================================================
 # INSCRIPTION / CONNEXION PAR EMAIL
 # ============================================================
@@ -104,8 +109,8 @@ def inscription():
             flash("Un code de vérification a été envoyé à ton adresse email.")
             return redirect(url_for("auth.inscription"))
 
-        if not request.form.get("age_ok"):
-            flash("Pour créer un compte, confirme avoir 15 ans ou plus (ou l'accord de ton représentant légal) et accepte les conditions.")
+        if request.form.get("age_ok") != "1" or request.form.get("conditions_ok") != "1":
+            flash("Confirme les conditions d'âge et accepte les conditions d'utilisation pour créer un compte.")
             return redirect(url_for("auth.inscription"))
 
         email = request.form.get("email", "").strip().lower()
@@ -143,6 +148,26 @@ def inscription():
         return redirect(url_for("auth.verifier_inscription"))
 
     return render_template("inscription.html")
+
+
+@auth_bp.route("/inscription/oauth/<provider>", methods=["POST"])
+@limiter.limit("5 per minute")
+def inscription_oauth(provider):
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
+    if provider not in {"google", "github"}:
+        return redirect(url_for("auth.inscription"))
+    if request.form.get("site_web", "").strip():
+        return redirect(url_for("auth.inscription"))
+    if request.form.get("age_ok") != "1" or request.form.get("conditions_ok") != "1":
+        flash("Confirme les conditions d'âge et accepte les conditions d'utilisation pour créer un compte.")
+        return redirect(url_for("auth.inscription"))
+    if not _oauth_configured(provider):
+        flash(f"L'inscription avec {provider.capitalize()} n'est pas encore configurée sur ce site.")
+        return redirect(url_for("auth.inscription"))
+
+    session["oauth_signup_provider"] = provider
+    return _oauth_authorize(provider)
 
 
 @auth_bp.route("/verifier-inscription", methods=["GET", "POST"])
@@ -280,15 +305,16 @@ def deconnexion():
 
 @auth_bp.route("/connexion/google")
 def connexion_google():
+    session.pop("oauth_signup_provider", None)
     if not _oauth_configured("google"):
         flash("La connexion Google n'est pas encore configurée sur ce site.")
         return redirect(url_for("auth.connexion"))
-    redirect_uri = url_for("auth.callback_google", _external=True)
-    return oauth.google.authorize_redirect(redirect_uri)
+    return _oauth_authorize("google")
 
 
 @auth_bp.route("/callback/google")
 def callback_google():
+    signup_requested = session.pop("oauth_signup_provider", None) == "google"
     token = oauth.google.authorize_access_token()
     info = token.get("userinfo")
     if not info or not info.get("email"):
@@ -298,6 +324,9 @@ def callback_google():
     email = info["email"].lower()
     user = User.query.filter_by(email=email).first()
     if not user:
+        if not signup_requested:
+            flash("Pour créer un compte, passe d'abord par le formulaire d'inscription et confirme les conditions.")
+            return redirect(url_for("auth.inscription"))
         user = User(email=email, nom=info.get("name"), methode_connexion="google", email_verifie=True)
         db.session.add(user)
         db.session.commit()
@@ -314,15 +343,16 @@ def callback_google():
 
 @auth_bp.route("/connexion/github")
 def connexion_github():
+    session.pop("oauth_signup_provider", None)
     if not _oauth_configured("github"):
         flash("La connexion Github n'est pas encore configurée sur ce site.")
         return redirect(url_for("auth.connexion"))
-    redirect_uri = url_for("auth.callback_github", _external=True)
-    return oauth.github.authorize_redirect(redirect_uri)
+    return _oauth_authorize("github")
 
 
 @auth_bp.route("/callback/github")
 def callback_github():
+    signup_requested = session.pop("oauth_signup_provider", None) == "github"
     token = oauth.github.authorize_access_token()
     resp = oauth.github.get("user", token=token)
     profile = resp.json()
@@ -342,6 +372,9 @@ def callback_github():
     email = email.lower()
     user = User.query.filter_by(email=email).first()
     if not user:
+        if not signup_requested:
+            flash("Pour créer un compte, passe d'abord par le formulaire d'inscription et confirme les conditions.")
+            return redirect(url_for("auth.inscription"))
         user = User(email=email, nom=profile.get("login"), methode_connexion="github", email_verifie=True)
         db.session.add(user)
         db.session.commit()

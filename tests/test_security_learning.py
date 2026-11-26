@@ -55,7 +55,13 @@ class ApplicationTests(unittest.TestCase):
         with patch("email_verification.envoyer_email", return_value=(True, None)):
             response = self.client.post(
                 "/inscription",
-                data={"email": "eleve@example.test", "nom": "Élève", "password": "un-mot-de-passe"},
+                data={
+                    "email": "eleve@example.test",
+                    "nom": "Élève",
+                    "password": "un-mot-de-passe",
+                    "age_ok": "1",
+                    "conditions_ok": "1",
+                },
             )
             self.assertEqual(response.status_code, 302)
             code = CodeVerification.query.filter_by(email="eleve@example.test").one()
@@ -75,6 +81,54 @@ class ApplicationTests(unittest.TestCase):
             data={"email": user.email, "password": "un-mot-de-passe"},
         )
         self.assertEqual(response.status_code, 302)
+
+    def test_registration_requires_age_and_terms_acknowledgements(self):
+        for data in (
+            {"age_ok": "1"},
+            {"conditions_ok": "1"},
+        ):
+            response = self.client.post(
+                "/inscription",
+                data={
+                    "email": "eleve@example.test",
+                    "password": "un-mot-de-passe",
+                    **data,
+                },
+            )
+            self.assertEqual(response.status_code, 302)
+            self.assertIn("/inscription", response.location)
+
+        self.assertIsNone(CodeVerification.query.filter_by(email="eleve@example.test").first())
+
+    def test_auth_pages_show_required_legal_checks_and_links(self):
+        response = self.client.get("/inscription")
+        self.assertEqual(response.status_code, 200)
+        page = response.get_data(as_text=True)
+        self.assertNotIn("Un compte pour garder ton élan", page)
+        self.assertIn('name="age_ok" value="1" required', page)
+        self.assertIn('name="conditions_ok" value="1" required', page)
+        self.assertIn('href="/conditions"', page)
+        self.assertIn('href="/confidentialite"', page)
+        self.assertIn('href="/mentions-legales"', page)
+        self.assertIn('formaction="/inscription/oauth/google"', page)
+        self.assertIn('formaction="/inscription/oauth/github"', page)
+
+        response = self.client.get("/connexion")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Créer un compte", response.get_data(as_text=True))
+
+    def test_oauth_registration_requires_legal_acknowledgements(self):
+        response = self.client.post("/inscription/oauth/google")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/inscription", response.location)
+
+        response = self.client.post(
+            "/inscription/oauth/github",
+            data={"age_ok": "1", "conditions_ok": "1"},
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/inscription", response.location)
+        self.assertEqual(User.query.count(), 0)
 
     def test_quiz_feedback_includes_learning_hint(self):
         with self.client.session_transaction() as quiz_session:

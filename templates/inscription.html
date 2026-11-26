@@ -4,298 +4,119 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="google-site-verification" content="ui-YgD7jU6E1Z3Ti7rLcxAvVe1BLAuyZWCfb5jUoKjE">
-    <title>Inscription | Hirondelle Conjugaison</title>
-    <meta name="description" content="Crée ton compte Hirondelle Conjugaison gratuitement — sauvegarde ta progression et débloque les statistiques.">
+    <title>Créer un compte | Hirondelle Conjugaison</title>
+    <meta name="description" content="Crée ton compte gratuit Hirondelle Conjugaison et retrouve ta progression.">
     <link rel="icon" type="image/png" href="/static/img/logo.png">
     <link rel="stylesheet" href="/static/style.css">
-    <style>
-        /* ════════════════════════════════════════════════════
-           Reproduction fidèle du mécanisme "Modern Login" (AsmrProg),
-           adaptée à la palette Hirondelle (bleu) au lieu du violet
-           d'origine, et connectée au backend Flask + OAuth.
-           ════════════════════════════════════════════════════ */
-        * { box-sizing: border-box; }
-
-        body {
-            margin: 0; padding-top: 0; min-height: 100vh;
-            font-family: 'Inter', Arial, sans-serif;
-            background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 50%, #f5f0ff 100%);
-            background-attachment: fixed;
-        }
-
-        .auth-stage {
-            width: 100%; min-height: calc(100vh - 56px);
-            padding: 24px 20px 50px; display: flex;
-            align-items: center; justify-content: center;
-        }
-
-        .container {
-            background-color: #fff;
-            border-radius: 30px;
-            box-shadow: 0 16px 48px rgba(15,23,42,0.16);
-            position: relative;
-            overflow: hidden;
-            width: 768px;
-            max-width: 100%;
-            min-height: 480px;
-        }
-
-        .container p {
-            font-size: 13px; line-height: 20px; letter-spacing: 0.3px;
-            margin: 16px 0; color: #64748b;
-        }
-        .container span { font-size: 12px; color: #94a3b8; }
-        .container a.forget-link {
-            color: #007bff; font-size: 13px; text-decoration: none;
-            margin: 12px 0 8px; font-weight: 600;
-        }
-
-        .container button.submit-btn {
-            background: linear-gradient(135deg, #007bff, #0056d6);
-            color: #fff; font-size: 12px; padding: 11px 45px;
-            border: 1px solid transparent; border-radius: 8px;
-            font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
-            margin-top: 12px; cursor: pointer;
-            box-shadow: 0 4px 14px rgba(0,123,255,0.28);
-        }
-        .container button.submit-btn:hover { opacity: 0.92; transform: translateY(-1px); }
-        .container button.submit-btn:active { transform: translateY(0) scale(0.98); }
-
-        .container button.hidden {
-            background-color: rgba(255,255,255,0.12);
-            border: 1.5px solid rgba(255,255,255,0.55);
-            color: #fff;
-            border-radius: 10px;
-            padding: 11px 32px;
-            font-size: 0.82rem;
-            letter-spacing: 0.3px;
-            text-transform: none;
-            backdrop-filter: blur(4px);
-            transition: all 0.18s;
-        }
-        .container button.hidden:hover {
-            background: rgba(255,255,255,0.22);
-            border-color: rgba(255,255,255,0.85);
-            transform: translateY(-1px);
-        }
-
-        .container form {
-            background-color: #fff;
-            display: flex; align-items: center; justify-content: center;
-            flex-direction: column; gap: 2px; padding: 28px 40px; height: 100%; width: 100%;
-        }
-
-        .container h1, .container h2 { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0; }
-
-        .container input {
-            background-color: #f1f5f9; border: 1.5px solid transparent;
-            margin: 5px 0; padding: 12px 14px; font-size: 14px;
-            border-radius: 9px; width: 100%; min-height: 44px; outline: none; font-family: inherit;
-            transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
-        }
-        .container input:focus { border-color: #007bff; background: #fff; box-shadow: 0 0 0 3px rgba(0,123,255,0.12); }
-        .container input[type="checkbox"] { width: 18px; min-height: 18px; height: 18px; margin: 0; accent-color: #007bff; }
-
-        .flash-msg {
-            width: 100%; background: #fff3cd; border: 1px solid #ffe69c; color: #664d03;
-            padding: 8px 12px; border-radius: 8px; font-size: 0.78rem; margin-top: 10px;
-        }
-
-        /* ── Panneaux de formulaire (mécanisme original) ── */
-        .form-container {
-            position: absolute; top: 0; height: 100%;
-            transition: transform 0.6s ease-in-out, opacity 0.35s ease, visibility 0s linear 0.6s;
-        }
-
-        .sign-in { left: 0; width: 50%; z-index: 2; visibility: visible; }
-        .container.active .sign-in { transform: translateX(100%); }
-
-        .sign-up { left: 0; width: 50%; opacity: 0; z-index: 1; visibility: hidden; pointer-events: none; }
-        .container.active .sign-up {
-            transform: translateX(100%); opacity: 1; z-index: 5; visibility: visible; pointer-events: auto;
-            animation: move 0.6s;
-        }
-        .container.active .sign-in { visibility: hidden; pointer-events: none; }
-        .container:not(.active) .sign-up { transform: translateX(0); }
-        .container:not(.active) .sign-in { opacity: 1; }
-        @keyframes move {
-            0%, 49.99% { opacity: 0; z-index: 1; }
-            50%, 100% { opacity: 1; z-index: 5; }
-        }
-
-        /* ── Icônes sociales (OAuth réel) ── */
-        .social-icons { margin: 10px 0 12px; display: flex; gap: 10px; }
-        .social-icons a.icon {
-            border: 1.5px solid #e2e8f0; border-radius: 10px;
-            display: inline-flex; justify-content: center; align-items: center;
-            width: 48px; height: 46px; color: #334155; text-decoration: none;
-            transition: transform 0.18s ease, background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
-        }
-        .social-icons a.icon svg { width: 21px; height: 21px; }
-        .social-icons a.icon:hover { background: #f8fafc; border-color: #007bff; color: #007bff; transform: translateY(-2px); box-shadow: 0 5px 14px rgba(15,23,42,0.1); }
-        .social-icons a.icon:focus-visible, .mobile-switch button:focus-visible, .toggle-panel button:focus-visible { outline: 3px solid #80bdff; outline-offset: 3px; }
-        .social-label { color: #64748b; font-size: 0.78rem; margin-top: 6px; }
-        .auth-switch {
-            border: 0; padding: 6px 8px; background: transparent; color: #007bff;
-            font: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer;
-        }
-
-        /* ── Panneau de bascule décoratif ── */
-        .toggle-container {
-            position: absolute; top: 0; left: 50%; width: 50%; height: 100%;
-            overflow: hidden; transition: transform 0.6s ease-in-out, border-radius 0.6s ease-in-out;
-            border-radius: 150px 0 0 100px; z-index: 1000;
-        }
-        .container.active .toggle-container {
-            transform: translateX(-100%);
-            border-radius: 0 150px 100px 0;
-        }
-
-        .toggle {
-            background: linear-gradient(160deg, #007bff 0%, #0056d6 55%, #0f172a 140%);
-            color: #fff; position: relative; left: -100%;
-            height: 100%; width: 200%;
-            transform: translateX(0); transition: transform 0.6s ease-in-out;
-        }
-        .container.active .toggle { transform: translateX(50%); }
-
-        .toggle-panel {
-            position: absolute; width: 50%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-            flex-direction: column; padding: 0 30px; text-align: center; top: 0;
-            transform: translateX(0); transition: transform 0.6s ease-in-out, opacity 0.3s ease;
-        }
-        .toggle-panel img {
-            width: 56px; height: 56px; border-radius: 14px; margin-bottom: 16px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-        }
-        .toggle-panel h1 { color: #fff; font-size: 1.4rem; margin: 0 0 10px; }
-        .toggle-panel p { color: rgba(255,255,255,0.85); margin: 0 0 22px; }
-
-        .toggle-left { transform: translateX(-200%); }
-        .container.active .toggle-left { transform: translateX(0); }
-
-        .toggle-right { right: 0; transform: translateX(0); }
-        .container.active .toggle-right { transform: translateX(200%); }
-
-        /* ── Responsive : le mécanisme à bascule slide ne tient pas sur petit
-             écran, on retombe sur un affichage empilé classique ── */
-        @media (max-width: 768px) {
-            .container { min-height: 0; border-radius: 22px; display: grid; overflow: hidden; }
-            .toggle-container { display: none; }
-            .form-container {
-                position: relative; grid-area: 1 / 1; width: 100% !important; height: auto;
-                padding: 20px 0; transform: none !important; z-index: 1 !important;
-                transition: opacity 0.25s ease, visibility 0s linear 0.25s;
-                animation: none !important;
-            }
-            .container form { padding: 10px 28px 18px; }
-            .sign-in { opacity: 0; visibility: hidden; }
-            .sign-up { opacity: 1; visibility: visible; }
-            .container.active .sign-in { opacity: 0; visibility: hidden; }
-            .container.active .sign-up { opacity: 1; visibility: visible; }
-            .container:not(.active) .sign-in { opacity: 1; visibility: visible; }
-            .container:not(.active) .sign-up { opacity: 0; visibility: hidden; }
-            .mobile-switch { display: block !important; }
-            .container h1, .container h2 { font-size: 1.35rem; }
-        }
-        .mobile-switch {
-            display: none; margin-top: 14px; font-size: 0.82rem; color: #64748b;
-        }
-        .mobile-switch button { margin-left: 2px; }
-    </style>
+    <link rel="stylesheet" href="/static/auth.css">
 </head>
-<body>
+<body class="auth-page">
 {% include '_topbar.html' %}
 
-<div class="auth-stage">
-    <div class="container active" id="container">
-        {% set auth_flash_messages = get_flashed_messages() %}
+<main id="contenu" class="auth-layout">
+    <section class="auth-card auth-card-signup" aria-labelledby="auth-title">
+        <div class="auth-form-side">
+            <a class="auth-back" href="/" aria-label="Retour au site">← <span>Retour au site</span></a>
+            <div class="auth-heading">
+                <span class="auth-eyebrow">TON COMPTE GRATUIT · 1 MINUTE</span>
+                <h1 id="auth-title">Tes progrès<br>commencent ici.</h1>
+            </div>
 
-        <!-- Inscription -->
-        <div class="form-container sign-up">
-            <form method="POST" action="/inscription">
+            {% set auth_flash_messages = get_flashed_messages() %}
+            {% if auth_flash_messages %}
+            <div class="auth-messages" role="status" aria-live="polite">
+                {% for msg in auth_flash_messages %}<p>{{ msg }}</p>{% endfor %}
+            </div>
+            {% endif %}
+
+            <form class="auth-form" method="POST" action="/inscription">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <h1>Créer un compte</h1>
-                <span class="social-label">Créer un compte avec</span>
-                <div class="social-icons">
-                    <a href="/connexion/google" class="icon" aria-label="Continuer avec Google" title="Continuer avec Google">
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.09-1.92 3.27-4.74 3.27-8.1Z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.65l-3.57-2.77c-.99.66-2.25 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.15v2.84A11 11 0 0 0 12 23Z"/><path fill="#FBBC05" d="M5.84 14.11a6.6 6.6 0 0 1 0-4.22V7.05H2.15a11 11 0 0 0 0 9.9l3.69-2.84Z"/><path fill="#EA4335" d="M12 4.36c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 1.09 14.97 0 12 0A11 11 0 0 0 2.15 7.05l3.69 2.84C6.71 7.29 9.14 4.36 12 4.36Z"/></svg>
-                    </a>
-                    <a href="/connexion/github" class="icon" aria-label="Continuer avec GitHub" title="Continuer avec GitHub">
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.56.1.76-.24.76-.54v-2.1c-3.1.67-3.76-1.32-3.76-1.32-.5-1.28-1.23-1.62-1.23-1.62-1.01-.69.08-.68.08-.68 1.12.08 1.7 1.15 1.7 1.15.99 1.7 2.6 1.21 3.23.93.1-.72.39-1.21.7-1.49-2.47-.28-5.07-1.24-5.07-5.5 0-1.22.44-2.21 1.15-2.99-.12-.28-.5-1.42.11-2.95 0 0 .94-.3 3.05 1.14a10.6 10.6 0 0 1 5.55 0c2.12-1.44 3.05-1.14 3.05-1.14.61 1.53.23 2.67.11 2.95.72.78 1.15 1.77 1.15 2.99 0 4.27-2.6 5.21-5.08 5.49.4.35.75 1.02.75 2.06v3.08c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z"/></svg>
-                    </a>
-                </div>
-                <span>ou utilise ton email</span>
-                <!-- Honeypot anti-bot : invisible pour un humain (CSS), mais
-                     un bot simple qui remplit tous les champs du formulaire
-                     va le compléter — ce qui le trahit. Le nom "site_web"
-                     est volontairement banal pour ressembler à un vrai champ. -->
-                <div style="position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden;" aria-hidden="true">
+                <div class="auth-honeypot" aria-hidden="true">
                     <label for="site_web">Site web</label>
                     <input type="text" id="site_web" name="site_web" tabindex="-1" autocomplete="off">
                 </div>
-                <input type="text" name="nom" placeholder="Prénom (optionnel)" aria-label="Prénom (optionnel)" autocomplete="given-name">
-                <input type="email" name="email" placeholder="Email" aria-label="Adresse email" autocomplete="email" required>
-                <input type="password" name="password" placeholder="Mot de passe (8 caractères min.)" aria-label="Mot de passe (8 caractères minimum)" autocomplete="new-password" required minlength="8">
-                {% for msg in auth_flash_messages %}<div class="flash-msg">{{ msg }}</div>{% endfor %}
-                <button type="submit" class="submit-btn">S'inscrire</button>
-                <p class="mobile-switch">Déjà inscrit(e) ? <button type="button" class="auth-switch" data-auth-show="login">Se connecter</button></p>
-            </form>
-        </div>
 
-        <!-- Connexion -->
-        <div class="form-container sign-in">
-            <form method="POST" action="/connexion">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <h2>Se connecter</h2>
-                <span class="social-label">Connexion rapide avec</span>
-                <div class="social-icons">
-                    <a href="/connexion/google" class="icon" aria-label="Continuer avec Google" title="Continuer avec Google">
+                <div class="auth-field">
+                    <label for="signup-name">Prénom <span class="auth-optional">Facultatif</span></label>
+                    <input id="signup-name" type="text" name="nom" placeholder="Comment t'appelles-tu ?" autocomplete="given-name">
+                </div>
+
+                <div class="auth-field">
+                    <label for="signup-email">Adresse email</label>
+                    <input id="signup-email" type="email" name="email" placeholder="toi@exemple.fr" autocomplete="email" required>
+                </div>
+
+                <div class="auth-field">
+                    <label for="signup-password">Mot de passe</label>
+                    <div class="auth-password-wrap">
+                        <input id="signup-password" type="password" name="password" placeholder="8 caractères minimum" autocomplete="new-password" required minlength="8" aria-describedby="signup-password-hint">
+                        <button class="auth-password-toggle" type="button" aria-label="Afficher le mot de passe" aria-pressed="false" data-password-toggle="signup-password">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.2-6 9.5-6 9.5 6 9.5 6-3.2 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.7"/></svg>
+                        </button>
+                    </div>
+                    <p class="auth-hint" id="signup-password-hint">8 caractères minimum. Un code de vérification sera envoyé par email.</p>
+                </div>
+
+                <fieldset class="auth-consents">
+                    <legend>Avant de créer ton compte</legend>
+                    <label class="auth-check">
+                        <input type="checkbox" name="age_ok" value="1" required>
+                        <span>J'ai 15 ans ou plus, ou l'accord de mon représentant légal.</span>
+                    </label>
+                    <label class="auth-check">
+                        <input type="checkbox" name="conditions_ok" value="1" required>
+                        <span>J'accepte les <a href="/conditions" target="_blank" rel="noopener">conditions d'utilisation</a> et j'ai pris connaissance de la <a href="/confidentialite" target="_blank" rel="noopener">politique de confidentialité</a>.</span>
+                    </label>
+                </fieldset>
+
+                <button class="auth-submit" type="submit">Créer mon espace <span aria-hidden="true">→</span></button>
+
+                <div class="auth-divider"><span>ou en un clic avec</span></div>
+                <div class="auth-socials">
+                    <button class="auth-social" type="submit" formaction="/inscription/oauth/google" formnovalidate>
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.09-1.92 3.27-4.74 3.27-8.1Z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.65l-3.57-2.77c-.99.66-2.25 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.15v2.84A11 11 0 0 0 12 23Z"/><path fill="#FBBC05" d="M5.84 14.11a6.6 6.6 0 0 1 0-4.22V7.05H2.15a11 11 0 0 0 0 9.9l3.69-2.84Z"/><path fill="#EA4335" d="M12 4.36c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 1.09 14.97 0 12 0A11 11 0 0 0 2.15 7.05l3.69 2.84C6.71 7.29 9.14 4.36 12 4.36Z"/></svg>
-                    </a>
-                    <a href="/connexion/github" class="icon" aria-label="Continuer avec GitHub" title="Continuer avec GitHub">
+                        <span>Google</span>
+                    </button>
+                    <button class="auth-social" type="submit" formaction="/inscription/oauth/github" formnovalidate>
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.56.1.76-.24.76-.54v-2.1c-3.1.67-3.76-1.32-3.76-1.32-.5-1.28-1.23-1.62-1.23-1.62-1.01-.69.08-.68.08-.68 1.12.08 1.7 1.15 1.7 1.15.99 1.7 2.6 1.21 3.23.93.1-.72.39-1.21.7-1.49-2.47-.28-5.07-1.24-5.07-5.5 0-1.22.44-2.21 1.15-2.99-.12-.28-.5-1.42.11-2.95 0 0 .94-.3 3.05 1.14a10.6 10.6 0 0 1 5.55 0c2.12-1.44 3.05-1.14 3.05-1.14.61 1.53.23 2.67.11 2.95.72.78 1.15 1.77 1.15 2.99 0 4.27-2.6 5.21-5.08 5.49.4.35.75 1.02.75 2.06v3.08c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z"/></svg>
-                    </a>
+                        <span>GitHub</span>
+                    </button>
                 </div>
-                <span>ou utilise ton email et mot de passe</span>
-                <input type="email" name="email" placeholder="Email" aria-label="Adresse email" autocomplete="email" required>
-                <input type="password" name="password" placeholder="Mot de passe" aria-label="Mot de passe" autocomplete="current-password" required>
-                <a href="/mot-de-passe-oublie" class="forget-link">Mot de passe oublié ?</a>
-                <p class="mobile-switch">Pas encore de compte ? <button type="button" class="auth-switch" data-auth-show="signup">S'inscrire</button></p>
-                {% for msg in auth_flash_messages %}<div class="flash-msg">{{ msg }}</div>{% endfor %}
-
-                <button type="submit" class="submit-btn">Se connecter</button>
-                
             </form>
+
+            <p class="auth-switch">Déjà un compte ? <a href="/connexion">Se connecter</a></p>
         </div>
 
-        <!-- Panneau décoratif de bascule -->
-        <div class="toggle-container">
-            <div class="toggle">
-                <div class="toggle-panel toggle-left">
-                    <img src="/static/img/logo.png" alt="Hirondelle">
-                    <h2>Bon retour !</h2>
-                    <p>Connecte-toi pour retrouver ta progression et tes statistiques.</p>
-                    <button type="button" class="hidden" data-auth-show="login">Se connecter</button>
-                </div>
-                <div class="toggle-panel toggle-right">
-                    <img src="/static/img/logo.png" alt="Hirondelle">
-                    <h2>Nouveau ici ?</h2>
-                    <p>Crée un compte gratuit pour sauvegarder ta progression et débloquer tes statistiques.</p>
-                    <button type="button" class="hidden" data-auth-show="signup">S'inscrire</button>
-                </div>
+        <aside class="auth-art auth-art-signup" aria-label="Découvre Hirondelle Conjugaison">
+            <div class="auth-art-glow"></div>
+            <span class="auth-art-tag">APPRENDRE PEUT ÊTRE UN PLAISIR</span>
+            <h2>Le déclic,<br>c'est de voir<br><span>que tu avances.</span></h2>
+            <p>Chaque bonne réponse construit quelque chose. Ton espace t'aide à le voir.</p>
+
+            <div class="auth-quiz-preview">
+                <div class="auth-quiz-topline"><span>UN PETIT APERÇU</span><span class="auth-quiz-dot"></span></div>
+                <p class="auth-quiz-prompt">Conjugue <strong>être</strong><br>à l'imparfait avec <strong>nous</strong></p>
+                <div class="auth-quiz-answer"><span>nous</span><strong>étions</strong><span aria-hidden="true">✓</span></div>
+                <div class="auth-quiz-foot"><span aria-hidden="true">✦</span> Une réponse à la fois.</div>
             </div>
-        </div>
 
-    </div>
-</div>
+            <div class="auth-signup-perks">
+                <span><i aria-hidden="true">✓</i> Progression sauvegardée</span>
+                <span><i aria-hidden="true">✓</i> Gratuit, sans publicité</span>
+            </div>
+        </aside>
+    </section>
+</main>
 
+{% include '_footer.html' %}
 <script>
-    const container = document.getElementById('container');
-    container.querySelectorAll('[data-auth-show]').forEach((button) => {
+    document.querySelectorAll('[data-password-toggle]').forEach((button) => {
         button.addEventListener('click', () => {
-            container.classList.toggle('active', button.dataset.authShow === 'signup');
+            const password = document.getElementById(button.dataset.passwordToggle);
+            const showPassword = password.type === 'password';
+            password.type = showPassword ? 'text' : 'password';
+            button.setAttribute('aria-pressed', String(showPassword));
+            button.setAttribute('aria-label', showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe');
         });
     });
 </script>
